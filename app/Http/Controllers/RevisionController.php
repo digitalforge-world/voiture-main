@@ -9,6 +9,16 @@ use Illuminate\Support\Str;
 
 class RevisionController extends Controller
 {
+    public function index()
+    {
+        $revisions = Revision::where('user_id', Auth::id())
+            ->orWhere('client_email', Auth::user()->email ?? '')
+            ->latest('date_demande')
+            ->paginate(10);
+
+        return view('revisions.index', compact('revisions'));
+    }
+
     public function create()
     {
         return view('revisions.create');

@@ -82,13 +82,40 @@ class RevisionController extends Controller
         $validated = $request->validate([
             'statut' => 'required|in:en_attente,diagnostic_en_cours,devis_envoye,accepte,refuse,en_intervention,termine,annule',
             'diagnostic_technique' => 'nullable|string',
-            'prix_estime' => 'nullable|numeric|min:0'
+            'montant_devis' => 'nullable|numeric|min:0',
+            'interventions_prevues' => 'nullable|string',
+            'pieces_necessaires' => 'nullable|string',
+            'notes_internes' => 'nullable|string',
         ]);
 
-        $revision->update($validated);
+        // Update the revision
+        $revision->update([
+            'statut' => $validated['statut'],
+            'diagnostic' => $validated['diagnostic_technique'],
+            'montant_devis' => $validated['montant_devis'] ?? $revision->montant_devis,
+            'interventions_prevues' => $validated['interventions_prevues'] ?? $revision->interventions_prevues,
+            'pieces_necessaires' => $validated['pieces_necessaires'] ?? $revision->pieces_necessaires,
+            'notes' => $validated['notes_internes'] ?? $revision->notes,
+        ]);
+
+        // Update diagnostic date if diagnostic is provided
+        if ($validated['diagnostic_technique']) {
+            $revision->update(['date_diagnostic' => now()]);
+        }
+
+        // Update devis date if montant_devis is provided and status is devis_envoye
+        if ($validated['montant_devis'] && $validated['statut'] === 'devis_envoye') {
+            $revision->update(['date_devis' => now()]);
+        }
+
+        // TODO: Send notification to client if notify_client is checked
+        if ($request->has('notify_client') && $request->notify_client) {
+            // Implement email/SMS notification here
+            // Example: Mail::to($revision->user->email)->send(new RevisionUpdated($revision));
+        }
 
         return redirect()->route('admin.revisions.index')
-            ->with('success', 'Révision mise à jour avec succès !');
+            ->with('success', 'Révision mise à jour avec succès ! Le client sera notifié.');
     }
 
     /**

@@ -28,13 +28,17 @@ class Revision extends Model
         'probleme_description',
         'type_revision',
         'diagnostic',
+        'diagnostic_technique',
         'interventions_prevues',
         'pieces_necessaires',
         'montant_devis',
         'montant_final',
         'statut',
         'photos',
-        'notes'
+        'notes',
+        'notes_internes',
+        'date_diagnostic',
+        'date_devis'
     ];
 
     public const CREATED_AT = 'date_demande';
