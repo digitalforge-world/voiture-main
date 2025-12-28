@@ -166,10 +166,12 @@
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
 
-                <div class="hidden md:flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 w-96 group focus-within:border-amber-500/50 transition duration-300">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 group-focus-within:text-amber-500"></i>
-                    <input type="text" placeholder="Rechercher une commande, un véhicule..." class="bg-transparent border-none text-xs font-medium focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 w-full">
-                </div>
+                <form action="{{ route('admin.global-search') }}" method="GET" class="hidden md:flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2 w-96 group focus-within:border-amber-500/50 transition duration-300">
+                    <button type="submit">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 group-focus-within:text-amber-500 transition-colors"></i>
+                    </button>
+                    <input type="text" name="q" placeholder="Rechercher (CMD, VIN, Nom)..." class="bg-transparent border-none text-xs font-medium focus:ring-0 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 w-full" value="{{ request('q') }}">
+                </form>
 
                 <div class="flex items-center gap-6">
                     <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 transition-all border border-slate-200 dark:border-slate-800">

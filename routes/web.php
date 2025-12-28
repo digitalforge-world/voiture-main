@@ -68,6 +68,7 @@ Route::post('/logout', function (Illuminate\Http\Request $request) {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/search', [AdminController::class, 'globalSearch'])->name('global-search');
 
     // Gestion des Utilisateurs
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);

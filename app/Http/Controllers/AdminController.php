@@ -44,4 +44,35 @@ class AdminController extends Controller
             'recentOrders'
         ));
     }
+    public function globalSearch(Request $request)
+    {
+        $query = $request->input('q');
+
+        if (!$query) {
+            return redirect()->back();
+        }
+
+        $results = [
+            'cars' => Voiture::where('marque', 'LIKE', "%{$query}%")
+                ->orWhere('modele', 'LIKE', "%{$query}%")
+                ->orWhere('numero_chassis', 'LIKE', "%{$query}%")
+                ->take(5)->get(),
+            'orders' => CommandeVoiture::where('reference', 'LIKE', "%{$query}%")
+                ->orWhere('tracking_number', 'LIKE', "%{$query}%")
+                ->orWhere('client_nom', 'LIKE', "%{$query}%")
+                ->orWhereHas('user', function ($q) use ($query) {
+                    $q->where('nom', 'LIKE', "%{$query}%")->orWhere('prenom', 'LIKE', "%{$query}%");
+                })
+                ->take(5)->get(),
+            'parts' => PieceDetachee::where('nom', 'LIKE', "%{$query}%")
+                ->orWhere('reference', 'LIKE', "%{$query}%")
+                ->take(5)->get(),
+            'users' => User::where('nom', 'LIKE', "%{$query}%")
+                ->orWhere('prenom', 'LIKE', "%{$query}%")
+                ->orWhere('email', 'LIKE', "%{$query}%")
+                ->take(5)->get(),
+        ];
+
+        return view('admin.search.results', compact('results', 'query'));
+    }
 }
