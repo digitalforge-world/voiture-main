@@ -67,10 +67,42 @@ Route::post('/logout', function (Illuminate\Http\Request $request) {
     return redirect()->route('home');
 })->name('logout');
 
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    // Gestion des Utilisateurs
+    Route::resource('users', App\Http\Controllers\Admin\UserController::class);
+
+    // Gestion des Véhicules
+    Route::resource('cars', App\Http\Controllers\Admin\VoitureController::class);
+
+    // Gestion des Ports
+    Route::resource('ports', App\Http\Controllers\Admin\PortController::class);
+
+    // Gestion des Commandes Voitures
+    Route::resource('orders-cars', App\Http\Controllers\Admin\CommandeVoitureController::class);
+
+    // Gestion des Locations
+    Route::resource('rentals', App\Http\Controllers\Admin\LocationController::class);
+
+    // Gestion des Pièces
+    Route::resource('parts-inventory', App\Http\Controllers\Admin\PieceController::class);
+
+    // Gestion des Commandes Pièces
+    Route::resource('orders-parts', App\Http\Controllers\Admin\CommandePieceController::class);
+    // Gestion des Révisions
+    Route::resource('revisions', App\Http\Controllers\Admin\RevisionController::class);
+    // Gestion des Paiements
+    Route::resource('payments', App\Http\Controllers\Admin\PaiementController::class);
+    // Paramètres
+    Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
+    // Rapports, Contenu, Logs
+    Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
+    Route::get('content', [App\Http\Controllers\Admin\ContentController::class, 'index'])->name('content');
+    Route::get('logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs');
 });
+
+Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Redirection des routes auth standards vers l'accueil (sécurité par obscurité)
 Route::get('/login', function () {
