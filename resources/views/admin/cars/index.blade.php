@@ -222,13 +222,25 @@
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Photo Principale</label>
-                    <div class="relative group">
-                        <input type="file" name="photo_principale" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <div class="w-full py-8 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-slate-950/50 flex flex-col items-center justify-center gap-3 group-hover:bg-slate-950 group-hover:border-amber-500/50 transition">
-                            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-600 group-hover:text-amber-500 transition"></i>
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-slate-300">Glisser-déposer ou cliquer pour uploader</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Photo Principale</label>
+                        <div class="relative group">
+                            <input type="file" name="photo_principale" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div class="w-full py-8 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-slate-950/50 flex flex-col items-center justify-center gap-3 group-hover:bg-slate-950 group-hover:border-amber-500/50 transition">
+                                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-600 group-hover:text-amber-500 transition"></i>
+                                <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-slate-300">Image de couverture</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Galerie Photos (Multiple)</label>
+                        <div class="relative group">
+                            <input type="file" name="photos[]" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div class="w-full py-8 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-slate-950/50 flex flex-col items-center justify-center gap-3 group-hover:bg-slate-950 group-hover:border-amber-500/50 transition">
+                                <i data-lucide="images" class="w-8 h-8 text-slate-600 group-hover:text-amber-500 transition"></i>
+                                <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-slate-300">Vues secondaires</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -293,6 +305,17 @@
                     </div>
                 </div>
 
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Ajouter des photos à la galerie (Sélection multiple)</label>
+                    <div class="relative group">
+                        <input type="file" name="photos[]" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div class="w-full py-8 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-slate-950/50 flex flex-col items-center justify-center gap-3 group-hover:bg-slate-950 group-hover:border-amber-500/50 transition">
+                            <i data-lucide="images" class="w-8 h-8 text-slate-600 group-hover:text-amber-500 transition"></i>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-slate-300">Vues additionnelles</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-8 flex gap-6">
                     <button type="button" onclick="closeModal('editCarModal')" class="flex-1 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-950 rounded-[2rem] border border-white/5 hover:bg-slate-900 transition mt-auto">Fermer</button>
                     <button type="submit" class="flex-[2] py-5 text-[10px] font-black uppercase tracking-widest text-slate-950 bg-amber-500 rounded-[2rem] hover:bg-white transition shadow-xl shadow-amber-500/10">Valider les modifications</button>
@@ -308,14 +331,22 @@
     <div class="relative min-h-screen flex items-center justify-center p-4">
         <div class="relative bg-slate-950 border border-white/5 w-full max-w-5xl rounded-[6rem] rounded-tl-xl rounded-br-xl overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in fade-in slide-in-from-bottom duration-500">
              <!-- Media Side -->
-             <div class="w-full md:w-1/2 h-[400px] md:h-auto relative bg-slate-900 overflow-hidden">
-                <img id="show_photo" src="" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+              <div class="w-full md:w-1/2 h-[400px] md:h-auto relative bg-slate-900 overflow-hidden group">
+                <img id="show_photo" src="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                
+                <!-- Gallery Overlay -->
+                <div class="absolute bottom-32 inset-x-0 px-10">
+                    <div id="show_car_gallery" class="flex items-center gap-3 overflow-x-auto pb-4 custom-scrollbar no-scrollbar">
+                        <!-- Thumbs dynamic -->
+                    </div>
+                </div>
+
                 <div class="absolute bottom-10 left-10">
                     <span id="show_badge" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest italic border list-none mb-3 inline-block"></span>
                     <h3 id="show_title" class="text-4xl font-black text-white italic uppercase tracking-tighter"></h3>
                 </div>
-             </div>
+              </div>
 
              <!-- Info Side -->
              <div class="w-full md:w-1/2 p-16 space-y-10 relative">
@@ -377,8 +408,23 @@
         document.getElementById('show_prix').innerText = new Intl.NumberFormat('fr-FR').format(car.prix) + ' FCFA';
         document.getElementById('show_vin').innerText = car.vin || 'NON SPÉCIFIÉ';
         document.getElementById('show_etat').innerText = car.etat;
-        document.getElementById('show_photo').src = car.photo_principale || '/images/placeholder-car.jpg';
         
+        const mainImg = document.getElementById('show_photo');
+        mainImg.src = car.photo_principale || '/images/placeholder-car.jpg';
+        
+        // Gallery
+        const gallery = document.getElementById('show_car_gallery');
+        gallery.innerHTML = '';
+        if (car.photos && car.photos.length > 0) {
+            car.photos.forEach(photo => {
+                const thumb = document.createElement('div');
+                thumb.className = 'flex-shrink-0 w-16 h-12 rounded-xl border border-white/20 overflow-hidden cursor-pointer hover:border-amber-500 transition-all p-0.5 bg-slate-900/50 backdrop-blur';
+                thumb.innerHTML = `<img src="${photo.url}" class="w-full h-full object-cover rounded-lg">`;
+                thumb.onclick = () => { mainImg.src = photo.url; };
+                gallery.appendChild(thumb);
+            });
+        }
+
         const badge = document.getElementById('show_badge');
         badge.innerText = car.disponibilite.replace('_', ' ');
         badge.className = 'px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest italic border inline-block mb-3 ';

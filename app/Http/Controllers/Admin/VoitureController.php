@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Voiture;
+use App\Models\PhotoVoiture;
+use Illuminate\Support\Facades\Storage;
+
 class VoitureController extends Controller
 {
     /**
@@ -12,7 +15,7 @@ class VoitureController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Voiture::query();
+        $query = Voiture::query()->with('photos');
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
@@ -34,9 +37,6 @@ class VoitureController extends Controller
         return view('admin.cars.index', compact('voitures'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -48,25 +48,36 @@ class VoitureController extends Controller
             'etat' => 'required|in:neuf,occasion,reconditionne',
             'vin' => 'nullable|string|max:50|unique:voitures,vin',
             'disponibilite' => 'required|in:disponible,importation,reserve',
-            'photo_principale' => 'nullable|image|max:2048',
+            'photos.*' => 'nullable|image|max:2048',
         ]);
 
-        $voiture = new \App\Models\Voiture($validated);
+        $voiture = new Voiture($validated);
         $voiture->date_creation = now();
-
-        if ($request->hasFile('photo_principale')) {
-            $path = $request->file('photo_principale')->store('voitures', 'public');
-            $voiture->photo_principale = '/storage/' . $path;
-        }
-
         $voiture->save();
 
-        return redirect()->route('admin.cars.index')->with('success', 'Véhicule ajouté au catalogue.');
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $index => $file) {
+                $path = $file->store('voitures', 'public');
+                $url = '/storage/' . $path;
+
+                $isPrincipal = ($index === 0);
+
+                PhotoVoiture::create([
+                    'voiture_id' => $voiture->id,
+                    'url' => $url,
+                    'ordre' => $index + 1,
+                    'principale' => $isPrincipal
+                ]);
+
+                if ($isPrincipal) {
+                    $voiture->update(['photo_principale' => $url]);
+                }
+            }
+        }
+
+        return redirect()->route('admin.cars.index')->with('success', 'Véhicule ajouté avec sa galerie photos.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $voiture = Voiture::findOrFail($id);
@@ -76,11 +87,26 @@ class VoitureController extends Controller
             'disponibilite' => 'required|in:disponible,importation,reserve,vendu',
             'kilometrage' => 'required|integer|min:0',
             'etat' => 'required|in:neuf,occasion,reconditionne',
+            'photos.*' => 'nullable|image|max:2048',
         ]);
 
         $voiture->update($validated);
 
-        return redirect()->route('admin.cars.index')->with('success', 'Catalogue mis à jour.');
+        if ($request->hasFile('photos')) {
+            foreach ($request->file('photos') as $index => $file) {
+                $path = $file->store('voitures', 'public');
+                $url = '/storage/' . $path;
+
+                PhotoVoiture::create([
+                    'voiture_id' => $voiture->id,
+                    'url' => $url,
+                    'ordre' => $voiture->photos()->count() + 1,
+                    'principale' => false
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.cars.index')->with('success', 'Catalogue et galerie mis à jour.');
     }
 
     /**
@@ -89,7 +115,14 @@ class VoitureController extends Controller
     public function destroy(string $id)
     {
         $voiture = Voiture::findOrFail($id);
+
+        // Delete all photos from storage
+        foreach ($voiture->photos as $photo) {
+            $path = str_replace('/storage/', '', $photo->url);
+            Storage::disk('public')->delete($path);
+        }
+
         $voiture->delete();
-        return redirect()->route('admin.cars.index')->with('success', 'Véhicule retiré du catalogue.');
+        return redirect()->route('admin.cars.index')->with('success', 'Véhicule et sa galerie retirés du catalogue.');
     }
 }

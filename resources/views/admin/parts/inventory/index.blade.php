@@ -150,8 +150,8 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Photo de l'article</label>
-                    <input type="file" name="photo" class="w-full py-5 px-8 bg-slate-950 border border-white/5 rounded-2xl text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-amber-500 file:text-slate-950 hover:file:bg-white transition">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Photos de l'article (Sélection multiple)</label>
+                    <input type="file" name="photos[]" multiple class="w-full py-5 px-8 bg-slate-950 border border-white/5 rounded-2xl text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-amber-500 file:text-slate-950 hover:file:bg-white transition">
                 </div>
 
                 <div class="pt-10 flex gap-6">
@@ -216,6 +216,11 @@
                     </div>
                 </div>
 
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2 italic">Ajouter des photos à la galerie (Sélection multiple)</label>
+                    <input type="file" name="photos[]" multiple class="w-full py-5 px-8 bg-slate-950 border border-white/5 rounded-2xl text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-amber-500 file:text-slate-950 hover:file:bg-white transition">
+                </div>
+
                 <div class="pt-10 flex gap-6">
                     <button type="button" onclick="closeModal('editPartModal')" class="flex-1 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-950 rounded-[2.5rem] border border-white/5 hover:bg-slate-900 transition font-black italic">Annuler</button>
                     <button type="submit" class="flex-[2] py-6 text-[10px] font-black uppercase tracking-widest text-slate-950 bg-amber-500 rounded-[2.5rem] hover:bg-white transition shadow-xl shadow-amber-500/20 font-black italic">Enregistrer les modifications</button>
@@ -236,7 +241,11 @@
                     <div class="absolute inset-0 bg-amber-500/20 blur-[100px] opacity-20 group-hover:opacity-40 transition"></div>
                     <img id="show_part_img" src="" class="relative w-64 h-64 object-contain drop-shadow-[0_20px_50px_rgba(251,191,36,0.1)]">
                 </div>
-                <div class="mt-12 text-center">
+                <!-- Gallery Thumbnails -->
+                <div id="show_part_gallery" class="flex flex-wrap items-center justify-center gap-2 mt-8">
+                    <!-- Dynamic thumbs -->
+                </div>
+                <div class="mt-8 text-center">
                     <span id="show_part_cat" class="px-6 py-2 rounded-full bg-slate-900 text-slate-500 border border-white/5 text-[9px] font-black uppercase tracking-[0.2em] italic mb-4 inline-block"></span>
                     <h3 id="show_part_nom" class="text-3xl font-black text-white italic tracking-tighter uppercase leading-tight"></h3>
                 </div>
@@ -319,11 +328,25 @@
         document.getElementById('show_part_prix').innerText = new Intl.NumberFormat('fr-FR').format(piece.prix) + ' FCFA';
         
         const stockEl = document.getElementById('show_part_stock');
-        stockEl.innerText = `${piece.stock} UNITÉS`;
-        stockEl.className = `text-2xl font-black italic tracking-tighter ${piece.stock <= 2 ? 'text-rose-500' : 'text-emerald-500'}`;
+        stockEl.innerText = piece.stock;
+        stockEl.className = 'text-2xl font-black italic tracking-tighter ' + (piece.stock <= 2 ? 'text-rose-500' : 'text-emerald-500');
         
-        document.getElementById('show_part_img').src = piece.photo || '/images/placeholder-part.png';
+        const mainImg = document.getElementById('show_part_img');
+        mainImg.src = piece.image || '/images/placeholder-part.jpg';
 
+        // Load Gallery
+        const gallery = document.getElementById('show_part_gallery');
+        gallery.innerHTML = '';
+        if (piece.photos && piece.photos.length > 0) {
+            piece.photos.forEach(photo => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg bg-slate-900 border border-white/10 overflow-hidden cursor-pointer hover:border-amber-500 transition p-1';
+                thumb.innerHTML = `<img src="${photo.url}" class="w-full h-full object-contain">`;
+                thumb.onclick = () => { mainImg.src = photo.url; };
+                gallery.appendChild(thumb);
+            });
+        }
+        
         openModal('showPartModal');
     }
 

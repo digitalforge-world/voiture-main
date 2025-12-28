@@ -12,7 +12,29 @@ class PieceDetachee extends Model
     protected $table = 'pieces_detachees';
 
     protected $fillable = [
-        'nom','reference','marque_compatible','modele_compatible','annee_debut','annee_fin','moteur_compatible','numero_chassis_compatible','categorie','sous_categorie','prix','stock','stock_minimum','etat','origine','description','specifications','compatible_avec','image','poids','dimensions','garantie_mois','disponible'
+        'nom',
+        'reference',
+        'marque_compatible',
+        'modele_compatible',
+        'annee_debut',
+        'annee_fin',
+        'moteur_compatible',
+        'numero_chassis_compatible',
+        'categorie',
+        'sous_categorie',
+        'prix',
+        'stock',
+        'stock_minimum',
+        'etat',
+        'origine',
+        'description',
+        'specifications',
+        'compatible_avec',
+        'image',
+        'poids',
+        'dimensions',
+        'garantie_mois',
+        'disponible'
     ];
 
     protected $casts = [
@@ -25,5 +47,10 @@ class PieceDetachee extends Model
     public function lignesCommandes()
     {
         return $this->hasMany(LigneCommandePiece::class, 'piece_id');
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(PhotoPiece::class, 'piece_id');
     }
 }
