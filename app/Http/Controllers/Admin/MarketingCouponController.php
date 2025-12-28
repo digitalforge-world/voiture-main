@@ -8,9 +8,28 @@ use Illuminate\Http\Request;
 
 class MarketingCouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = MarketingCoupon::latest()->paginate(20);
+        $query = MarketingCoupon::query();
+
+        // Search by code
+        if ($request->filled('search')) {
+            $query->where('code', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by type
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
+
+        // Sort by newest first (today's coupons on top)
+        $coupons = $query->latest()->paginate(15)->withQueryString();
+
         return view('admin.coupons.index', compact('coupons'));
     }
 

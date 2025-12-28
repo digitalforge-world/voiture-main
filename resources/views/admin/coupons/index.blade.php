@@ -3,9 +3,212 @@
 @section('title', 'Coupons & Promotions')
 
 @section('content')
-<div class="space-y-8">
+<div class="space-y-6">
+    {{-- Success/Error Messages --}}
+    @if(session('success'))
+        <div class="mx-2 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top duration-500">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i>
+            <span class="text-sm font-bold text-emerald-500">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mx-2 p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top duration-500">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500"></i>
+            <span class="text-sm font-bold text-rose-500">{{ session('error') }}</span>
+        </div>
+    @endif
+
     {{-- Header --}}
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-2">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-2">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight italic uppercase underline decoration-amber-500 decoration-2 underline-offset-4">Coupons & Promotions</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-bold mt-1 uppercase tracking-widest text-[9px] italic">{{ $coupons->total() }} code(s) promo</p>
+        </div>
+        <a href="{{ route('admin.coupons.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 text-slate-950 font-black uppercase tracking-widest text-[9px] rounded-lg hover:bg-amber-400 transition shadow-lg">
+            <i data-lucide="plus-circle" class="w-3 h-3"></i>
+            Nouveau
+        </a>
+    </div>
+
+    {{-- Filters --}}
+    <form method="GET" class="mx-2 p-4 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un code..." class="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none">
+            
+            <select name="type" class="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                <option value="">Tous les types</option>
+                <option value="percentage" {{ request('type') === 'percentage' ? 'selected' : '' }}>Pourcentage</option>
+                <option value="fixed" {{ request('type') === 'fixed' ? 'selected' : '' }}>Montant Fixe</option>
+            </select>
+
+            <select name="status" class="px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                <option value="">Tous les statuts</option>
+                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actifs</option>
+                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactifs</option>
+            </select>
+
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 px-3 py-2 bg-amber-500 text-slate-950 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-400 transition">
+                    <i data-lucide="filter" class="w-3 h-3 inline mr-1"></i>Filtrer
+                </button>
+                <a href="{{ route('admin.coupons.index') }}" class="px-3 py-2 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-[9px] font-black uppercase rounded-lg hover:bg-slate-200 transition">
+                    <i data-lucide="x" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 px-2">
+        <div class="group p-4 border bg-white dark:bg-slate-900/30 border-slate-100 dark:border-slate-900 rounded-xl hover:border-amber-500/30 transition shadow-sm relative overflow-hidden">
+            <div class="p-2 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-500 w-fit mb-3"><i data-lucide="tag" class="w-4 h-4"></i></div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white italic">{{ $coupons->total() }}</div>
+            <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1 italic">Total</div>
+        </div>
+
+        <div class="group p-4 border bg-white dark:bg-slate-900/30 border-slate-100 dark:border-slate-900 rounded-xl hover:border-emerald-500/30 transition shadow-sm relative overflow-hidden">
+            <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-500 w-fit mb-3"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white italic">{{ $coupons->where('is_active', true)->count() }}</div>
+            <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1 italic">Actifs</div>
+        </div>
+
+        <div class="group p-4 border bg-white dark:bg-slate-900/30 border-slate-100 dark:border-slate-900 rounded-xl hover:border-blue-500/30 transition shadow-sm relative overflow-hidden">
+            <div class="p-2 bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-500 w-fit mb-3"><i data-lucide="percent" class="w-4 h-4"></i></div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white italic">{{ $coupons->where('type', 'percentage')->count() }}</div>
+            <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1 italic">Pourcentage</div>
+        </div>
+
+        <div class="group p-4 border bg-white dark:bg-slate-900/30 border-slate-100 dark:border-slate-900 rounded-xl hover:border-purple-500/30 transition shadow-sm relative overflow-hidden">
+            <div class="p-2 bg-purple-500/10 rounded-lg text-purple-600 dark:text-purple-500 w-fit mb-3"><i data-lucide="banknote" class="w-4 h-4"></i></div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white italic">{{ $coupons->where('type', 'fixed')->count() }}</div>
+            <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mt-1 italic">Fixe</div>
+        </div>
+    </div>
+
+    {{-- Coupons Table --}}
+    <div class="border overflow-hidden bg-white dark:bg-slate-950/50 border-slate-100 dark:border-slate-900 rounded-2xl shadow-sm">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5">
+                <tr>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Code</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Type</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Valeur</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Utilisation</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Validité</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 italic">Statut</th>
+                    <th class="px-4 py-3 text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 text-right italic">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                @forelse($coupons as $coupon)
+                <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition duration-300">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1.5 bg-amber-500/10 rounded-lg">
+                                <i data-lucide="ticket" class="w-3 h-3 text-amber-500"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-black text-slate-900 dark:text-white tracking-wider">{{ $coupon->code }}</div>
+                                <div class="text-[8px] font-bold text-slate-400 dark:text-slate-600 mt-0.5 uppercase">{{ $coupon->created_at->format('d/m/Y') }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        @if($coupon->type === 'percentage')
+                            <span class="inline-flex items-center px-2 py-0.5 text-[8px] font-black uppercase tracking-wider border rounded-full bg-blue-500/10 text-blue-500 border-blue-500/20">
+                                <i data-lucide="percent" class="w-2.5 h-2.5 mr-1"></i> %
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 text-[8px] font-black uppercase tracking-wider border rounded-full bg-purple-500/10 text-purple-500 border-purple-500/20">
+                                <i data-lucide="banknote" class="w-2.5 h-2.5 mr-1"></i> €
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-black text-slate-900 dark:text-white">
+                            @if($coupon->type === 'percentage')
+                                {{ $coupon->value }}%
+                            @else
+                                {{ number_format($coupon->value, 0, ',', ' ') }} <span class="text-[9px] text-amber-500">€</span>
+                            @endif
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            {{ $coupon->current_uses }} / {{ $coupon->max_uses ?? '∞' }}
+                        </div>
+                        @if($coupon->max_uses)
+                            <div class="mt-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1">
+                                <div class="bg-amber-500 h-1 rounded-full" style="width: {{ min(100, ($coupon->current_uses / $coupon->max_uses) * 100) }}%"></div>
+                            </div>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase">
+                            @if($coupon->starts_at)
+                                {{ $coupon->starts_at->format('d/m/y') }}
+                            @endif
+                            @if($coupon->expires_at)
+                                <br>→ {{ $coupon->expires_at->format('d/m/y') }}
+                            @endif
+                            @if(!$coupon->starts_at && !$coupon->expires_at)
+                                Illimité
+                            @endif
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        @if($coupon->is_active)
+                            <span class="inline-flex items-center px-2 py-0.5 text-[8px] font-black uppercase tracking-wider border rounded-full bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
+                                <span class="w-1 h-1 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></span> Actif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 text-[8px] font-black uppercase tracking-wider border rounded-full bg-slate-500/10 text-slate-500 border-slate-500/20">
+                                Inactif
+                            </span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <a href="{{ route('admin.coupons.edit', $coupon) }}" class="p-1.5 hover:bg-amber-500/10 rounded-lg transition text-slate-400 hover:text-amber-500" title="Modifier">
+                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                            </a>
+                            <form action="{{ route('admin.coupons.destroy', $coupon) }}" method="POST" class="inline" onsubmit="return confirm('Supprimer ce coupon ?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="p-1.5 hover:bg-rose-500/10 rounded-lg transition text-slate-400 hover:text-rose-500" title="Supprimer">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="px-4 py-12 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="p-3 bg-slate-100 dark:bg-slate-900 rounded-full">
+                                <i data-lucide="tag" class="w-6 h-6 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-1">Aucun coupon</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-xs">Créez votre premier code promo</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        {{-- Pagination --}}
+        @if($coupons->hasPages())
+            <div class="px-4 py-3 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/30">
+                {{ $coupons->links() }}
+            </div>
+        @endif
+    </div>
+</div>
+@endsection
         <div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight italic uppercase underline decoration-amber-500 decoration-4 underline-offset-[-2px] transition-colors">Coupons & Promotions</h1>
             <p class="text-slate-500 dark:text-slate-400 font-bold mt-2 uppercase tracking-widest text-[10px] italic transition-colors">Gérez vos codes promo et réductions</p>
