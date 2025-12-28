@@ -145,6 +145,25 @@
                         </a>
                     </nav>
                 </div>
+
+                <!-- Group 6: Relations & Marketing (Nouveau) -->
+                <div class="mb-6">
+                    <h4 class="px-4 text-[10px] font-black tracking-[0.2em] uppercase text-slate-600 mb-4 italic transition-colors">Croissance & Support</h4>
+                    <nav class="space-y-1">
+                        <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/coupons*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i data-lucide="tag" class="w-5 h-5"></i> Coupons & Promos
+                        </a>
+                        <a href="{{ route('admin.suppliers.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/suppliers*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i data-lucide="container" class="w-5 h-5"></i> Fournisseurs
+                        </a>
+                         <a href="{{ route('admin.tickets.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/tickets*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i data-lucide="message-circle-question" class="w-5 h-5"></i> Support Client
+                        </a>
+                        <a href="{{ route('admin.invoices.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/invoices*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i data-lucide="file-text" class="w-5 h-5"></i> Factures PDF
+                        </a>
+                    </nav>
+                </div>
             </div>
 
             <!-- Bottom Action -->

@@ -3,209 +3,343 @@
 @section('title', 'Demandes de Révision - AutoImport Hub')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Header Area -->
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-2">
+<div class="space-y-4">
+    {{-- Success/Error Messages --}}
+    @if(session('success'))
+        <div class="mx-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top duration-500">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+            <span class="text-xs font-bold text-emerald-500">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mx-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top duration-500">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
+            <span class="text-xs font-bold text-rose-500">{{ session('error') }}</span>
+        </div>
+    @endif
+
+    {{-- Header Area --}}
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between px-2">
         <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic underline decoration-amber-500 decoration-4 underline-offset-8 transition-colors">Demandes de Révision</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-bold mt-2 uppercase tracking-widest text-[10px] italic transition-colors">Planification et suivi des entretiens mécaniques</p>
+            <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic underline decoration-amber-500 decoration-2 underline-offset-4">Demandes de Révision</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-bold mt-0.5 uppercase tracking-widest text-[8px] italic">{{ $revisions->total() }} demande(s) • Aujourd'hui: {{ $revisions->filter(fn($r) => $r->date_demande->isToday())->count() }}</p>
         </div>
     </div>
 
-    <!-- Revisions Table -->
-    <div class="border overflow-hidden bg-white dark:bg-slate-950/50 border-slate-100 dark:border-slate-900 rounded-[4rem] rounded-tl-xl rounded-br-xl shadow-lg dark:shadow-2xl backdrop-blur-sm transition-colors">
-        <table class="w-full text-left">
-            <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5 transition-colors">
+    {{-- Filters --}}
+    <form method="GET" class="mx-2 p-3 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-lg">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher (client, voiture, plaque)..." class="px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none">
+            
+            <select name="statut" class="px-2 py-1.5 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                <option value="">Tous les statuts</option>
+                <option value="en_attente" {{ request('statut') === 'en_attente' ? 'selected' : '' }}>En Attente</option>
+                <option value="diagnostic_en_cours" {{ request('statut') === 'diagnostic_en_cours' ? 'selected' : '' }}>Diagnostic en Cours</option>
+                <option value="devis_envoye" {{ request('statut') === 'devis_envoye' ? 'selected' : '' }}>Devis Envoyé</option>
+                <option value="accepte" {{ request('statut') === 'accepte' ? 'selected' : '' }}>Accepté</option>
+                <option value="en_intervention" {{ request('statut') === 'en_intervention' ? 'selected' : '' }}>En Intervention</option>
+                <option value="termine" {{ request('statut') === 'termine' ? 'selected' : '' }}>Terminé</option>
+                <option value="annule" {{ request('statut') === 'annule' ? 'selected' : '' }}>Annulé</option>
+            </select>
+
+            <label class="flex items-center gap-2 px-2 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition">
+                <input type="checkbox" name="today" value="1" {{ request('today') ? 'checked' : '' }} class="w-3 h-3 rounded border-slate-300 text-amber-500 focus:ring-amber-500">
+                <span class="text-xs font-bold text-slate-600 dark:text-slate-400">Aujourd'hui uniquement</span>
+            </label>
+
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 px-2 py-1.5 bg-amber-500 text-slate-950 text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-400 transition">
+                    <i data-lucide="filter" class="w-3 h-3 inline mr-1"></i>Filtrer
+                </button>
+                <a href="{{ route('admin.revisions.index') }}" class="px-2 py-1.5 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-[8px] font-black uppercase rounded-lg hover:bg-slate-200 transition">
+                    <i data-lucide="x" class="w-3 h-3"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+
+    {{-- Revisions Table --}}
+    <div class="border overflow-hidden bg-white dark:bg-slate-950/50 border-slate-100 dark:border-slate-900 rounded-xl shadow-sm">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5">
                 <tr>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Client</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Véhicule Concerné</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Type de Service</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Statut</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 text-right italic transition-colors">Actions</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Client</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Véhicule</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Problème</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Diagnostic</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Prix Devis</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Statut</th>
+                    <th class="px-2 py-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 text-right">Action</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-white/5 transition-colors">
+            <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                 @forelse($revisions as $revision)
-                <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition duration-300 transition-colors">
-                    <td class="px-8 py-6">
-                        <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic transition-colors">{{ $revision->user->prenom }} {{ $revision->user->nom }}</div>
-                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest italic mt-1 transition-colors">{{ $revision->date_demande?->format('d/m/Y') ?? 'N/A' }}</div>
+                <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition">
+                    <td class="px-2 py-1.5">
+                        <div class="text-[10px] font-bold text-slate-900 dark:text-white">
+                            @if($revision->user)
+                                {{ $revision->user->prenom }} {{ $revision->user->nom }}
+                            @else
+                                Client inconnu
+                            @endif
+                        </div>
+                        <div class="text-[8px] text-slate-400 dark:text-slate-600 mt-0.5">{{ $revision->date_demande->format('d/m/Y H:i') }}</div>
                     </td>
-                    <td class="px-8 py-6">
-                        <div class="text-[11px] font-black text-slate-900 dark:text-white uppercase italic tracking-tight transition-colors">{{ $revision->marque_modele }}</div>
-                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mt-0.5 italic transition-colors">{{ $revision->immatriculation ?? 'NON-RENSEIGNÉ' }}</div>
+                    <td class="px-2 py-1.5">
+                        <div class="text-[10px] font-bold text-slate-900 dark:text-white">{{ $revision->marque_vehicule }} {{ $revision->modele_vehicule }}</div>
+                        <div class="text-[8px] text-slate-400 dark:text-slate-600 mt-0.5">{{ $revision->immatriculation ?? 'N/A' }}</div>
                     </td>
-                    <td class="px-8 py-6">
-                        <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold leading-relaxed max-w-[200px] italic transition-colors">
-                            {{ Str::limit($revision->description_probleme, 50) }}
+                    <td class="px-2 py-1.5">
+                        <div class="text-[9px] text-slate-600 dark:text-slate-400 max-w-[200px]">
+                            {{ Str::limit($revision->probleme_description, 50) }}
                         </div>
                     </td>
-                    <td class="px-8 py-6">
+                    <td class="px-2 py-1.5">
+                        @if($revision->diagnostic || $revision->diagnostic_technique)
+                            <div class="text-[9px] text-emerald-600 dark:text-emerald-500 max-w-[150px]">
+                                {{ Str::limit($revision->diagnostic_technique ?? $revision->diagnostic, 40) }}
+                            </div>
+                        @else
+                            <div class="text-[8px] text-slate-400 italic">En attente</div>
+                        @endif
+                    </td>
+                    <td class="px-2 py-1.5">
+                        @if($revision->montant_devis > 0 || $revision->prix_estime > 0)
+                            <div class="text-[10px] font-black text-amber-600 dark:text-amber-500">
+                                {{ number_format($revision->montant_devis ?? $revision->prix_estime, 0, ',', ' ') }} <span class="text-[7px]">FCFA</span>
+                            </div>
+                        @else
+                            <div class="text-[8px] text-slate-400">-</div>
+                        @endif
+                    </td>
+                    <td class="px-2 py-1.5">
                         @php
                             $statusColor = match($revision->statut) {
                                 'en_attente' => 'bg-slate-500/10 text-slate-500 border-slate-500/20',
-                                'en_diagnostic' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                                'diagnostic_en_cours' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
                                 'devis_envoye' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                                'accepte' => 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+                                'en_intervention' => 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
                                 'termine' => 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
                                 'annule' => 'bg-rose-500/10 text-rose-500 border-rose-500/20',
                                 default => 'bg-slate-500/10 text-slate-500 border-slate-500/20',
                             };
                         @endphp
-                        <span class="px-3 py-1.5 rounded-lg border {{ $statusColor }} text-[9px] font-black uppercase tracking-widest italic leading-none transition-colors">
+                        <span class="inline-block px-1.5 py-0.5 rounded border {{ $statusColor }} text-[7px] font-black uppercase tracking-wide">
                             {{ str_replace('_', ' ', $revision->statut) }}
                         </span>
                     </td>
-                    <td class="px-8 py-6 text-right">
-                        <div class="flex items-center justify-end gap-3 transition-colors">
-                             <button onclick="openShowRevisionModal({{ json_encode($revision->load('user')) }})" class="p-3 bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-[1.2rem] group/btn border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-xl transition-colors">
-                                <i data-lucide="eye" class="w-4 h-4 transition-transform group-hover/btn:scale-110"></i>
-                            </button>
-                            <button onclick="openEditRevisionModal({{ json_encode($revision) }})" class="p-3 bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:text-white hover:bg-amber-500 transition rounded-[1.2rem] group/btn border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-xl transition-colors">
-                                <i data-lucide="edit-3" class="w-4 h-4 transition-transform group-hover/btn:scale-110"></i>
-                            </button>
-                        </div>
+                    <td class="px-2 py-1.5 text-right">
+                        <button onclick="openValidateModal({{ json_encode($revision) }})" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 rounded text-amber-600 dark:text-amber-500 transition text-[8px] font-black uppercase">
+                            <i data-lucide="check-square" class="w-3 h-3 inline mr-1"></i>Valider
+                        </button>
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 dark:text-slate-600 italic font-black uppercase tracking-[0.2em] text-xs transition-colors">Aucune demande de révision en attente.</td></tr>
+                <tr>
+                    <td colspan="7" class="px-2 py-6 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="p-2 bg-slate-100 dark:bg-slate-900 rounded-full">
+                                <i data-lucide="wrench" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-900 dark:text-white mb-1">Aucune demande</h3>
+                                <p class="text-slate-500 dark:text-slate-400 text-[9px]">Les demandes apparaîtront ici</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
 
-        <!-- Pagination -->
+        {{-- Pagination --}}
         @if($revisions->hasPages())
-        <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-white/5 transition-colors">
-            {{ $revisions->links() }}
-        </div>
+            <div class="px-2 py-1.5 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-900/30">
+                {{ $revisions->links() }}
+            </div>
         @endif
     </div>
 </div>
 
-<!-- Edit Revision Modal -->
-<div id="editRevisionModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
-    <div class="fixed inset-0 bg-white/80 dark:bg-slate-950/90 backdrop-blur-xl transition-colors" onclick="closeModal('editRevisionModal')"></div>
+{{-- Validate Revision Modal --}}
+<div id="validateModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-white/80 dark:bg-slate-950/90 backdrop-blur-xl" onclick="closeModal('validateModal')"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 w-full max-w-2xl p-12 shadow-2xl rounded-[4rem] rounded-tr-xl rounded-bl-xl overflow-hidden animate-in zoom-in duration-300 transition-colors">
-            <h2 class="text-3xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter mb-2 transition-colors">Diagnostic Atélier</h2>
-            <p class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-10 italic border-l-2 border-amber-500 pl-4 transition-colors">Expertise technique & devis estimatif</p>
+        <div class="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 w-full max-w-3xl p-5 shadow-2xl rounded-xl overflow-hidden">
+            
+            {{-- Header --}}
+            <div class="flex items-start justify-between mb-4 pb-3 border-b border-slate-100 dark:border-white/5">
+                <div>
+                    <h2 class="text-lg font-black text-slate-900 dark:text-white uppercase">Analyse & Communication au Client</h2>
+                    <p class="text-amber-500 font-bold text-xs mt-0.5" id="val_reference"></p>
+                </div>
+                <button onclick="closeModal('validateModal')" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
+                    <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                </button>
+            </div>
 
-            <form id="editRevisionForm" method="POST" class="space-y-8 relative">
+            {{-- Content --}}
+            <form id="validateForm" method="POST" class="space-y-4">
                 @csrf
                 @method('PUT')
-                
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-2 italic transition-colors">Statut de l'intervention</label>
-                    <select name="statut" id="edit_rev_statut" class="w-full py-5 px-8 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner font-black uppercase tracking-wider transition-colors">
-                        <option value="en_attente">En Attente</option>
-                        <option value="en_diagnostic">Diagnostic en Cours</option>
-                        <option value="devis_envoye">Devis Transmis</option>
-                        <option value="termine">Révision Terminée</option>
-                        <option value="annule">Intervention Annulée</option>
-                    </select>
+
+                {{-- Info Summary --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-100 dark:border-white/5">
+                        <div class="text-[8px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+                            <i data-lucide="user" class="w-3 h-3"></i>Client
+                        </div>
+                        <div id="val_client_name" class="text-sm font-bold text-slate-900 dark:text-white"></div>
+                        <div id="val_client_phone" class="text-[9px] text-slate-500 mt-0.5"></div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-100 dark:border-white/5">
+                        <div class="text-[8px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1">
+                            <i data-lucide="car" class="w-3 h-3"></i>Véhicule
+                        </div>
+                        <div id="val_vehicle" class="text-sm font-bold text-slate-900 dark:text-white"></div>
+                        <div id="val_plate" class="text-[9px] text-slate-500 mt-0.5"></div>
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-2 italic transition-colors">Rapport Technique</label>
-                    <textarea name="diagnostic_technique" id="edit_rev_diag" rows="4" class="w-full py-5 px-8 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-3xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner italic font-medium transition-colors" placeholder="Détails des points contrôlés..."></textarea>
+                {{-- Problem --}}
+                <div class="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900/20">
+                    <div class="text-[8px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-500 mb-1.5 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3 h-3"></i>Problème Signalé
+                    </div>
+                    <p id="val_problem" class="text-xs text-blue-700 dark:text-blue-400"></p>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-2 italic transition-colors">Prix Estimé (Total)</label>
-                    <input type="number" name="prix_estime" id="edit_rev_prix" class="w-full py-5 px-8 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner font-black text-amber-500 transition-colors">
+                {{-- Diagnostic Section --}}
+                <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 rounded-xl border border-emerald-200 dark:border-emerald-900/30">
+                    <div class="text-[9px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-500 mb-3 flex items-center gap-1">
+                        <i data-lucide="clipboard-check" class="w-4 h-4"></i>Analyse & Diagnostic
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="space-y-1">
+                            <label class="text-[8px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 ml-1">Diagnostic Technique *</label>
+                            <textarea name="diagnostic_technique" id="val_diagnostic" rows="3" required class="w-full py-1.5 px-2 bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900/30 rounded-lg text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Description détaillée du diagnostic effectué..."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[8px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 ml-1">Interventions Prévues</label>
+                                <textarea name="interventions_prevues" id="val_interventions" rows="2" class="w-full py-1.5 px-2 bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900/30 rounded-lg text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Liste des travaux à effectuer..."></textarea>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-[8px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400 ml-1">Pièces Nécessaires</label>
+                                <textarea name="pieces_necessaires" id="val_pieces" rows="2" class="w-full py-1.5 px-2 bg-white dark:bg-slate-950 border border-emerald-200 dark:border-emerald-900/30 rounded-lg text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500" placeholder="Liste des pièces à commander..."></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="pt-10 flex gap-6">
-                    <button type="button" onclick="closeModal('editRevisionModal')" class="flex-1 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-black italic transition-colors">Fermer</button>
-                    <button type="submit" class="flex-[2] py-6 text-[10px] font-black uppercase tracking-widest text-slate-950 bg-amber-500 rounded-[2.5rem] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition shadow-xl shadow-amber-500/20 font-black italic transition-colors">Valider le Diagnostic</button>
+                {{-- Pricing Section - Communication au Client --}}
+                <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-xl border-2 border-amber-300 dark:border-amber-900/30">
+                    <div class="text-[9px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-3 flex items-center gap-2">
+                        <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+                        <span>Tarification - Communication au Client</span>
+                        <span class="ml-auto px-2 py-0.5 bg-amber-500 text-white rounded-full text-[7px]">IMPORTANT</span>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="p-3 bg-amber-100/50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800/30">
+                            <p class="text-[9px] text-amber-800 dark:text-amber-400 flex items-start gap-2">
+                                <i data-lucide="info" class="w-3 h-3 mt-0.5 flex-shrink-0"></i>
+                                <span>Ce montant sera <strong>communiqué au client</strong> comme devis estimatif. Il pourra suivre l'évolution de sa demande depuis son espace.</span>
+                            </p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[8px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 ml-1 flex items-center gap-1">
+                                <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                                Montant du Devis (FCFA) *
+                            </label>
+                            <input type="number" name="montant_devis" id="val_prix" step="0.01" required class="w-full py-2 px-3 bg-white dark:bg-slate-950 border-2 border-amber-300 dark:border-amber-900/30 rounded-lg text-slate-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" placeholder="0.00">
+                            <p class="text-[8px] text-amber-600 dark:text-amber-500 ml-1 mt-1">💡 Prix qui sera affiché au client dans son suivi</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Payment Section --}}
+                <div class="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/20 dark:to-blue-950/20 rounded-xl border-2 border-indigo-300 dark:border-indigo-900/30">
+                    <div class="text-[9px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-500 mb-3 flex items-center gap-2">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>Enregistrement du Paiement</span>
+                        <span class="ml-auto px-2 py-0.5 bg-indigo-500 text-white rounded-full text-[7px]">ADMIN UNIQUEMENT</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[8px] font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-400 ml-1">Montant Perçu (FCFA)</label>
+                            <input type="number" name="montant_paye" id="val_montant_paye" step="0.01" class="w-full py-2 px-3 bg-white dark:bg-slate-950 border-2 border-indigo-300 dark:border-indigo-900/30 rounded-lg text-slate-900 dark:text-white text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="0.00">
+                        </div>
+
+                        <div class="space-y-1">
+                             <label class="text-[8px] font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-400 ml-1">Statut Paiement</label>
+                             <select name="statut_paiement" id="val_statut_paiement" class="w-full py-2 px-3 bg-white dark:bg-slate-950 border border-indigo-300 dark:border-indigo-900/30 rounded-lg text-slate-900 dark:text-white text-xs font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                 <option value="non_paye">Non Payé</option>
+                                 <option value="partiel">Partiel</option>
+                                 <option value="paye">Totalement Payé</option>
+                             </select>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Status & Notification --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 ml-1">Statut de la Demande *</label>
+                        <select name="statut" id="val_statut" required class="w-full py-1.5 px-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-lg text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500">
+                            <option value="en_attente">En Attente</option>
+                            <option value="diagnostic_en_cours">Diagnostic en Cours</option>
+                            <option value="devis_envoye">Devis Envoyé</option>
+                            <option value="accepte">Accepté</option>
+                            <option value="en_intervention">En Intervention</option>
+                            <option value="termine">Terminé</option>
+                            <option value="annule">Annulé</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 ml-1">Notes Internes</label>
+                        <input type="text" name="notes_internes" id="val_notes" class="w-full py-1.5 px-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-lg text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500" placeholder="Notes pour le service...">
+                    </div>
+                </div>
+
+                <div class="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900/20">
+                    <label class="flex items-start gap-2 cursor-pointer">
+                        <input type="checkbox" name="notify_client" value="1" checked class="mt-0.5 w-4 h-4 rounded border-blue-300 text-blue-500 focus:ring-blue-500">
+                        <div>
+                            <div class="text-[9px] font-black text-blue-700 dark:text-blue-400 uppercase">Notifier le Client</div>
+                            <p class="text-[8px] text-blue-600 dark:text-blue-500 mt-0.5">Envoyer un email/SMS au client avec le devis et l'état de sa demande</p>
+                        </div>
+                    </label>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+                    <button type="button" onclick="closeModal('validateModal')" class="flex-1 py-2 bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-slate-200 dark:hover:bg-slate-800 transition">
+                        <i data-lucide="x" class="w-3 h-3 inline mr-1"></i>Annuler
+                    </button>
+                    <button type="submit" class="flex-1 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-[9px] font-black uppercase tracking-wider hover:from-amber-400 hover:to-orange-400 transition shadow-lg shadow-amber-500/30">
+                        <i data-lucide="send" class="w-3 h-3 inline mr-1"></i>Valider & Communiquer au Client
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<!-- Show Revision Modal -->
-<div id="showRevisionModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
-    <div class="fixed inset-0 bg-white/80 dark:bg-slate-950/95 backdrop-blur-2xl transition-colors" onclick="closeModal('showRevisionModal')"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 w-full max-w-4xl shadow-2xl rounded-[5rem] rounded-tl-xl rounded-br-xl overflow-hidden flex flex-col md:flex-row animate-in fade-in slide-in-from-bottom duration-500 transition-colors">
-             <!-- Mechanics Side -->
-             <div class="w-full md:w-2/5 p-16 bg-slate-50 dark:bg-slate-950 border-r border-slate-100 dark:border-white/5 flex flex-col transition-colors">
-                <div class="mb-12">
-                    <span id="show_rev_id" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-[0.2em] italic mb-6 inline-block transition-colors"></span>
-                    <h3 class="text-4xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase leading-tight transition-colors">Fiche de <br> Maintenance</h3>
-                </div>
-
-                <div class="space-y-12">
-                    <div>
-                        <div class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-4 italic transition-colors">Demandeur</div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-black text-amber-500 uppercase italic shadow-inner transition-colors" id="show_rev_user_initials"></div>
-                            <div>
-                                <div id="show_rev_user_name" class="text-sm font-black text-slate-900 dark:text-white italic transition-colors"></div>
-                                <div id="show_rev_user_phone" class="text-[10px] text-slate-400 dark:text-slate-500 font-bold italic mt-1 transition-colors"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-8 border-t border-slate-100 dark:border-white/5 transition-colors">
-                        <div class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-4 italic transition-colors">Configuration Atélier</div>
-                        <div class="space-y-4">
-                             <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-white/5 transition-colors">
-                                <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase italic transition-colors">Diagnostic</span>
-                                <span id="show_rev_diag_status" class="text-[10px] font-black uppercase italic transition-colors"></span>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-             </div>
-
-             <!-- Details Side -->
-             <div class="w-full md:w-3/5 p-16 bg-white dark:bg-slate-900 relative transition-colors">
-                <button onclick="closeModal('showRevisionModal')" class="absolute top-10 right-10 p-4 bg-slate-50 dark:bg-white/5 text-slate-400 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-2xl transition transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-
-                <div class="space-y-12 mt-4">
-                    <div>
-                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6 italic transition-colors">Symptômes Déclarés</h4>
-                        <div id="show_rev_problem" class="text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed italic bg-slate-50 dark:bg-slate-950 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 transition-colors"></div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-8">
-                        <div>
-                            <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase italic block mb-2 transition-colors">Identité Véhicule</span>
-                            <div id="show_rev_car" class="text-lg font-black text-slate-900 dark:text-white italic uppercase tracking-tighter transition-colors"></div>
-                        </div>
-                        <div>
-                            <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase italic block mb-2 transition-colors">Immatriculation</span>
-                            <div id="show_rev_plate" class="text-lg font-black text-amber-500 italic uppercase transition-colors"></div>
-                        </div>
-                    </div>
-
-                    <div class="pt-10 border-t border-slate-100 dark:border-white/5 transition-colors">
-                        <div class="flex justify-between items-end mb-10">
-                            <div>
-                                <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase italic block mb-2 transition-colors">Expertise Rendue</span>
-                                <div id="show_rev_diag_full" class="text-sm font-medium text-emerald-500 italic bg-emerald-500/5 p-6 rounded-[2rem] border border-emerald-500/10 min-h-[100px] transition-colors"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center p-8 bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] border border-slate-100 dark:border-white/10 shadow-2xl transition-colors">
-                            <div>
-                                <div class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase italic mb-1 transition-colors">Total Devis Estimé</div>
-                                <div id="show_rev_price" class="text-3xl font-black text-slate-900 dark:text-white italic tracking-tighter transition-colors"></div>
-                            </div>
-                            <button onclick="closeModal('showRevisionModal')" class="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-2xl text-[9px] font-black uppercase tracking-widest italic hover:bg-amber-500 dark:hover:bg-amber-500 transition transition-colors">Fermer</button>
-                        </div>
-                    </div>
-                </div>
-             </div>
-        </div>
-    </div>
-</div>
+@endsection
 
 @section('scripts')
 <script>
+    let currentRevision = null;
+
     function openModal(id) {
         document.getElementById(id).classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
@@ -216,39 +350,47 @@
         document.body.classList.remove('overflow-hidden');
     }
 
-    function openEditRevisionModal(rev) {
-        const form = document.getElementById('editRevisionForm');
-        form.action = `/admin/revisions/${rev.id}`;
-        document.getElementById('edit_rev_statut').value = rev.statut;
-        document.getElementById('edit_rev_diag').value = rev.diagnostic_technique || '';
-        document.getElementById('edit_rev_prix').value = rev.prix_estime || 0;
-        openModal('editRevisionModal');
+    function openValidateModal(revision) {
+        currentRevision = revision;
+        
+        // Update form action
+        document.getElementById('validateForm').action = `/admin/revisions/${revision.id}`;
+        
+        // Fill reference
+        document.getElementById('val_reference').textContent = `#REV-${revision.id}`;
+        
+        // Fill client info
+        const clientName = revision.user 
+            ? `${revision.user.prenom} ${revision.user.nom}` 
+            : 'Client inconnu';
+        document.getElementById('val_client_name').textContent = clientName;
+        document.getElementById('val_client_phone').textContent = revision.user?.telephone || 'N/A';
+        
+        // Fill vehicle info
+        document.getElementById('val_vehicle').textContent = `${revision.marque_vehicule} ${revision.modele_vehicule}`;
+        document.getElementById('val_plate').textContent = revision.immatriculation || 'N/A';
+        
+        // Fill problem
+        document.getElementById('val_problem').textContent = revision.probleme_description || 'N/A';
+        
+        // Fill form fields
+        document.getElementById('val_statut').value = revision.statut;
+        document.getElementById('val_prix').value = revision.montant_devis || revision.prix_estime || 0;
+        document.getElementById('val_diagnostic').value = revision.diagnostic_technique || revision.diagnostic || '';
+        document.getElementById('val_interventions').value = revision.interventions_prevues || '';
+        document.getElementById('val_pieces').value = revision.pieces_necessaires || '';
+        document.getElementById('val_notes').value = revision.notes_internes || revision.notes || '';
+        document.getElementById('val_montant_paye').value = revision.montant_paye || 0;
+        document.getElementById('val_statut_paiement').value = revision.statut_paiement || 'non_paye';
+        
+        openModal('validateModal');
     }
 
-    function openShowRevisionModal(rev) {
-        document.getElementById('show_rev_id').innerText = `ORDRE-WORKSHOP #${rev.id.toString().padStart(4, '0')}`;
-        document.getElementById('show_rev_user_name').innerText = `${rev.user.prenom} ${rev.user.nom}`;
-        document.getElementById('show_rev_user_phone').innerText = rev.user.telephone || 'Non spécifié';
-        document.getElementById('show_rev_user_initials').innerText = rev.user.prenom[0] + rev.user.nom[0];
-        
-        document.getElementById('show_rev_diag_status').innerText = rev.statut.replace('_', ' ');
-        document.getElementById('show_rev_diag_status').className = `text-[10px] font-black uppercase italic ${rev.statut === 'termine' ? 'text-emerald-500' : 'text-amber-500'}`;
-        
-        document.getElementById('show_rev_problem').innerText = rev.description_probleme;
-        document.getElementById('show_rev_car').innerText = rev.marque_modele;
-        document.getElementById('show_rev_plate').innerText = rev.immatriculation || 'NON-RENSEIGNÉ';
-        document.getElementById('show_rev_diag_full').innerText = rev.diagnostic_technique || 'En attente d\'expertise technique...';
-        document.getElementById('show_rev_price').innerText = new Intl.NumberFormat('fr-FR').format(rev.prix_estime || 0) + ' FCFA';
-
-        openModal('showRevisionModal');
-    }
-
-    window.addEventListener('keydown', (e) => {
+    // Close modals with Escape key
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            closeModal('editRevisionModal');
-            closeModal('showRevisionModal');
+            closeModal('validateModal');
         }
     });
 </script>
-@endsection
 @endsection

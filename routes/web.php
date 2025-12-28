@@ -107,6 +107,18 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
     Route::get('content', [App\Http\Controllers\Admin\ContentController::class, 'index'])->name('content');
     Route::get('logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs');
+
+    // === Nouveaux Modules ===
+    // Marketing & Coupons
+    Route::resource('coupons', App\Http\Controllers\Admin\MarketingCouponController::class);
+    // Fournisseurs & Partenaires
+    Route::resource('suppliers', App\Http\Controllers\Admin\PartnerSupplierController::class);
+    // Support Client & Tickets
+    Route::resource('tickets', App\Http\Controllers\Admin\SupportTicketController::class);
+    Route::post('tickets/{ticket}/reply', [App\Http\Controllers\Admin\SupportTicketController::class, 'reply'])->name('tickets.reply');
+    // Facturation
+    Route::resource('invoices', App\Http\Controllers\Admin\AccountingInvoiceController::class);
+    Route::get('invoices/{invoice}/download', [App\Http\Controllers\Admin\AccountingInvoiceController::class, 'download'])->name('invoices.download');
 });
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
