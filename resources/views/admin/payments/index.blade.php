@@ -35,7 +35,7 @@
                 <tr class="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition duration-300">
                     <td class="px-8 py-6">
                         <div class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1 italic transition-colors">#PAY-{{ str_pad($payment->id, 6, '0', STR_PAD_LEFT) }}</div>
-                        <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-1 transition-colors">{{ $payment->date_paiement->format('d/m/Y H:i') }}</div>
+                        <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-1 transition-colors">{{ $payment->date_paiement?->format('d/m/Y H:i') ?? 'N/A' }}</div>
                     </td>
                     <td class="px-8 py-6">
                         <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic transition-colors">{{ $payment->user->prenom }} {{ $payment->user->nom }}</div>

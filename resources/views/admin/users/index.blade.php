@@ -86,7 +86,7 @@
                             </div>
                             <div>
                                 <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic transition-colors">{{ $user->prenom }} {{ $user->nom }}</div>
-                                <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-1 transition-colors">Inscrit le {{ $user->date_creation->format('d/m/Y') }}</div>
+                                <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-1 transition-colors">Inscrit le {{ $user->date_creation?->format('d/m/Y') ?? 'N/A' }}</div>
                             </div>
                         </div>
                     </td>

@@ -70,7 +70,7 @@
                                 #{{ $order->numero_suivi ?? 'SANS-REF' }}
                             </span>
                             <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic mt-2 transition-colors">{{ $order->user->prenom }} {{ $order->user->nom }}</div>
-                            <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-0.5 transition-colors">{{ $order->date_commande->format('d M Y') }}</div>
+                            <div class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest italic mt-0.5 transition-colors">{{ $order->date_commande?->format('d M Y') ?? 'N/A' }}</div>
                         </div>
                     </td>
                     <td class="px-8 py-6">

@@ -60,14 +60,12 @@
                                 str_contains($actionLower, 'login') => 'text-blue-400',
                                 default => 'text-slate-400'
                             };
-                            $initial = $log->action[0] ?? '?';
                             
                             // Try to format details for preview
                             $detailsPreview = '';
                             if($log->details) {
                                 $decoded = is_string($log->details) ? json_decode($log->details, true) : $log->details;
                                 if(is_array($decoded)) {
-                                     // Just show top level keys or count to keep it small
                                      $detailsPreview = json_encode($decoded);
                                      if(strlen($detailsPreview) > 80) $detailsPreview = substr($detailsPreview, 0, 80) . '...';
                                 } else {
@@ -77,7 +75,7 @@
                         @endphp
                         <tr class="hover:bg-slate-900/50 transition-colors group">
                             <td class="px-4 py-1.5 border-r border-slate-800/50 whitespace-nowrap text-slate-500">
-                                {{ $log->date_action->format('Y-m-d H:i:s') }}
+                                {{ $log->date_action?->format('Y-m-d H:i:s') ?? 'N/A' }}
                             </td>
                             <td class="px-4 py-1.5 border-r border-slate-800/50 whitespace-nowrap {{ $colorClass }}">
                                 [{{ strtoupper(substr($log->action, 0, 4)) }}] {{ $log->action }}
@@ -92,7 +90,7 @@
                             <td class="px-4 py-1.5 border-r border-slate-800/50 whitespace-nowrap text-slate-400">
                                 {{ $log->table_concernee }}:{{ $log->enregistrement_id }}
                             </td>
-                            <td class="px-4 py-1.5 text-slate-600 truncate max-w-md group-hover:text-slate-400 transition-colors cursor-help" title="{{ $log->details }}">
+                            <td class="px-4 py-1.5 text-slate-600 truncate max-w-md group-hover:text-slate-400 transition-colors cursor-help" title="{{ is_array($log->details) ? json_encode($log->details) : $log->details }}">
                                 {{ $detailsPreview }}
                             </td>
                             <td class="px-2 py-1.5 text-center">

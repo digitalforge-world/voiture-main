@@ -99,4 +99,12 @@ class User extends Authenticatable
     {
         return trim(($this->prenom ?? '') . ' ' . ($this->nom ?? '')) ?: ($this->name ?? '');
     }
+
+    /**
+     * Vérifier si l'utilisateur est administrateur.
+     */
+    public function getIsAdminAttribute(): bool
+    {
+        return ($this->role ?? '') === 'admin';
+    }
 }

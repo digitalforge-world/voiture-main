@@ -22,7 +22,7 @@ class AdminUserSeeder extends Seeder
                 'telephone' => '+000000000000', // Valeur fictive pour l'admin
                 'mot_de_passe' => Hash::make('password'), // Mot de passe par défaut
                 'role' => 'admin',
-                'is_admin' => true,
+                'actif' => true,
                 'email_verified_at' => now(),
             ]);
 

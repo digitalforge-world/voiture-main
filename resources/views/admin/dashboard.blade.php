@@ -121,7 +121,7 @@
                                     <span class="text-[9px] font-black text-amber-500/60 uppercase tracking-widest italic border border-amber-500/20 px-1.5 rounded transition-colors">{{ $order->tracking_number ?? $order->reference ?? 'REF' }}</span>
                                 </div>
                             </td>
-                            <td class="px-8 py-6 text-xs text-slate-400 dark:text-slate-500 font-bold italic tracking-tighter transition-colors">{{ $order->created_at->format('d M Y') }}</td>
+                            <td class="px-8 py-6 text-xs text-slate-400 dark:text-slate-500 font-bold italic tracking-tighter transition-colors">{{ $order->date_commande?->format('d M Y') ?? 'N/A' }}</td>
                             <td class="px-8 py-6 text-right">
                                 <div class="text-sm font-black text-slate-900 dark:text-white italic transition-colors">{{ number_format($order->montant_total, 0, ',', ' ') }} <span class="text-[10px] text-amber-600 dark:text-amber-500 font-medium transition-colors">FCFA</span></div>
                             </td>

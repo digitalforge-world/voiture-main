@@ -42,8 +42,8 @@
                     </td>
                     <td class="px-8 py-6">
                         <div class="flex flex-col gap-1">
-                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black italic uppercase transition-colors">DU {{ $rental->date_debut->format('d/m/Y') }}</span>
-                            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-black italic uppercase transition-colors">AU {{ $rental->date_fin->format('d/m/Y') }}</span>
+                            <span class="text-[10px] text-slate-700 dark:text-slate-300 font-black italic uppercase transition-colors">DU {{ $rental->date_debut?->format('d/m/Y') ?? 'N/A' }}</span>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-black italic uppercase transition-colors">AU {{ $rental->date_fin?->format('d/m/Y') ?? 'N/A' }}</span>
                         </div>
                     </td>
                     <td class="px-8 py-6">

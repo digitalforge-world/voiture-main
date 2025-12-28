@@ -29,7 +29,7 @@
                 <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition duration-300 transition-colors">
                     <td class="px-8 py-6">
                         <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic transition-colors">{{ $revision->user->prenom }} {{ $revision->user->nom }}</div>
-                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest italic mt-1 transition-colors">{{ $revision->date_demande->format('d/m/Y') }}</div>
+                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest italic mt-1 transition-colors">{{ $revision->date_demande?->format('d/m/Y') ?? 'N/A' }}</div>
                     </td>
                     <td class="px-8 py-6">
                         <div class="text-[11px] font-black text-slate-900 dark:text-white uppercase italic tracking-tight transition-colors">{{ $revision->marque_modele }}</div>
@@ -203,55 +203,6 @@
         </div>
     </div>
 </div>
-
-@section('scripts')
-<script>
-    function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-    }
-
-    function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    }
-
-    function openEditRevisionModal(rev) {
-        const form = document.getElementById('editRevisionForm');
-        form.action = `/admin/revisions/${rev.id}`;
-        document.getElementById('edit_rev_statut').value = rev.statut;
-        document.getElementById('edit_rev_diag').value = rev.diagnostic_technique || '';
-        document.getElementById('edit_rev_prix').value = rev.prix_estime || 0;
-        openModal('editRevisionModal');
-    }
-
-    function openShowRevisionModal(rev) {
-        document.getElementById('show_rev_id').innerText = `ORDRE-WORKSHOP #${rev.id.toString().padStart(4, '0')}`;
-        document.getElementById('show_rev_user_name').innerText = `${rev.user.prenom} ${rev.user.nom}`;
-        document.getElementById('show_rev_user_phone').innerText = rev.user.telephone || 'Non spécifié';
-        document.getElementById('show_rev_user_initials').innerText = rev.user.prenom[0] + rev.user.nom[0];
-        
-        document.getElementById('show_rev_diag_status').innerText = rev.statut.replace('_', ' ');
-        document.getElementById('show_rev_diag_status').className = `text-[10px] font-black uppercase italic ${rev.statut === 'termine' ? 'text-emerald-500' : 'text-amber-500'}`;
-        
-        document.getElementById('show_rev_problem').innerText = rev.description_probleme;
-        document.getElementById('show_rev_car').innerText = rev.marque_modele;
-        document.getElementById('show_rev_plate').innerText = rev.immatriculation || 'NON-RENSEIGNÉ';
-        document.getElementById('show_rev_diag_full').innerText = rev.diagnostic_technique || 'En attente d\'expertise technique...';
-        document.getElementById('show_rev_price').innerText = new Intl.NumberFormat('fr-FR').format(rev.prix_estime || 0) + ' FCFA';
-
-        openModal('showRevisionModal');
-    }
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal('editRevisionModal');
-            closeModal('showRevisionModal');
-        }
-    });
-</script>
-@endsection
-
 
 @section('scripts')
 <script>
