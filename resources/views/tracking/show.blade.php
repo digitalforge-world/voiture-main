@@ -3,22 +3,22 @@
 @section('title', 'Détails de la Commande ' . $tracking)
 
 @section('content')
-<div class="min-h-screen pt-24 pb-12 bg-slate-950">
+<div class="min-h-screen pt-24 pb-12 bg-white dark:bg-slate-950 transition-colors duration-500">
     <div class="container px-4 mx-auto max-w-4xl">
         <div class="mb-8">
-            <a href="{{ route('tracking.index') }}" class="inline-flex items-center text-sm text-slate-400 hover:text-amber-500 transition-colors">
+            <a href="{{ route('tracking.index') }}" class="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-amber-500 transition-colors">
                 <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
                 Retour à la recherche
             </a>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xl dark:shadow-2xl transition-colors">
             {{-- Header --}}
-            <div class="p-6 md:p-8 border-b border-slate-800 bg-slate-900/50">
+            <div class="p-6 md:p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 transition-colors">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-3 mb-2">
-                            <h1 class="text-2xl font-bold text-white">{{ $tracking }}</h1>
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $tracking }}</h1>
                             @php
                                 $statusColors = [
                                     'en_attente' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
@@ -35,14 +35,14 @@
                                 {{ str_replace('_', ' ', $status) }}
                             </span>
                         </div>
-                        <p class="text-slate-400">
+                        <p class="text-slate-500 dark:text-slate-400 transition-colors">
                             Commande créée le {{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y à H:i') }}
                         </p>
                     </div>
                     
                     <div class="text-right">
-                        <div class="text-sm text-slate-400 mb-1">Type de Service</div>
-                        <div class="font-bold text-white uppercase tracking-wide">
+                        <div class="text-sm text-slate-500 dark:text-slate-400 mb-1 transition-colors">Type de Service</div>
+                        <div class="font-bold text-slate-900 dark:text-white uppercase tracking-wide transition-colors">
                             @switch($type)
                                 @case('voiture') COMMANDE VÉHICULE @break
                                 @case('location') LOCATION @break
@@ -55,10 +55,10 @@
             </div>
 
             {{-- Progress Bar --}}
-            <div class="py-8 px-6 md:px-12 bg-slate-950/30 border-b border-slate-800">
+            <div class="py-12 px-6 md:px-12 bg-white dark:bg-slate-950/30 border-b border-slate-100 dark:border-slate-800 transition-colors">
                 <div class="relative">
                     {{-- Barre de fond --}}
-                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-800 -translate-y-1/2 rounded-full"></div>
+                    <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 rounded-full transition-colors"></div>
                     
                     {{-- Barre de progression active --}}
                     @php
@@ -77,10 +77,10 @@
                     <div class="relative flex justify-between">
                         @foreach(['Reçu', 'Validé', 'En cours', 'Terminé'] as $index => $step)
                         <div class="flex flex-col items-center gap-2">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-4 {{ $progress >= ($index * 33 + 10) ? 'bg-amber-500 border-slate-900 text-slate-950' : 'bg-slate-900 border-slate-800 text-slate-500' }}">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-4 {{ $progress >= ($index * 33 + 10) ? 'bg-amber-500 border-white dark:border-slate-900 text-slate-950' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-500' }} transition-colors">
                                 {{ $index + 1 }}
                             </div>
-                            <span class="text-xs font-medium {{ $progress >= ($index * 33 + 10) ? 'text-white' : 'text-slate-500' }}">{{ $step }}</span>
+                            <span class="text-xs font-medium {{ $progress >= ($index * 33 + 10) ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500' }} transition-colors">{{ $step }}</span>
                         </div>
                         @endforeach
                     </div>
@@ -92,23 +92,23 @@
                 <div class="grid md:grid-cols-2 gap-8">
                     {{-- Détails de l'article --}}
                     <div>
-                        <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-800 pb-2">Détails de la Commande</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2 transition-colors">Détails de la Commande</h3>
                         
                         @if($type === 'voiture')
                             <div class="flex gap-4 mb-4">
-                                <img src="{{ $order->image ?? '' }}" class="w-24 h-24 object-cover rounded-lg bg-slate-800" alt="Voiture">
+                                <img src="{{ $order->image ?? '' }}" class="w-24 h-24 object-cover rounded-lg bg-slate-100 dark:bg-slate-800 transition-colors" alt="Voiture">
                                 <div>
-                                    <h4 class="font-bold text-white text-lg">{{ $order->marque }} {{ $order->modele }}</h4>
-                                    <p class="text-slate-400">{{ $order->annee }}</p>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-lg transition-colors">{{ $order->marque }} {{ $order->modele }}</h4>
+                                    <p class="text-slate-500 dark:text-slate-400 transition-colors">{{ $order->annee }}</p>
                                     <div class="mt-2 text-amber-500 font-bold">{{ number_format($order->prix, 0, ',', ' ') }} €</div>
                                 </div>
                             </div>
                         @elseif($type === 'location')
                             <div class="flex gap-4 mb-4">
-                                <img src="{{ $order->image ?? '' }}" class="w-24 h-24 object-cover rounded-lg bg-slate-800" alt="Location">
+                                <img src="{{ $order->image ?? '' }}" class="w-24 h-24 object-cover rounded-lg bg-slate-100 dark:bg-slate-800 transition-colors" alt="Location">
                                 <div>
-                                    <h4 class="font-bold text-white text-lg">{{ $order->marque }} {{ $order->modele }}</h4>
-                                    <p class="text-slate-400">Du {{ \Carbon\Carbon::parse($order->date_debut)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($order->date_fin)->format('d/m/Y') }}</p>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-lg transition-colors">{{ $order->marque }} {{ $order->modele }}</h4>
+                                    <p class="text-slate-500 dark:text-slate-400 transition-colors">Du {{ \Carbon\Carbon::parse($order->date_debut)->format('d/m/Y') }} au {{ \Carbon\Carbon::parse($order->date_fin)->format('d/m/Y') }}</p>
                                     <div class="mt-2 text-amber-500 font-bold">{{ number_format($order->montant_total, 0, ',', ' ') }} FCFA</div>
                                 </div>
                             </div>
@@ -134,20 +134,20 @@
                         @elseif($type === 'revision')
                             <div class="space-y-3">
                                 <div class="flex justify-between">
-                                    <span class="text-slate-400">Véhicule:</span>
-                                    <span class="text-white">{{ $order->marque_vehicule }} {{ $order->modele_vehicule }} ({{ $order->annee_vehicule }})</span>
+                                    <span class="text-slate-500 dark:text-slate-400">Véhicule:</span>
+                                    <span class="text-slate-900 dark:text-white transition-colors">{{ $order->marque_vehicule }} {{ $order->modele_vehicule }} ({{ $order->annee_vehicule }})</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-slate-400">Immatriculation:</span>
-                                    <span class="text-white font-mono bg-slate-800 px-2 rounded">{{ $order->immatriculation ?? 'N/A' }}</span>
+                                    <span class="text-slate-500 dark:text-slate-400">Immatriculation:</span>
+                                    <span class="text-slate-900 dark:text-white font-mono bg-slate-100 dark:bg-slate-800 px-2 rounded transition-colors">{{ $order->immatriculation ?? 'N/A' }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-slate-400">Date de demande:</span>
-                                    <span class="text-white">{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y') }}</span>
+                                    <span class="text-slate-500 dark:text-slate-400">Date de demande:</span>
+                                    <span class="text-slate-900 dark:text-white transition-colors">{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y') }}</span>
                                 </div>
                                 <div class="mt-4">
-                                    <span class="block text-slate-400 text-sm mb-1">Description du problème:</span>
-                                    <p class="text-slate-300 bg-slate-900 p-3 rounded-lg text-sm border border-slate-800">{{ $order->probleme_description ?? 'Non spécifié' }}</p>
+                                    <span class="block text-slate-500 dark:text-slate-400 text-sm mb-1 transition-colors">Description du problème:</span>
+                                    <p class="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-sm border border-slate-200 dark:border-slate-800 transition-colors">{{ $order->probleme_description ?? 'Non spécifié' }}</p>
                                 </div>
                             </div>
                         @endif
@@ -155,48 +155,48 @@
 
                     {{-- Info Client --}}
                     <div>
-                        <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-800 pb-2">Informations Client</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2 transition-colors">Informations Client</h3>
                         <div class="space-y-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors">
                                     <i data-lucide="user" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-500">Nom Complet</p>
-                                    <p class="text-white">{{ $order->client_nom ?? 'Non renseigné' }}</p>
+                                    <p class="text-xs text-slate-500 transition-colors">Nom Complet</p>
+                                    <p class="text-slate-900 dark:text-white transition-colors">{{ $order->client_nom ?? 'Non renseigné' }}</p>
                                 </div>
                             </div>
 
                             @if(!empty($order->client_email))
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors">
                                     <i data-lucide="mail" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-500">Email</p>
-                                    <p class="text-white">{{ $order->client_email }}</p>
+                                    <p class="text-xs text-slate-500 transition-colors">Email</p>
+                                    <p class="text-slate-900 dark:text-white transition-colors">{{ $order->client_email }}</p>
                                 </div>
                             </div>
                             @endif
 
                             @if(!empty($order->client_telephone))
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors">
                                     <i data-lucide="phone" class="w-4 h-4"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-slate-500">Téléphone</p>
-                                    <p class="text-white">{{ $order->client_telephone }}</p>
+                                    <p class="text-xs text-slate-500 transition-colors">Téléphone</p>
+                                    <p class="text-slate-900 dark:text-white transition-colors">{{ $order->client_telephone }}</p>
                                 </div>
                             </div>
                             @endif
                         </div>
 
-                        <div class="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                        <div class="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl transition-all">
                             <div class="flex gap-3">
                                 <i data-lucide="info" class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"></i>
-                                <p class="text-sm text-slate-300">
-                                    Conservez précieusement votre numéro de tracking <strong class="text-white">{{ $tracking }}</strong>. Il est le seul moyen d'accéder à ces informations.
+                                <p class="text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                                    Conservez précieusement votre numéro de tracking <strong class="text-slate-900 dark:text-white transition-colors">{{ $tracking }}</strong>. Il est le seul moyen d'accéder à ces informations.
                                 </p>
                             </div>
                         </div>
@@ -204,8 +204,8 @@
                 </div>
             </div>
             
-            <div class="bg-slate-950 p-4 text-center border-t border-slate-800">
-                <button onclick="window.print()" class="text-slate-400 hover:text-white text-sm flex items-center justify-center gap-2 mx-auto transition-colors">
+            <div class="bg-white dark:bg-slate-950 p-4 text-center border-t border-slate-100 dark:border-slate-800 transition-colors">
+                <button onclick="window.print()" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm flex items-center justify-center gap-2 mx-auto transition-colors">
                     <i data-lucide="printer" class="w-4 h-4"></i>
                     Imprimer les détails de la commande
                 </button>

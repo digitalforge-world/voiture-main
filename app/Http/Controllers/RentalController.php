@@ -11,7 +11,7 @@ class RentalController extends Controller
     {
         $voitures = VoitureLocation::where('disponible', true)
             ->latest()
-            ->get();
+            ->paginate(9);
 
         return view('rental.index', compact('voitures'));
     }

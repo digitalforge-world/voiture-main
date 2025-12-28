@@ -9,19 +9,29 @@ class SettingController extends Controller
 {
     public function index()
     {
-        return view('admin.settings.index');
+        $settings = \App\Models\ParametreSysteme::all()->groupBy('groupe');
+        return view('admin.settings.index', compact('settings'));
     }
 
-    public function update(Request $request, string $id)
+    public function updateBulk(Request $request)
     {
-        $parameter = \App\Models\ParametreSysteme::findOrFail($id);
+        $settings = $request->input('settings', []);
 
-        $validated = $request->validate([
-            'valeur' => 'required',
-        ]);
+        // Handle regular settings
+        foreach ($settings as $cle => $valeur) {
+            \App\Models\ParametreSysteme::where('cle', $cle)->update(['valeur' => $valeur]);
+        }
 
-        $parameter->update($validated);
+        // Handle file uploads
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $cle => $file) {
+                if ($file->isValid()) {
+                    $path = $file->store('branding', 'public');
+                    \App\Models\ParametreSysteme::where('cle', $cle)->update(['valeur' => '/storage/' . $path]);
+                }
+            }
+        }
 
-        return redirect()->back()->with('success', 'Paramètre système mis à jour.');
+        return redirect()->back()->with('success', 'Tous les paramètres ont été mis à jour avec succès.');
     }
 }

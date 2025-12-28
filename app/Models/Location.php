@@ -54,7 +54,7 @@ class Location extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function voitureLocation()
+    public function voiture()
     {
         return $this->belongsTo(VoitureLocation::class, 'voiture_location_id');
     }

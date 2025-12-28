@@ -3,7 +3,7 @@
 @section('title', $voiture->marque . ' ' . $voiture->modele)
 
 @section('content')
-<div class="min-h-screen bg-slate-950">
+<div class="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
     <!-- Breadcrumbs -->
     <div class="pt-8 pb-4">
         <div class="container px-4 mx-auto lg:px-8">
@@ -22,72 +22,72 @@
             <!-- Left Column: Gallery & Details -->
             <div class="lg:col-span-8 space-y-12">
                 <!-- Gallery Mockup -->
-                <div class="relative overflow-hidden group rounded-[2.5rem] bg-slate-900 border border-slate-800 shadow-2xl">
+                <div class="relative overflow-hidden group rounded-[2.5rem] bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl dark:shadow-2xl transition-colors">
                     <img src="{{ $voiture->image ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1200' }}" alt="{{ $voiture->marque }}" class="object-cover w-full aspect-[16/9] group-hover:scale-105 transition duration-1000">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
                 </div>
 
                 <!-- Main Info Section -->
-                <div class="p-10 border bg-slate-900/40 border-slate-800 rounded-[2.5rem] backdrop-blur-sm">
-                    <div class="flex flex-col gap-6 mb-10 md:flex-row md:items-end md:justify-between border-b border-white/5 pb-10">
+                <div class="p-10 border bg-white dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 rounded-[2.5rem] backdrop-blur-sm shadow-sm dark:shadow-none transition-all">
+                    <div class="flex flex-col gap-6 mb-10 md:flex-row md:items-end md:justify-between border-b border-slate-100 dark:border-white/5 pb-10 transition-colors">
                         <div>
                             <div class="flex items-center gap-3 mb-4">
                                 <span class="px-4 py-1 text-xs font-black tracking-widest uppercase bg-amber-500 text-slate-950 rounded-full">{{ $voiture->etat }}</span>
-                                <span class="px-4 py-1 text-xs font-black tracking-widest uppercase border border-slate-800 text-slate-400 rounded-full">{{ $voiture->annee }}</span>
+                                <span class="px-4 py-1 text-xs font-black tracking-widest uppercase border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-full transition-colors">{{ $voiture->annee }}</span>
                             </div>
-                            <h1 class="text-4xl font-black text-white lg:text-5xl tracking-tight leading-none">{{ $voiture->marque }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">{{ $voiture->modele }}</span></h1>
-                            <div class="flex items-center gap-2 mt-4 text-slate-400">
+                            <h1 class="text-4xl font-black text-slate-900 dark:text-white lg:text-5xl tracking-tight leading-none transition-colors">{{ $voiture->marque }} <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">{{ $voiture->modele }}</span></h1>
+                            <div class="flex items-center gap-2 mt-4 text-slate-500 dark:text-slate-400 transition-colors">
                                 <i data-lucide="shield-check" class="w-5 h-5 text-amber-500"></i>
-                                <span class="text-sm font-medium">Châssis: <span class="font-mono text-white">{{ $voiture->numero_chassis }}</span></span>
+                                <span class="text-sm font-medium">Châssis: <span class="font-mono text-slate-900 dark:text-white transition-colors">{{ $voiture->numero_chassis }}</span></span>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-sm font-bold tracking-widest uppercase text-slate-500 mb-1">Prix de vente Fob</div>
-                            <div class="text-5xl font-black text-white">{{ number_format($voiture->prix, 0, ',', ' ') }}<span class="text-xl text-amber-500 ml-1">€</span></div>
+                            <div class="text-sm font-bold tracking-widest uppercase text-slate-500 mb-1 transition-colors">Prix de vente Fob</div>
+                            <div class="text-5xl font-black text-slate-900 dark:text-white transition-colors">{{ number_format($voiture->prix, 0, ',', ' ') }}<span class="text-xl text-amber-500 ml-1">€</span></div>
                         </div>
                     </div>
 
                     <!-- Key Specs Grid -->
                     <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
                         <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500">
+                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500 transition-colors">
                                 <i data-lucide="gauge-circle" class="w-4 h-4 text-amber-500"></i> Kilométrage
                             </div>
-                            <div class="text-lg font-bold text-white">{{ number_format($voiture->kilometrage, 0, ',', ' ') }} km</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ number_format($voiture->kilometrage, 0, ',', ' ') }} km</div>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500">
+                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500 transition-colors">
                                 <i data-lucide="fuel" class="w-4 h-4 text-amber-500"></i> Carburant
                             </div>
-                            <div class="text-lg font-bold text-white">{{ $voiture->carburant }}</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ $voiture->carburant }}</div>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500">
+                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500 transition-colors">
                                 <i data-lucide="settings-2" class="w-4 h-4 text-amber-500"></i> Transmission
                             </div>
-                            <div class="text-lg font-bold text-white">{{ $voiture->transmission }}</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ $voiture->transmission }}</div>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500">
+                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-slate-500 transition-colors">
                                 <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Moteur
                             </div>
-                            <div class="text-lg font-bold text-white">{{ $voiture->moteur }}</div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-white transition-colors">{{ $voiture->moteur }}</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Description & Features -->
                 <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
-                    <div class="p-10 border bg-slate-900/20 border-slate-800 rounded-[2.5rem]">
-                        <h3 class="mb-6 text-xl font-bold text-white flex items-center gap-3">
+                    <div class="p-10 border bg-white dark:bg-slate-900/20 border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-sm dark:shadow-none transition-all">
+                        <h3 class="mb-6 text-xl font-bold text-slate-900 dark:text-white flex items-center gap-3 transition-colors">
                             <i data-lucide="info" class="w-5 h-5 text-amber-500"></i> Description
                         </h3>
-                        <p class="text-sm leading-relaxed text-slate-400 whitespace-pre-line">
+                        <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-400 whitespace-pre-line transition-colors">
                             {{ $voiture->description ?: "Ce véhicule a été inspecté par nos experts internationaux. Il présente un excellent état mécanique et esthétique. Idéal pour une importation sereine." }}
                         </p>
                     </div>
-                    <div class="p-10 border bg-slate-900/20 border-slate-800 rounded-[2.5rem]">
-                        <h3 class="mb-6 text-xl font-bold text-white flex items-center gap-3">
+                    <div class="p-10 border bg-white dark:bg-slate-900/20 border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-sm dark:shadow-none transition-all">
+                        <h3 class="mb-6 text-xl font-bold text-slate-900 dark:text-white flex items-center gap-3 transition-colors">
                             <i data-lucide="list-checks" class="w-5 h-5 text-amber-500"></i> Équipements
                         </h3>
                         <ul class="grid grid-cols-1 gap-3">
@@ -95,7 +95,7 @@
                                 $options = explode(',', $voiture->options_equipements ?: 'Climatisation,Bluetooth,Sièges chauffants,Radar de recul,Jantes alliage');
                             @endphp
                             @foreach($options as $option)
-                                <li class="flex items-center gap-3 text-sm font-medium text-slate-400">
+                                <li class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400 transition-colors">
                                     <i data-lucide="check" class="w-4 h-4 text-amber-500 p-0.5 bg-amber-500/10 rounded"></i>
                                     {{ trim($option) }}
                                 </li>
@@ -107,17 +107,17 @@
 
             <!-- Right Column: Calculator -->
             <div class="lg:col-span-4">
-                <div class="sticky h-fit top-28 p-1 p-px bg-gradient-to-br from-amber-500/30 to-slate-800 rounded-[2.5rem]">
-                    <div class="bg-slate-950 p-8 rounded-[2.4rem]">
-                        <h3 class="mb-8 text-2xl font-black text-white tracking-tight">Estimer l'Importation</h3>
+                <div class="sticky h-fit top-28 p-1 p-px bg-gradient-to-br from-amber-500/30 to-slate-200 dark:to-slate-800 rounded-[2.5rem] transition-colors">
+                    <div class="bg-white dark:bg-slate-950 p-8 rounded-[2.4rem] transition-colors">
+                        <h3 class="mb-8 text-2xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">Estimer l'Importation</h3>
                         
                         <div class="space-y-8">
                             <!-- Port Selection -->
                             <div class="space-y-4">
-                                <label class="text-xs font-black tracking-widest uppercase text-slate-500">Port de Destination</label>
-                                <select id="port_id" class="w-full py-4 px-5 text-sm bg-slate-900 border border-slate-800 rounded-2xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition text-white">
+                                <label class="text-xs font-black tracking-widest uppercase text-slate-500 transition-colors">Port de Destination</label>
+                                <select id="port_id" class="w-full py-4 px-5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition text-slate-900 dark:text-white">
                                     @foreach($ports as $port)
-                                        <option value="{{ $port->id }}" data-frais="{{ $port->frais_base }}" {{ $voiture->port_recommande_id == $port->id ? 'selected' : '' }}>
+                                        <option value="{{ $port->id }}" data-frais="{{ $port->frais_base }}" class="bg-white dark:bg-slate-900" {{ $voiture->port_recommande_id == $port->id ? 'selected' : '' }}>
                                             {{ $port->nom }} ({{ $port->pays }})
                                         </option>
                                     @endforeach
@@ -125,10 +125,10 @@
                             </div>
 
                             <!-- Cost Breakdown -->
-                            <div class="space-y-4 p-6 bg-slate-900/50 rounded-3xl border border-white/5">
+                            <div class="space-y-4 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-3xl border border-slate-100 dark:border-white/5 transition-colors">
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-slate-500 font-medium">Prix du véhicule</span>
-                                    <span class="text-white font-bold">{{ number_format($voiture->prix, 0, ',', ' ') }} €</span>
+                                    <span class="text-slate-500 font-medium transition-colors">Prix du véhicule</span>
+                                    <span class="text-slate-900 dark:text-white font-bold transition-colors">{{ number_format($voiture->prix, 0, ',', ' ') }} €</span>
                                 </div>
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-slate-500 font-medium whitespace-nowrap">Frais de transport (Fret)</span>
@@ -138,9 +138,9 @@
                                     <span class="text-slate-500 font-medium whitespace-nowrap">Estimation Douane (10%)</span>
                                     <span class="text-amber-500/80 font-bold" id="customs_cost">{{ number_format($voiture->prix * 0.1, 0, ',', ' ') }} €</span>
                                 </div>
-                                <div class="pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
-                                    <span class="text-white font-black uppercase tracking-widest text-xs">Total Estimé</span>
-                                    <span class="text-3xl font-black text-white" id="total_cost">0 €</span>
+                                <div class="pt-4 mt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between transition-colors">
+                                    <span class="text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs transition-colors">Total Estimé</span>
+                                    <span class="text-3xl font-black text-slate-900 dark:text-white transition-colors" id="total_cost">0 €</span>
                                 </div>
                             </div>
 
@@ -153,15 +153,15 @@
                                     <div class="space-y-4 mb-6">
                                         <div>
                                             <label for="client_nom" class="sr-only">Nom complet</label>
-                                            <input type="text" name="client_nom" id="client_nom" required placeholder="Votre Nom Complet" class="w-full py-3 px-4 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
+                                            <input type="text" name="client_nom" id="client_nom" required placeholder="Votre Nom Complet" class="w-full py-3 px-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
                                         </div>
                                         <div>
                                             <label for="client_email" class="sr-only">Email</label>
-                                            <input type="email" name="client_email" id="client_email" placeholder="Votre Email (Optionnel)" class="w-full py-3 px-4 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
+                                            <input type="email" name="client_email" id="client_email" placeholder="Votre Email (Optionnel)" class="w-full py-3 px-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
                                         </div>
                                         <div>
                                             <label for="client_telephone" class="sr-only">Téléphone</label>
-                                            <input type="tel" name="client_telephone" id="client_telephone" required placeholder="Votre Téléphone (Requis)" class="w-full py-3 px-4 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
+                                            <input type="tel" name="client_telephone" id="client_telephone" required placeholder="Votre Téléphone (Requis)" class="w-full py-3 px-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
                                         </div>
                                     </div>
 

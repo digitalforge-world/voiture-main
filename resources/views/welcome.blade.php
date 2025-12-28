@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'AutoImport Hub - Votre partenaire automobile en Afrique de l\'Ouest')
+@section('title', ($siteSettings['site_name'] ?? 'AutoImport Hub') . ' - Votre partenaire automobile en Afrique de l\'Ouest')
 
 @section('content')
 <div class="min-h-screen">
     {{-- Hero Section --}}
-    <section class="relative pt-24 pb-20 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <section class="relative pt-24 pb-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-500">
         <div class="absolute inset-0 opacity-20">
             <div class="absolute top-20 left-10 w-72 h-72 bg-amber-500/30 rounded-full blur-3xl"></div>
             <div class="absolute bottom-10 right-20 w-96 h-96 bg-amber-600/20 rounded-full blur-3xl"></div>
@@ -18,12 +18,12 @@
                         🚗 Leader en Afrique de l'Ouest
                     </span>
                     
-                    <h1 class="text-4xl font-extrabold leading-tight text-white lg:text-5xl">
+                    <h1 class="text-4xl font-extrabold leading-tight text-slate-900 dark:text-white lg:text-5xl transition-colors">
                         Importation, Location et <br class="hidden sm:block">
                         Pièces Automobiles
                     </h1>
                     
-                    <p class="text-lg leading-relaxed text-slate-300 max-w-xl">
+                    <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl transition-colors">
                         Simplifiez vos besoins automobiles. Importez depuis l'Europe ou l'Asie, 
                         louez un véhicule ou trouvez la pièce parfaite - tout ça sur une seule plateforme.
                     </p>
@@ -35,7 +35,7 @@
                             Commander une voiture
                         </a>
                         
-                        <a href="{{ route('rental.index') }}" class="inline-flex items-center px-6 py-3.5 text-base font-semibold text-white bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors">
+                        <a href="{{ route('rental.index') }}" class="inline-flex items-center px-6 py-3.5 text-base font-semibold text-slate-700 dark:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
                             <i data-lucide="key" class="w-5 h-5 mr-2"></i>
                             Louer un véhicule
                         </a>
@@ -52,17 +52,17 @@
                     </div>
 
                     {{-- Stats --}}
-                    <div class="flex gap-8 pt-6 border-t border-slate-800">
+                    <div class="flex gap-8 pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
                         <div>
-                            <div class="text-2xl font-bold text-white">500+</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white">500+</div>
                             <div class="text-sm text-slate-500">Voitures livrées</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-white">12</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white">12</div>
                             <div class="text-sm text-slate-500">Ports couverts</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-white">4.9★</div>
+                            <div class="text-2xl font-bold text-slate-900 dark:text-white">4.9★</div>
                             <div class="text-sm text-slate-500">Note moyenne</div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                          style="mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 95%);">
                     
                     {{-- Floating badge --}}
-                    <div class="absolute top-8 -right-4 bg-slate-900/90 backdrop-blur border border-amber-500/30 rounded-xl p-4 shadow-xl">
+                    <div class="absolute top-8 -right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-200 dark:border-amber-500/30 rounded-xl p-4 shadow-xl">
                         <div class="flex items-center gap-3">
                             <div class="bg-amber-500 rounded-lg p-2">
                                 <i data-lucide="percent" class="w-6 h-6 text-slate-950"></i>
@@ -92,11 +92,11 @@
     </section>
 
     {{-- Services Overview --}}
-    <section class="py-16 bg-slate-900/50">
+    <section class="py-16 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="mb-12 text-center">
-                <h2 class="text-3xl font-bold text-white mb-3">Nos Services</h2>
-                <p class="text-slate-400 max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Nos Services</h2>
+                <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto transition-colors">
                     Une plateforme complète pour gérer tous vos besoins automobiles
                 </p>
             </div>
@@ -116,12 +116,12 @@
                 @endphp
 
                 @foreach($services as $service)
-                <div class="p-6 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-amber-500/40 transition-all group">
+                <div class="p-6 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-amber-500/40 transition-all group shadow-sm dark:shadow-none">
                     <div class="mb-4 inline-flex p-3 bg-amber-500/10 text-amber-500 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
                         <i data-lucide="{{ $service['icon'] }}" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2">{{ $service['title'] }}</h3>
-                    <p class="text-sm text-slate-400 leading-relaxed">{{ $service['desc'] }}</p>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2 transition-colors">{{ $service['title'] }}</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed transition-colors">{{ $service['desc'] }}</p>
                 </div>
                 @endforeach
             </div>
@@ -129,22 +129,22 @@
     </section>
 
     {{-- Featured Cars --}}
-    <section class="py-16 bg-slate-950">
+    <section class="py-16 bg-white dark:bg-slate-950 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="flex items-end justify-between mb-10">
                 <div>
-                    <h2 class="text-3xl font-bold text-white mb-2">Véhicules Disponibles</h2>
-                    <p class="text-slate-400">Nouveaux arrivages et coups de cœur</p>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Véhicules Disponibles</h2>
+                    <p class="text-slate-500 dark:text-slate-400 transition-colors">Nouveaux arrivages et coups de cœur</p>
                 </div>
                 
                 <div class="hidden md:flex gap-3">
-                    <select class="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none">
+                    <select class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none transition-all">
                         <option>Marque</option>
                         <option>Toyota</option>
                         <option>Mercedes</option>
                         <option>BMW</option>
                     </select>
-                    <select class="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none">
+                    <select class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none transition-all">
                         <option>Pays</option>
                         <option>Allemagne</option>
                         <option>France</option>
@@ -155,29 +155,29 @@
 
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 @forelse($featuredCars ?? [] as $car)
-                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all group">
+                    <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all group shadow-sm dark:shadow-none">
                         <div class="relative aspect-[4/3] overflow-hidden">
-                            <img src="{{ $car->image ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=600' }}" 
-                                 alt="{{ ($car->marque ?? '') . ' ' . ($car->modele ?? '') }}" 
+                            <img src="{{ data_get($car, 'image') ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=600' }}" 
+                                 alt="{{ (data_get($car, 'marque', '')) . ' ' . (data_get($car, 'modele', '')) }}" 
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute top-3 left-3">
-                                <span class="px-2 py-1 bg-amber-500 text-slate-950 text-xs font-bold rounded">{{ $car->annee ?? '2024' }}</span>
+                                <span class="px-2 py-1 bg-amber-500 text-slate-950 text-xs font-bold rounded">{{ data_get($car, 'annee', '2024') }}</span>
                             </div>
                         </div>
                         <div class="p-5">
-                            <h3 class="font-bold text-white text-lg mb-1">{{ ($car->marque ?? '') . ' ' . ($car->modele ?? '') }}</h3>
-                            <p class="text-sm text-slate-500 mb-4">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 transition-colors">{{ (data_get($car, 'marque', '')) . ' ' . (data_get($car, 'modele', '')) }}</h3>
+                            <p class="text-sm text-slate-500 mb-4 transition-colors">
                                 <i data-lucide="map-pin" class="w-3 h-3 inline"></i>
-                                {{ ($car->ville_origine ?? '') . ', ' . ($car->pays_origine ?? '') }}
+                                {{ (data_get($car, 'ville_origine', '')) . ', ' . (data_get($car, 'pays_origine', '')) }}
                             </p>
                             
                             <div class="flex items-baseline justify-between mb-4">
-                                <div class="text-2xl font-bold text-white">
-                                    {{ number_format($car->prix ?? 0, 0, ',', ' ') }}<span class="text-sm text-amber-500">€</span>
+                                <div class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+                                    {{ number_format(data_get($car, 'prix', 0), 0, ',', ' ') }}<span class="text-sm text-amber-500">€</span>
                                 </div>
                             </div>
                             
-                            <a href="{{ route('cars.show', $car->id ?? 1) }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-slate-800 text-white rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-colors">
+                            <a href="{{ route('cars.show', data_get($car, 'id', 1)) }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all">
                                 Voir les détails
                             </a>
                         </div>
@@ -193,7 +193,7 @@
                         ];
                         $demo = $demos[$i];
                     @endphp
-                    <div class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all group">
+                    <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all group shadow-sm dark:shadow-none">
                         <div class="relative aspect-[4/3] overflow-hidden">
                             <img src="https://images.unsplash.com/photo-{{ $demo['img'] }}?auto=format&fit=crop&q=80&w=600" 
                                  alt="{{ $demo['name'] }}" 
@@ -203,19 +203,19 @@
                             </div>
                         </div>
                         <div class="p-5">
-                            <h3 class="font-bold text-white text-lg mb-1">{{ $demo['name'] }}</h3>
-                            <p class="text-sm text-slate-500 mb-4">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 transition-colors">{{ $demo['name'] }}</h3>
+                            <p class="text-sm text-slate-500 mb-4 transition-colors">
                                 <i data-lucide="map-pin" class="w-3 h-3 inline"></i>
                                 {{ $demo['loc'] }}
                             </p>
                             
                             <div class="flex items-baseline justify-between mb-4">
-                                <div class="text-2xl font-bold text-white">
+                                <div class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
                                     {{ number_format($demo['price'], 0, ',', ' ') }}<span class="text-sm text-amber-500">€</span>
                                 </div>
                             </div>
                             
-                            <a href="{{ route('cars.index') }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-slate-800 text-white rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-colors">
+                            <a href="{{ route('cars.index') }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all">
                                 Voir les détails
                             </a>
                         </div>
@@ -234,11 +234,11 @@
     </section>
 
     {{-- Ports Section --}}
-    <section class="py-16 bg-slate-900/30">
+    <section class="py-16 bg-slate-50 dark:bg-slate-900/30 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="mb-12 text-center">
-                <h2 class="text-3xl font-bold text-white mb-3">Ports d'Arrivée Disponibles</h2>
-                <p class="text-slate-400 max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Ports d'Arrivée Disponibles</h2>
+                <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto transition-colors">
                     Choisissez le port le plus proche de chez vous. Les frais et délais varient selon la destination.
                 </p>
             </div>
@@ -256,7 +256,7 @@
                 @endphp
 
                 @foreach($ports as $port)
-                <div class="relative p-5 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-amber-500/30 transition-colors {{ $port['popular'] ? 'ring-2 ring-amber-500/20' : '' }}">
+                <div class="relative p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-amber-500/30 transition-all shadow-sm dark:shadow-none {{ $port['popular'] ? 'ring-2 ring-amber-500/20' : '' }}">
                     @if($port['popular'])
                     <span class="absolute -top-2 right-4 px-2 py-0.5 bg-amber-500 text-slate-950 text-xs font-bold rounded">Populaire</span>
                     @endif
@@ -264,11 +264,11 @@
                     <div class="flex items-start gap-3">
                         <span class="text-3xl">{{ $port['flag'] }}</span>
                         <div class="flex-1">
-                            <h3 class="font-semibold text-white text-lg">{{ $port['name'] }}</h3>
-                            <p class="text-sm text-slate-500 mb-3">{{ $port['country'] }}</p>
-                            <div class="text-sm text-slate-400">
+                            <h3 class="font-semibold text-slate-900 dark:text-white text-lg transition-colors">{{ $port['name'] }}</h3>
+                            <p class="text-sm text-slate-500 mb-3 transition-colors">{{ $port['country'] }}</p>
+                            <div class="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                                 <i data-lucide="clock" class="w-4 h-4 inline text-amber-500"></i>
-                                Délai: <strong class="text-white">{{ $port['delay'] }}</strong>
+                                Délai: <strong class="text-slate-900 dark:text-white transition-colors">{{ $port['delay'] }}</strong>
                             </div>
                         </div>
                     </div>
@@ -284,11 +284,11 @@
     </section>
 
     {{-- Location Vehicles --}}
-    <section class="py-16 bg-slate-950">
+    <section class="py-16 bg-white dark:bg-slate-950 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="mb-10">
-                <h2 class="text-3xl font-bold text-white mb-2">Location de Véhicules</h2>
-                <p class="text-slate-400">Durée flexible • Paiement sécurisé • Véhicules récents</p>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2 transition-colors">Location de Véhicules</h2>
+                <p class="text-slate-500 dark:text-slate-400 transition-colors">Durée flexible • Paiement sécurisé • Véhicules récents</p>
             </div>
 
             <div class="grid gap-6 md:grid-cols-3">
@@ -301,22 +301,22 @@
                 @endphp
 
                 @foreach($rentals as $rental)
-                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all">
+                <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all shadow-sm dark:shadow-none">
                     <div class="relative aspect-video overflow-hidden">
                         <img src="https://images.unsplash.com/photo-{{ $rental['img'] }}?auto=format&fit=crop&q=80&w=600" 
                              alt="{{ $rental['name'] }}" 
                              class="w-full h-full object-cover">
-                        <span class="absolute top-3 right-3 px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded">
+                        <span class="absolute top-3 right-3 px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded transition-colors">
                             Disponible
                         </span>
                     </div>
                     <div class="p-5">
-                        <h3 class="font-bold text-white text-lg mb-1">{{ $rental['name'] }}</h3>
-                        <p class="text-sm text-slate-500 mb-4">{{ $rental['cat'] }}</p>
+                        <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 transition-colors">{{ $rental['name'] }}</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-500 mb-4 transition-colors">{{ $rental['cat'] }}</p>
                         
-                        <div class="mb-4 pb-4 border-b border-slate-800">
-                            <span class="text-2xl font-bold text-white">{{ number_format($rental['price'], 0, ' ', ' ') }}</span>
-                            <span class="text-sm text-slate-400"> FCFA/jour</span>
+                        <div class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                            <span class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ number_format($rental['price'], 0, ' ', ' ') }}</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400 transition-colors"> FCFA/jour</span>
                         </div>
 
                         <div class="space-y-2 mb-5 text-sm text-slate-400">
@@ -347,46 +347,46 @@
     </section>
 
     {{-- Parts & Compatibility --}}
-    <section class="py-16 bg-slate-900/50">
+    <section class="py-16 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="grid gap-12 lg:grid-cols-2 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold text-white mb-4">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors">
                         Pièces Détachées avec Compatibilité Intelligente
                     </h2>
-                    <p class="text-lg text-slate-300 mb-8">
+                    <p class="text-lg text-slate-600 dark:text-slate-300 mb-8 transition-colors">
                         Notre système trouve automatiquement les pièces compatibles avec votre véhicule. 
                         Recherche par marque, modèle ou numéro de châssis.
                     </p>
 
                     <div class="space-y-4">
-                        <div class="flex gap-4 p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                        <div class="flex gap-4 p-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm dark:shadow-none transition-all">
                             <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-amber-500/20 text-amber-500 rounded-lg">
                                 <i data-lucide="search" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-white mb-1">Recherche par modèle</h4>
-                                <p class="text-sm text-slate-400">Entrez marque, modèle et année</p>
+                                <h4 class="font-semibold text-slate-900 dark:text-white mb-1 transition-colors">Recherche par modèle</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Entrez marque, modèle et année</p>
                             </div>
                         </div>
 
-                        <div class="flex gap-4 p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                        <div class="flex gap-4 p-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm dark:shadow-none transition-all">
                             <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-amber-500/20 text-amber-500 rounded-lg">
                                 <i data-lucide="scan" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-white mb-1">Numéro VIN</h4>
-                                <p class="text-sm text-slate-400">Précision maximale avec le châssis</p>
+                                <h4 class="font-semibold text-slate-900 dark:text-white mb-1 transition-colors">Numéro VIN</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Précision maximale avec le châssis</p>
                             </div>
                         </div>
 
-                        <div class="flex gap-4 p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                        <div class="flex gap-4 p-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-lg shadow-sm dark:shadow-none transition-all">
                             <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-amber-500/20 text-amber-500 rounded-lg">
                                 <i data-lucide="repeat" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-white mb-1">Échange possible</h4>
-                                <p class="text-sm text-slate-400">Valorisez vos pièces usagées</p>
+                                <h4 class="font-semibold text-slate-900 dark:text-white mb-1 transition-colors">Échange possible</h4>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Valorisez vos pièces usagées</p>
                             </div>
                         </div>
                     </div>
@@ -397,13 +397,13 @@
                     </a>
                 </div>
 
-                <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
-                    <h3 class="text-xl font-bold text-white mb-6">Recherche rapide</h3>
+                <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm dark:shadow-none transition-all">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 transition-colors">Recherche rapide</h3>
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-400 mb-2">Marque du véhicule</label>
-                            <select class="w-full px-4 py-3 bg-slate-950 border border-slate-700 text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 transition-colors">Marque du véhicule</label>
+                            <select class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none transition-all">
                                 <option>Sélectionnez...</option>
                                 <option>Toyota</option>
                                 <option>Mercedes-Benz</option>
@@ -414,15 +414,15 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-400 mb-2">Modèle</label>
+                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 transition-colors">Modèle</label>
                             <input type="text" placeholder="Ex: Corolla, C-Class..." 
-                                   class="w-full px-4 py-3 bg-slate-950 border border-slate-700 text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                                   class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none transition-all">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-400 mb-2">Année</label>
+                            <label class="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-2 transition-colors">Année</label>
                             <input type="number" placeholder="2020" 
-                                   class="w-full px-4 py-3 bg-slate-950 border border-slate-700 text-white rounded-lg focus:border-amber-500 focus:outline-none">
+                                   class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-lg focus:border-amber-500 focus:outline-none transition-all">
                         </div>
 
                         <button class="w-full py-3 bg-amber-500 text-slate-950 font-semibold rounded-lg hover:bg-amber-400 transition-colors flex items-center justify-center gap-2">
@@ -436,11 +436,11 @@
     </section>
 
     {{-- Revision Service --}}
-    <section class="py-16 bg-slate-950">
+    <section class="py-16 bg-white dark:bg-slate-950 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="mb-12 text-center">
-                <h2 class="text-3xl font-bold text-white mb-3">Service de Révision</h2>
-                <p class="text-slate-400">Diagnostic • Devis • Suivi en temps réel</p>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Service de Révision</h2>
+                <p class="text-slate-500 dark:text-slate-400 transition-colors">Diagnostic • Devis • Suivi en temps réel</p>
             </div>
 
             <div class="grid gap-6 md:grid-cols-4">
@@ -458,12 +458,12 @@
                     <div class="absolute -top-3 left-4 w-8 h-8 bg-amber-500 text-slate-950 rounded-full flex items-center justify-center font-bold text-sm">
                         {{ $index + 1 }}
                     </div>
-                    <div class="pt-6 p-5 bg-slate-900/60 border border-slate-800 rounded-xl">
+                    <div class="pt-6 p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm dark:shadow-none transition-all">
                         <div class="mb-4 inline-flex p-2.5 bg-amber-500/10 text-amber-500 rounded-lg">
                             <i data-lucide="{{ $step['icon'] }}" class="w-6 h-6"></i>
                         </div>
-                        <h3 class="font-semibold text-white mb-2">{{ $step['title'] }}</h3>
-                        <p class="text-sm text-slate-400">{{ $step['desc'] }}</p>
+                        <h3 class="font-semibold text-slate-900 dark:text-white mb-2 transition-colors">{{ $step['title'] }}</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">{{ $step['desc'] }}</p>
                     </div>
                 </div>
                 @endforeach
@@ -478,11 +478,11 @@
     </section>
 
     {{-- Trust Section --}}
-    <section class="py-16 bg-slate-900/30">
+    <section class="py-16 bg-slate-50 dark:bg-slate-900/30 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="mb-12 text-center">
-                <h2 class="text-3xl font-bold text-white mb-3">Pourquoi Nous Choisir ?</h2>
-                <p class="text-slate-400">Transparence et professionnalisme à chaque étape</p>
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3 transition-colors">Pourquoi Nous Choisir ?</h2>
+                <p class="text-slate-500 dark:text-slate-400 transition-colors">Transparence et professionnalisme à chaque étape</p>
             </div>
 
             <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -498,12 +498,12 @@
                 @endphp
 
                 @foreach($points as $point)
-                <div class="p-5 bg-slate-900/60 border border-slate-800 rounded-xl hover:border-amber-500/30 transition-colors">
+                <div class="p-5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-amber-500/30 transition-all shadow-sm dark:shadow-none">
                     <div class="mb-3 inline-flex p-2.5 bg-amber-500/10 text-amber-500 rounded-lg">
                         <i data-lucide="{{ $point['icon'] }}" class="w-6 h-6"></i>
                     </div>
-                    <h3 class="font-semibold text-white mb-2">{{ $point['title'] }}</h3>
-                    <p class="text-sm text-slate-400">{{ $point['desc'] }}</p>
+                    <h3 class="font-semibold text-slate-900 dark:text-white mb-2 transition-colors">{{ $point['title'] }}</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">{{ $point['desc'] }}</p>
                 </div>
                 @endforeach
             </div>
@@ -511,32 +511,32 @@
     </section>
 
     {{-- Simple Tracking Preview --}}
-    <section class="py-16 bg-slate-950">
+    <section class="py-16 bg-white dark:bg-slate-950 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-7xl">
             <div class="grid gap-12 lg:grid-cols-2 items-center">
                 <div class="order-2 lg:order-1">
-                    <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-8 relative overflow-hidden">
+                    <div class="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl p-8 relative overflow-hidden transition-all shadow-sm dark:shadow-none">
                         {{-- Decorative elements --}}
                         <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl"></div>
                         
                         <div class="relative z-10">
-                            <div class="bg-slate-950 border border-slate-800 rounded-lg p-6 shadow-xl mb-6">
+                            <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 shadow-xl mb-6 transition-all">
                                 <div class="flex items-center gap-4 mb-4">
                                     <div class="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center text-amber-500">
                                         <i data-lucide="package-search" class="w-5 h-5"></i>
                                     </div>
                                     <div>
-                                        <div class="text-sm text-slate-400">Numéro de Suivi</div>
-                                        <div class="text-xl font-mono font-bold text-white tracking-wider">CAR-2024-X8Y9</div>
+                                        <div class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Numéro de Suivi</div>
+                                        <div class="text-xl font-mono font-bold text-slate-900 dark:text-white tracking-wider transition-colors">CAR-2024-X8Y9</div>
                                     </div>
                                 </div>
                                 <div class="space-y-4">
                                     <div>
                                         <div class="flex justify-between text-sm mb-2">
-                                            <span class="text-white">État de la commande</span>
+                                            <span class="text-slate-700 dark:text-white transition-colors">État de la commande</span>
                                             <span class="text-amber-500 font-bold">En transit</span>
                                         </div>
-                                        <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden transition-colors">
                                             <div class="h-full bg-amber-500 w-2/3"></div>
                                         </div>
                                     </div>
@@ -555,36 +555,36 @@
                 </div>
 
                 <div class="order-1 lg:order-2">
-                    <h2 class="text-3xl font-bold text-white mb-4">Sérénité Totale, Sans Inscription</h2>
-                    <p class="text-lg text-slate-300 mb-6">
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-4 transition-colors">Sérénité Totale, Sans Inscription</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-300 mb-6 transition-colors">
                         Pas besoin de créer de compte. À chaque commande, vous recevez un code de suivi unique pour suivre votre véhicule ou vos pièces en temps réel.
                     </p>
 
                     <ul class="space-y-4 mb-8">
-                        <li class="flex items-start gap-3 text-slate-300">
+                        <li class="flex items-start gap-3 text-slate-600 dark:text-slate-300 transition-colors">
                             <div class="mt-1 bg-amber-500/10 p-1 rounded">
                                 <i data-lucide="shield-check" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <div>
-                                <strong class="text-white block">Accès Sécurisé</strong>
+                                <strong class="text-slate-900 dark:text-white block transition-colors">Accès Sécurisé</strong>
                                 Votre numéro de suivi est votre clé personnelle.
                             </div>
                         </li>
-                        <li class="flex items-start gap-3 text-slate-300">
+                        <li class="flex items-start gap-3 text-slate-600 dark:text-slate-300 transition-colors">
                             <div class="mt-1 bg-amber-500/10 p-1 rounded">
                                 <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <div>
-                                <strong class="text-white block">Instantané</strong>
+                                <strong class="text-slate-900 dark:text-white block transition-colors">Instantané</strong>
                                 Aucune procédure d'inscription longue et fastidieuse.
                             </div>
                         </li>
-                        <li class="flex items-start gap-3 text-slate-300">
+                        <li class="flex items-start gap-3 text-slate-600 dark:text-slate-300 transition-colors">
                             <div class="mt-1 bg-amber-500/10 p-1 rounded">
                                 <i data-lucide="bell" class="w-4 h-4 text-amber-500"></i>
                             </div>
                             <div>
-                                <strong class="text-white block">Notifications</strong>
+                                <strong class="text-slate-900 dark:text-white block transition-colors">Notifications</strong>
                                 Mises à jour en temps réel sur l'avancement.
                             </div>
                         </li>
@@ -600,10 +600,10 @@
     </section>
 
     {{-- Final CTA --}}
-    <section class="py-20 bg-gradient-to-br from-amber-500/10 to-slate-950">
+    <section class="py-20 bg-gradient-to-br from-amber-500/10 to-slate-50 dark:to-slate-950 transition-colors duration-500">
         <div class="container px-4 mx-auto max-w-4xl text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">Prêt à Commander ?</h2>
-            <p class="text-xl text-slate-300 mb-8">
+            <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-4 transition-colors">Prêt à Commander ?</h2>
+            <p class="text-xl text-slate-600 dark:text-slate-300 mb-8 transition-colors">
                 Trouvez votre véhicule idéal ou la pièce qu'il vous faut dès maintenant.
             </p>
 
@@ -613,7 +613,7 @@
                     Explorer les véhicules
                 </a>
                 
-                <a href="{{ route('tracking.index') }}" class="inline-flex items-center px-8 py-4 border-2 border-amber-500/50 text-white font-semibold rounded-lg hover:bg-amber-500/10 transition-colors">
+                <a href="{{ route('tracking.index') }}" class="inline-flex items-center px-8 py-4 border-2 border-slate-200 dark:border-amber-500/50 text-slate-700 dark:text-white font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-amber-500/10 transition-all">
                     <i data-lucide="search" class="w-5 h-5 mr-2"></i>
                     Suivre une commande
                 </a>

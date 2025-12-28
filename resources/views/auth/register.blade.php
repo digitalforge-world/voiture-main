@@ -3,69 +3,69 @@
 @section('title', 'Inscription')
 
 @section('content')
-<div class="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+<div class="min-h-screen bg-white dark:bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-500">
     <!-- Decorative background elements -->
     <div class="absolute top-10 right-10 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] -z-10 animate-pulse"></div>
     <div class="absolute bottom-10 left-10 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -z-10 animate-pulse" style="animation-delay: 1.5s;"></div>
 
     <div class="sm:mx-auto sm:w-full sm:max-w-2xl relative">
         <div class="text-center mb-12">
-            <h2 class="text-5xl font-black text-white tracking-tight uppercase italic flex flex-col items-center gap-2">
+            <h2 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic flex flex-col items-center gap-2 transition-colors">
                 <span>Créer Un</span>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 underline decoration-white/20 underline-offset-8">Compte</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 underline decoration-slate-200 dark:decoration-white/20 underline-offset-8 transition-all">Compte</span>
             </h2>
             <p class="mt-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
                 Rejoignez le réseau leader de l'automobile
             </p>
         </div>
 
-        <div class="p-px bg-gradient-to-br from-amber-500/30 to-slate-800 rounded-[3rem] shadow-2xl">
-            <div class="bg-slate-950/80 backdrop-blur-2xl py-12 px-10 sm:px-16 rounded-[2.9rem]">
+        <div class="p-px bg-gradient-to-br from-amber-500/30 to-slate-200 dark:to-slate-800 rounded-[3rem] shadow-xl dark:shadow-2xl transition-colors">
+            <div class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl py-12 px-10 sm:px-16 rounded-[2.9rem] transition-colors">
                 <form action="#" method="POST" class="space-y-8">
                     @csrf
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Nom</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Nom</label>
                             <input type="text" name="nom" required placeholder="Doe" 
-                                class="w-full py-4 px-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition hover:border-slate-700">
+                                class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition group-hover:border-slate-300 dark:group-hover:border-slate-700 transition-colors">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Prénom</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Prénom</label>
                             <input type="text" name="prenom" required placeholder="John" 
-                                class="w-full py-4 px-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition hover:border-slate-700">
+                                class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition group-hover:border-slate-300 dark:group-hover:border-slate-700 transition-colors">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Email professionnel</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Email professionnel</label>
                             <div class="relative group">
                                 <input type="email" name="email" required placeholder="john@example.com" 
-                                    class="w-full py-4 pl-12 pr-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition">
-                                <i data-lucide="mail" class="absolute left-4 top-4 w-5 h-5 text-slate-600 group-focus-within:text-amber-500 transition"></i>
+                                    class="w-full py-4 pl-12 pr-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition transition-colors">
+                                <i data-lucide="mail" class="absolute left-4 top-4 w-5 h-5 text-slate-400 dark:text-slate-600 group-focus-within:text-amber-500 transition transition-colors"></i>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Téléphone</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Téléphone</label>
                             <div class="relative group">
                                 <input type="tel" name="telephone" required placeholder="+228 90 00 00 00" 
-                                    class="w-full py-4 pl-12 pr-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition">
-                                <i data-lucide="phone" class="absolute left-4 top-4 w-5 h-5 text-slate-600 group-focus-within:text-amber-500 transition"></i>
+                                    class="w-full py-4 pl-12 pr-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition transition-colors">
+                                <i data-lucide="phone" class="absolute left-4 top-4 w-5 h-5 text-slate-400 dark:text-slate-600 group-focus-within:text-amber-500 transition transition-colors"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4 border-t border-slate-900">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4 border-t border-slate-100 dark:border-slate-900 transition-colors">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Mot de passe</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Mot de passe</label>
                             <input type="password" name="password" required placeholder="••••••••" 
-                                class="w-full py-4 px-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition">
+                                class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition transition-colors">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Confirmation</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 transition-colors">Confirmation</label>
                             <input type="password" name="password_confirmation" required placeholder="••••••••" 
-                                class="w-full py-4 px-6 bg-slate-900 border border-slate-800 rounded-2xl text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition">
+                                class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition transition-colors">
                         </div>
                     </div>
 
@@ -78,11 +78,11 @@
                 </form>
 
                 <div class="mt-12 flex items-center justify-center gap-4">
-                    <span class="h-px bg-slate-900 flex-grow"></span>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-600 whitespace-nowrap">
-                        Déjà inscrit ? <a href="{{ route('login') }}" class="text-amber-500 hover:text-white transition ml-2 underline decoration-amber-500/20">Se connecter</a>
+                    <span class="h-px bg-slate-100 dark:bg-slate-900 flex-grow transition-colors"></span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-600 whitespace-nowrap transition-colors">
+                        Déjà inscrit ? <a href="{{ route('login') }}" class="text-amber-500 hover:text-slate-900 dark:hover:text-white transition-colors ml-2 underline decoration-amber-500/20">Se connecter</a>
                     </p>
-                    <span class="h-px bg-slate-900 flex-grow"></span>
+                    <span class="h-px bg-slate-100 dark:bg-slate-900 flex-grow transition-colors"></span>
                 </div>
             </div>
         </div>

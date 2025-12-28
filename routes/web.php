@@ -96,6 +96,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('payments', App\Http\Controllers\Admin\PaiementController::class);
     // Paramètres
     Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
+    Route::post('settings/update-bulk', [App\Http\Controllers\Admin\SettingController::class, 'updateBulk'])->name('settings.update-bulk');
     // Rapports, Contenu, Logs
     Route::get('reports', [App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports');
     Route::get('content', [App\Http\Controllers\Admin\ContentController::class, 'index'])->name('content');

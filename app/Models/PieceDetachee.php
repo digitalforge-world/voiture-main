@@ -53,4 +53,9 @@ class PieceDetachee extends Model
     {
         return $this->hasMany(PhotoPiece::class, 'piece_id');
     }
+
+    public function videos()
+    {
+        return $this->hasMany(VideoPiece::class, 'piece_id');
+    }
 }

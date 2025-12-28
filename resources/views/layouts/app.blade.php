@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'AutoImport Hub') - Importation & Location de Véhicules</title>
+    <title>@yield('title', $siteSettings['site_name'] ?? 'AutoImport Hub') - Importation & Location de Véhicules</title>
     
     <meta name="description" content="Plateforme complète pour l'importation de voitures, location de véhicules et vente de pièces détachées en Afrique de l'Ouest.">
+    
+    @if(isset($siteSettings['site_favicon']))
+        <link rel="icon" type="image/x-icon" href="{{ $siteSettings['site_favicon'] }}">
+    @endif
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,26 +33,59 @@
     
     @yield('styles')
 </head>
-<body class="h-full font-sans antialiased text-slate-200 selection:bg-amber-500/30">
+<body class="h-full font-sans antialiased text-slate-600 dark:text-slate-200 selection:bg-amber-500/30 bg-white dark:bg-slate-950 transition-colors duration-300">
     <div class="flex flex-col min-h-screen">
         <!-- Navigation -->
-        <header class="sticky top-0 z-50 transition-all duration-300 border-b bg-slate-950/80 backdrop-blur-md border-slate-800" id="main-header">
+        <header class="sticky top-0 z-50 transition-all duration-300 border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800" id="main-header">
             <div class="container px-4 mx-auto lg:px-8">
                 <nav class="flex items-center justify-between h-20">
                     <div class="flex items-center gap-2">
-                        <a href="{{ url('/') }}" class="flex items-center gap-2 text-2xl font-bold tracking-tighter transition hover:opacity-90">
-                            <span class="text-amber-500">AUTO</span>
-                            <span class="text-white">IMPORT</span>
-                            <span class="px-1.5 py-0.5 text-xs font-black bg-white text-slate-950 rounded uppercase tracking-tighter">Hub</span>
+                        <a href="{{ url('/') }}" class="group flex items-center py-2">
+                            @php
+                                $displayMode = $siteSettings['site_display_mode'] ?? 'both';
+                                $hasLogo = isset($siteSettings['site_logo']) && !empty($siteSettings['site_logo']);
+                                $siteName = $siteSettings['site_name'] ?? 'AutoImport Hub';
+                                $isDefaultName = in_array($siteName, ['AutoImport Hub', 'AutoImport']);
+                            @endphp
+
+                            <div class="flex items-center">
+                                @if($hasLogo && ($displayMode === 'logo' || $displayMode === 'both'))
+                                    <div class="relative flex items-center">
+                                        <img src="{{ $siteSettings['site_logo'] }}" alt="Logo" class="h-11 w-auto object-contain transition-all duration-700 group-hover:scale-105 filter drop-shadow-[0_0_10px_rgba(251,191,36,0.1)]">
+                                    </div>
+                                @endif
+
+                                @if($hasLogo && $displayMode === 'both' && ($displayMode === 'text' || $displayMode === 'both'))
+                                    <div class="h-8 w-px bg-gradient-to-b from-transparent via-amber-500 to-transparent mx-6 opacity-40 group-hover:opacity-100 group-hover:h-10 transition-all duration-700"></div>
+                                @endif
+
+                                @if($displayMode === 'text' || $displayMode === 'both')
+                                    <div class="flex flex-col">
+                                        @if($isDefaultName)
+                                            <div class="flex items-center text-2xl tracking-tighter leading-none">
+                                                <span class="font-black text-slate-900 dark:text-white transition-colors">AUTO</span>
+                                                <span class="font-light text-amber-500">IMPORT</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 mt-1.5 items-center">
+                                                <span class="text-[8px] font-black uppercase tracking-[0.4em] text-slate-500">Solutions</span>
+                                                <div class="h-px w-8 bg-white/10 group-hover:w-12 group-hover:bg-amber-500/50 transition-all duration-700"></div>
+                                            </div>
+                                        @else
+                                            <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white uppercase italic leading-none transition-colors">{{ $siteName }}</span>
+                                            <span class="text-[7px] font-black tracking-[0.5em] text-amber-500/60 uppercase mt-1.5 group-hover:text-amber-500 transition-colors">Automotive Excellence</span>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                         </a>
                     </div>
                     
                     <ul class="items-center hidden gap-8 md:flex">
-                        <li><a href="{{ url('/') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('/') ? 'text-amber-500' : 'text-slate-400' }}">Accueil</a></li>
-                        <li><a href="{{ route('cars.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('cars*') ? 'text-amber-500' : 'text-slate-400' }}">Voitures</a></li>
-                        <li><a href="{{ route('parts.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('parts*') ? 'text-amber-500' : 'text-slate-400' }}">Pièces</a></li>
-                        <li><a href="{{ route('rental.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('rental*') ? 'text-amber-500' : 'text-slate-400' }}">Location</a></li>
-                        <li><a href="{{ route('revisions.create') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-400' }}">Révision</a></li>
+                        <li><a href="{{ url('/') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('/') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Accueil</a></li>
+                        <li><a href="{{ route('cars.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('cars*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
+                        <li><a href="{{ route('parts.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('parts*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
+                        <li><a href="{{ route('rental.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('rental*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
+                        <li><a href="{{ route('revisions.create') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</a></li>
                     </ul>
 
                     <div class="flex items-center gap-4">
@@ -68,7 +113,12 @@
                             </a>
                         @endauth
                         
-                        <button class="flex items-center justify-center w-10 h-10 transition border md:hidden border-slate-800 rounded-xl hover:bg-slate-900" id="mobile-menu-btn">
+                        <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                            <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                            <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                        </button>
+
+                        <button class="flex items-center justify-center w-10 h-10 transition border md:hidden border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900" id="mobile-menu-btn">
                             <i data-lucide="menu" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -76,13 +126,13 @@
             </div>
             
             <!-- Mobile Menu -->
-            <div class="hidden border-t md:hidden border-slate-800 bg-slate-950" id="mobile-menu">
+            <div class="hidden border-t md:hidden border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950" id="mobile-menu">
                 <ul class="flex flex-col p-4 py-6 gap-4">
-                    <li><a href="{{ url('/') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('/') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-400' }}">Accueil</a></li>
-                    <li><a href="{{ route('cars.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('cars*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-400' }}">Voitures</a></li>
-                    <li><a href="{{ route('parts.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('parts*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-400' }}">Pièces</a></li>
-                    <li><a href="{{ route('rental.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('rental*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-400' }}">Location</a></li>
-                    <li><a href="{{ route('revisions.create') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('revisions*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-400' }}">Révision</a></li>
+                    <li><a href="{{ url('/') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('/') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Accueil</a></li>
+                    <li><a href="{{ route('cars.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('cars*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
+                    <li><a href="{{ route('parts.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('parts*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
+                    <li><a href="{{ route('rental.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('rental*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
+                    <li><a href="{{ route('revisions.create') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('revisions*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</a></li>
                 </ul>
             </div>
         </header>
@@ -92,14 +142,14 @@
             <!-- Flash Messages -->
             <div class="fixed top-24 right-4 z-[100] w-full max-w-sm pointer-events-none">
                 @if(session('success'))
-                    <div class="flex items-center gap-3 p-4 mb-4 text-sm font-medium border pointer-events-auto bg-slate-900/90 backdrop-blur border-emerald-500/50 text-emerald-400 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500">
+                    <div class="flex items-center gap-3 p-4 mb-4 text-sm font-medium border pointer-events-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur border-emerald-500/50 text-emerald-600 dark:text-emerald-400 rounded-2xl shadow-xl dark:shadow-2xl animate-in slide-in-from-right duration-500">
                         <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i>
                         {{ session('success') }}
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="flex items-center gap-3 p-4 mb-4 text-sm font-medium border pointer-events-auto bg-slate-900/90 backdrop-blur border-rose-500/50 text-rose-400 rounded-2xl shadow-2xl animate-in slide-in-from-right duration-500">
+                    <div class="flex items-center gap-3 p-4 mb-4 text-sm font-medium border pointer-events-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur border-rose-500/50 text-rose-600 dark:text-rose-400 rounded-2xl shadow-xl dark:shadow-2xl animate-in slide-in-from-right duration-500">
                         <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500"></i>
                         {{ session('error') }}
                     </div>
@@ -110,30 +160,56 @@
         </main>
 
         <!-- Footer Structuré -->
-        <footer class="border-t bg-slate-950 border-slate-900">
+        <footer class="border-t bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-900 transition-colors duration-300">
             <div class="container px-4 py-16 mx-auto lg:px-8">
                 <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5 lg:gap-8">
                     <!-- Branding & Description -->
-                    <div class="space-y-6 lg:col-span-2">
-                        <a href="{{ url('/') }}" class="flex items-center gap-2 text-2xl font-bold tracking-tighter">
-                            <span class="text-amber-500">AUTO</span>
-                            <span class="text-white">IMPORT</span>
-                            <span class="px-1.5 py-0.5 text-xs font-black bg-amber-500 text-slate-950 rounded uppercase tracking-tighter">Hub</span>
+                    <div class="space-y-8 lg:col-span-2">
+                        <a href="{{ url('/') }}" class="group inline-flex items-center">
+                            @php
+                                $displayMode = $siteSettings['site_display_mode'] ?? 'both';
+                                $hasLogo = isset($siteSettings['site_logo']) && !empty($siteSettings['site_logo']);
+                                $siteName = $siteSettings['site_name'] ?? 'AutoImport Hub';
+                                $isDefaultName = in_array($siteName, ['AutoImport Hub', 'AutoImport']);
+                            @endphp
+
+                            <div class="flex items-center">
+                                @if($hasLogo && ($displayMode === 'logo' || $displayMode === 'both'))
+                                    <img src="{{ $siteSettings['site_logo'] }}" alt="Logo" class="h-10 w-auto object-contain transition-all duration-700 opacity-80 group-hover:opacity-100 group-hover:scale-105">
+                                @endif
+
+                                @if($hasLogo && $displayMode === 'both' && ($displayMode === 'text' || $displayMode === 'both'))
+                                    <div class="h-8 w-px bg-white/10 mx-6"></div>
+                                @endif
+
+                                @if($displayMode === 'text' || $displayMode === 'both')
+                                    <div class="flex flex-col">
+                                        @if($isDefaultName)
+                                            <div class="flex items-center text-xl tracking-tighter leading-none">
+                                                <span class="font-black text-white">AUTO</span>
+                                                <span class="font-light text-amber-500">IMPORT</span>
+                                            </div>
+                                        @else
+                                            <span class="text-lg font-black tracking-tight text-white uppercase italic leading-none">{{ $siteName }}</span>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
                         </a>
-                        <p class="text-sm leading-relaxed text-slate-400">
-                            Plateforme complète pour l'importation, la location et l'entretien automobile en Afrique de l'Ouest. Service transparent, traçable et professionnel.
+                        <p class="text-xs leading-relaxed text-slate-500 max-w-sm uppercase tracking-widest font-bold">
+                             {{ $siteSettings['site_description'] ?? 'Plateforme complète pour l\'importation, la location et l\'entretien automobile en Afrique de l\'Ouest.' }}
                         </p>
                         <div class="flex items-center gap-4">
-                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-400">
+                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-200 dark:bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-500 dark:text-slate-400">
                                 <i data-lucide="facebook" class="w-5 h-5"></i>
                             </a>
-                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-400">
+                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-200 dark:bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-500 dark:text-slate-400">
                                 <i data-lucide="instagram" class="w-5 h-5"></i>
                             </a>
-                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-400">
+                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-200 dark:bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-500 dark:text-slate-400">
                                 <i data-lucide="twitter" class="w-5 h-5"></i>
                             </a>
-                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-400">
+                            <a href="#" class="p-2.5 transition rounded-xl bg-slate-200 dark:bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-slate-500 dark:text-slate-400">
                                 <i data-lucide="linkedin" class="w-5 h-5"></i>
                             </a>
                         </div>
@@ -210,9 +286,9 @@
                 </div>
 
                 <!-- Copyright -->
-                <div class="pt-8 mt-8 text-center border-t border-slate-900/50">
+                <div class="pt-8 mt-8 text-center border-t border-slate-200 dark:border-slate-900/50">
                     <p class="text-xs text-slate-500">
-                        &copy; {{ date('Y') }} AutoImport Hub. Tous droits réservés. Développé avec excellence pour l'Afrique de l'Ouest.
+                        &copy; {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'AutoImport Hub' }}. Tous droits réservés. Développé avec excellence pour l'Afrique de l'Ouest.
                     </p>
                 </div>
             </div>
@@ -236,11 +312,37 @@
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 20) {
-                header.classList.add('bg-slate-950/95', 'shadow-2xl', 'h-16');
+                header.classList.add('dark:bg-slate-950/95', 'bg-white/95', 'shadow-2xl', 'h-16');
                 header.classList.remove('h-20');
             } else {
-                header.classList.remove('bg-slate-950/95', 'shadow-2xl', 'h-16');
+                header.classList.remove('dark:bg-slate-950/95', 'bg-white/95', 'shadow-2xl', 'h-16');
                 header.classList.add('h-20');
+            }
+        });
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        
+        themeToggleBtn.addEventListener('click', () => {
+            // if set via local storage previously
+            if (localStorage.getItem('theme')) {
+                if (localStorage.getItem('theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+
+            // if NOT set via local storage previously
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
             }
         });
     </script>

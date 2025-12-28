@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (!app()->runningInConsole() && \Illuminate\Support\Facades\Schema::hasTable('parametres_systeme')) {
+            $settings = \App\Models\ParametreSysteme::all()->pluck('valeur', 'cle')->toArray();
+            view()->share('siteSettings', $settings);
+        }
     }
 }
