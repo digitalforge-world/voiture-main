@@ -10,7 +10,7 @@ class LogController extends Controller
     public function index()
     {
         $logs = \App\Models\LogActivite::with('user')
-            ->orderBy('date_log', 'desc')
+            ->orderBy('date_action', 'desc')
             ->paginate(20);
 
         return view('admin.logs.index', compact('logs'));

@@ -32,7 +32,7 @@
                 <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition duration-300 transition-colors">
                     <td class="px-8 py-6">
                         <div class="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1 italic transition-colors">{{ $log->action }}</div>
-                        <div class="text-[9px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest italic transition-colors">{{ $log->date_log->format('d/m/Y H:i:s') }}</div>
+                        <div class="text-[9px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest italic transition-colors">{{ $log->date_action->format('d/m/Y H:i:s') }}</div>
                     </td>
                     <td class="px-8 py-6">
                         @if($log->user)
@@ -43,12 +43,17 @@
                             <div class="text-[11px] font-black text-slate-900 dark:text-slate-300 italic transition-colors">{{ $log->user->prenom }} {{ $log->user->nom }}</div>
                         </div>
                         @else
-                        <span class="text-[10px] text-slate-400 dark:text-slate-600 font-black italic transition-colors">SYSTÈME</span>
+                        <div class="flex items-center gap-3 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 flex items-center justify-center text-slate-400 dark:text-slate-600 transition-colors">
+                                <i data-lucide="globe" class="w-4 h-4"></i>
+                            </div>
+                            <div class="text-[11px] font-black text-slate-500 dark:text-slate-500 italic uppercase tracking-widest transition-colors">{{ $log->operator_name }}</div>
+                        </div>
                         @endif
                     </td>
                     <td class="px-8 py-6">
-                        <span class="text-[10px] font-black text-slate-500 dark:text-slate-500 uppercase italic tracking-widest transition-colors">{{ $log->table_affectee ?? 'N/A' }}</span>
-                        <div class="text-[9px] text-slate-400 dark:text-slate-600 italic transition-colors">REF_ID: {{ $log->id_enregistrement ?? 'SYS' }}</div>
+                        <span class="text-[10px] font-black text-slate-500 dark:text-slate-500 uppercase italic tracking-widest transition-colors">{{ $log->table_concernee ?? 'N/A' }}</span>
+                        <div class="text-[9px] text-slate-400 dark:text-slate-600 italic transition-colors">REF_ID: {{ $log->enregistrement_id ?? 'SYS' }}</div>
                     </td>
                     <td class="px-8 py-6">
                         @php
@@ -123,6 +128,11 @@
                     </div>
                 </div>
 
+                <div class="p-10 bg-slate-50 dark:bg-slate-950 rounded-[3rem] border border-slate-100 dark:border-white/5 shadow-inner transition-colors">
+                    <div class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-6 italic transition-colors">Détails Techniques (JSON)</div>
+                    <pre id="show_log_details" class="text-[10px] font-mono text-slate-600 dark:text-slate-400 overflow-x-auto whitespace-pre-wrap break-all"></pre>
+                </div>
+
                 <div class="pt-8 text-center">
                     <button onclick="closeModal('showLogModal')" class="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-[2rem] text-[10px] font-black uppercase tracking-widest italic hover:bg-amber-500 dark:hover:bg-amber-500 transition duration-300 shadow-2xl transition-colors">
                         Fermer le Rapport
@@ -147,16 +157,30 @@
 
     function openShowLogModal(log) {
         document.getElementById('show_log_action').innerText = log.action.toUpperCase();
-        document.getElementById('show_log_user').innerText = log.user ? `${log.user.prenom} ${log.user.nom}` : 'SYSTEM_KERNEL';
+        document.getElementById('show_log_user').innerText = (log.operator_name || 'INCONNU').toUpperCase();
         
-        const dateObj = new Date(log.date_log);
+        const dateObj = new Date(log.date_action);
         document.getElementById('show_log_date').innerText = dateObj.toLocaleString('fr-FR', { 
             day: '2-digit', month: 'long', year: 'numeric', 
             hour: '2-digit', minute: '2-digit', second: '2-digit' 
         }).toUpperCase();
         
-        document.getElementById('show_log_table').innerText = (log.table_affectee || 'N/A').toUpperCase();
-        document.getElementById('show_log_id').innerText = log.id_enregistrement || 'SYS_INTERNAL';
+        document.getElementById('show_log_table').innerText = (log.table_concernee || 'N/A').toUpperCase();
+        document.getElementById('show_log_id').innerText = log.enregistrement_id || 'SYS_INTERNAL';
+
+        // Display Details
+        const detailsEl = document.getElementById('show_log_details');
+        if (log.details) {
+            try {
+                // If it's already an object (from JSON response), stringify it
+                const details = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+                detailsEl.textContent = JSON.stringify(details, null, 2);
+            } catch (e) {
+                detailsEl.textContent = log.details;
+            }
+        } else {
+            detailsEl.textContent = "Aucun détail technique disponible.";
+        }
 
         openModal('showLogModal');
     }

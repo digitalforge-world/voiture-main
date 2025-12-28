@@ -89,7 +89,7 @@
         <div class="lg:col-span-2 space-y-8">
             <div class="flex items-center justify-between px-2">
                 <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic underline decoration-amber-500 decoration-4 underline-offset-8 transition-colors">Ventes Récentes</h2>
-                <a href="#" class="group text-[10px] font-black text-slate-400 dark:text-slate-500 hover:text-amber-500 transition tracking-[0.2em] uppercase flex items-center gap-2 italic transition-colors">
+                <a href="{{ route('admin.orders-cars.index') }}" class="group text-[10px] font-black text-slate-400 dark:text-slate-500 hover:text-amber-500 transition tracking-[0.2em] uppercase flex items-center gap-2 italic transition-colors">
                     Voir la liste complète <i data-lucide="arrow-right" class="w-3 h-3 group-hover:translate-x-1 transition"></i>
                 </a>
             </div>
@@ -143,9 +143,9 @@
                 <div class="relative p-10 border bg-amber-500 text-slate-950 rounded-[2.5rem] shadow-2xl">
                     <h3 class="text-2xl font-black uppercase mb-4 leading-none tracking-tighter italic font-display">Nouvelle Voiture</h3>
                     <p class="text-[10px] font-black mb-8 leading-relaxed opacity-80 uppercase tracking-widest italic leading-tight">Ajoutez un véhicule premium au catalogue global.</p>
-                    <a href="#" class="flex items-center justify-center gap-3 w-full py-5 bg-slate-950 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-900 transition translate-y-0 hover:-translate-y-1 duration-300 shadow-xl active:scale-95">
+                    <button onclick="openModal('createCarModal'); lucide.createIcons();" class="flex items-center justify-center gap-3 w-full py-5 bg-slate-950 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-slate-900 transition translate-y-0 hover:-translate-y-1 duration-300 shadow-xl active:scale-95 cursor-pointer">
                         <i data-lucide="plus-circle" class="w-4 h-4"></i> Commencer
-                    </a>
+                    </button>
                 </div>
             </div>
             
@@ -164,10 +164,11 @@
                         <span class="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-tighter italic transition-colors">Pneus Michelin X</span>
                     </div>
                 </div>
-                <button class="w-full py-4 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] hover:text-slate-900 dark:hover:text-white transition-colors italic">Consulter l'Inventaire Complet</button>
+                <a href="{{ route('admin.parts-inventory.index') }}" class="w-full block text-center py-4 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] hover:text-slate-900 dark:hover:text-white transition-colors italic">Consulter l'Inventaire Complet</a>
             </div>
         </div>
     </div>
 </div>
+@include('admin.cars.create-modal')
 @endsection
 

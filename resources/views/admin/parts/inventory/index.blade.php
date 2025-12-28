@@ -281,6 +281,11 @@
 
                 <div id="edit_part_media_preview" class="flex flex-wrap gap-4 empty:hidden transition-colors"></div>
 
+                <div class="pt-6 border-t border-slate-100 dark:border-white/5">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-2 italic transition-colors mb-4 block">Médias Actuels (Cliquer pour supprimer)</label>
+                    <div id="existing_part_media_container" class="flex flex-wrap gap-4 empty:hidden"></div>
+                </div>
+
                 <div class="pt-10 flex gap-6 transition-colors">
                     <button type="button" onclick="closeModal('editPartModal')" class="flex-1 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:bg-white dark:hover:bg-slate-900 transition font-black italic transition-colors">Annuler</button>
                     <button type="submit" class="flex-[2] py-6 text-[10px] font-black uppercase tracking-widest text-slate-950 transition bg-amber-500 rounded-[2.5rem] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition shadow-xl shadow-amber-500/20 font-black italic transition-colors">Enregistrer les modifications</button>
@@ -381,7 +386,85 @@
         document.getElementById('edit_part_stock').value = piece.stock;
         document.getElementById('edit_part_etat').value = piece.etat;
 
+        const mediaContainer = document.getElementById('existing_part_media_container');
+        mediaContainer.innerHTML = '';
+        
+        if (piece.image) {
+            addMediaThumb(mediaContainer, 'photo', piece.image, 'principale', 'part');
+        }
+        
+        if (piece.photos) {
+            piece.photos.forEach(p => {
+                if (p.url !== piece.image) {
+                    addMediaThumb(mediaContainer, 'photo', p.url, p.id, 'part');
+                }
+            });
+        }
+        
+        if (piece.videos) {
+            piece.videos.forEach(v => {
+                addMediaThumb(mediaContainer, 'video', v.url, v.id, 'part');
+            });
+        }
+
         openModal('editPartModal');
+        lucide.createIcons();
+    }
+
+    function addMediaThumb(container, type, url, id, entity) {
+        const div = document.createElement('div');
+        div.id = `media-${type}-${id}`;
+        div.className = 'relative w-20 h-20 rounded-xl overflow-hidden group cursor-pointer border border-slate-100 dark:border-white/10';
+        
+        if (type === 'photo') {
+            div.innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
+        } else {
+            div.innerHTML = `
+                <div class="absolute inset-0 flex items-center justify-center bg-slate-900 border border-white/5">
+                    <i data-lucide="video" class="w-6 h-6 text-white"></i>
+                </div>
+            `;
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'absolute inset-0 bg-rose-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity';
+        overlay.innerHTML = '<i data-lucide="trash-2" class="w-5 h-5 text-white"></i>';
+        overlay.onclick = () => deleteMedia(type, id, entity);
+        
+        div.appendChild(overlay);
+        container.appendChild(div);
+    }
+
+    async function deleteMedia(type, id, entity) {
+        if (id === 'principale') {
+            alert("L'image principale ne peut pas être supprimée seule. Téléchargez une nouvelle photo pour la remplacer.");
+            return;
+        }
+
+        if (!confirm('Supprimer définitivement cet élément ?')) return;
+        
+        const basePath = entity === 'car' ? '/admin/cars' : '/admin/parts-inventory';
+        const url = `${basePath}/${type}s/${id}`;
+        
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById(`media-${type}-${id}`).remove();
+            } else {
+                alert('Erreur: ' + (result.message || 'Inconnue'));
+            }
+        } catch (e) {
+            console.error(e);
+            alert('Erreur réseau.');
+        }
     }
 
     function openShowPartModal(piece) {

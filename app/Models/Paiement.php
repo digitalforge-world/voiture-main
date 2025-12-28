@@ -5,14 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Traits\LogsActivity;
+
 class Paiement extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $table = 'paiements';
 
     protected $fillable = [
-        'reference','tracking_number','user_id','type_transaction','transaction_id','montant','methode','operateur','numero_transaction_externe','statut','date_paiement','date_confirmation','notes'
+        'reference',
+        'tracking_number',
+        'user_id',
+        'type_transaction',
+        'transaction_id',
+        'montant',
+        'methode',
+        'operateur',
+        'numero_transaction_externe',
+        'statut',
+        'date_paiement',
+        'date_confirmation',
+        'notes'
     ];
 
     public const CREATED_AT = 'date_paiement';

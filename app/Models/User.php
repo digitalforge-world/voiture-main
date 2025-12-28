@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, \App\Traits\LogsActivity;
 
     protected $table = 'users';
 
@@ -27,7 +27,19 @@ class User extends Authenticatable
      * @var array<int,string>
      */
     protected $fillable = [
-        'nom', 'prenom', 'email', 'telephone', 'mot_de_passe', 'role', 'adresse', 'ville', 'pays', 'photo_profil', 'actif', 'email_verified_at', 'remember_token',
+        'nom',
+        'prenom',
+        'email',
+        'telephone',
+        'mot_de_passe',
+        'role',
+        'adresse',
+        'ville',
+        'pays',
+        'photo_profil',
+        'actif',
+        'email_verified_at',
+        'remember_token',
     ];
 
     /**
@@ -36,7 +48,8 @@ class User extends Authenticatable
      * @var array<int,string>
      */
     protected $hidden = [
-        'mot_de_passe', 'remember_token',
+        'mot_de_passe',
+        'remember_token',
     ];
 
     /**

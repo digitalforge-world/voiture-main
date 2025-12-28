@@ -153,4 +153,38 @@ class PieceController extends Controller
         $piece->delete();
         return redirect()->route('admin.parts-inventory.index')->with('success', 'Pièce retirée du catalogue.');
     }
+
+    public function deletePhoto(PhotoPiece $photo)
+    {
+        try {
+            $path = str_replace('/storage/', '', $photo->url);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
+            $piece = $photo->piece;
+            if ($photo->principale && $piece) {
+                $piece->update(['image' => null]);
+            }
+
+            $photo->delete();
+            return response()->json(['success' => true, 'message' => 'Archive supprimée']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteVideo(VideoPiece $video)
+    {
+        try {
+            $path = str_replace('/storage/', '', $video->url);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+            $video->delete();
+            return response()->json(['success' => true, 'message' => 'Vidéo supprimée']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }

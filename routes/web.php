@@ -4,23 +4,22 @@ use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\VoitureController;
-use App\Http\Controllers\PieceController;
+use App\Http\Controllers\VoitureController as PublicVoitureController;
+use App\Http\Controllers\PieceController as PublicPieceController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\TrackingController;
-
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Routes Publiques - Services (Maintenant accessibles sans auth)
-Route::get('/cars', [VoitureController::class, 'index'])->name('cars.index');
-Route::get('/cars/{id}', [VoitureController::class, 'show'])->name('cars.show');
-Route::post('/cars/{id}/order', [VoitureController::class, 'order'])->name('cars.order');
+Route::get('/cars', [PublicVoitureController::class, 'index'])->name('cars.index');
+Route::get('/cars/{id}', [PublicVoitureController::class, 'show'])->name('cars.show');
+Route::post('/cars/{id}/order', [PublicVoitureController::class, 'order'])->name('cars.order');
 
-Route::get('/parts', [PieceController::class, 'index'])->name('parts.index');
-Route::get('/parts/compatibility', [PieceController::class, 'searchCompatibility'])->name('parts.compatibility');
-Route::post('/parts/{id}/buy', [PieceController::class, 'buy'])->name('parts.buy');
+Route::get('/parts', [PublicPieceController::class, 'index'])->name('parts.index');
+Route::get('/parts/compatibility', [PublicPieceController::class, 'searchCompatibility'])->name('parts.compatibility');
+Route::post('/parts/{id}/buy', [PublicPieceController::class, 'buy'])->name('parts.buy');
 
 Route::get('/rental', [RentalController::class, 'index'])->name('rental.index');
 Route::post('/rental/{id}/book', [RentalController::class, 'book'])->name('rental.book');
@@ -87,6 +86,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Gestion des Pièces
     Route::resource('parts-inventory', App\Http\Controllers\Admin\PieceController::class);
+
+    // Media Deletion
+    Route::delete('cars/photos/{photo}', [App\Http\Controllers\Admin\VoitureController::class, 'deletePhoto'])->name('cars.photos.destroy');
+    Route::delete('cars/videos/{video}', [App\Http\Controllers\Admin\VoitureController::class, 'deleteVideo'])->name('cars.videos.destroy');
+    Route::delete('parts-inventory/photos/{photo}', [App\Http\Controllers\Admin\PieceController::class, 'deletePhoto'])->name('parts-inventory.photos.destroy');
+    Route::delete('parts-inventory/videos/{video}', [App\Http\Controllers\Admin\PieceController::class, 'deleteVideo'])->name('parts-inventory.videos.destroy');
 
     // Gestion des Commandes Pièces
     Route::resource('orders-parts', App\Http\Controllers\Admin\CommandePieceController::class);

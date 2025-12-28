@@ -233,4 +233,38 @@ class VoitureController extends Controller
         $voiture->delete();
         return redirect()->route('admin.cars.index')->with('success', 'Véhicule et sa galerie retirés du catalogue.');
     }
+
+    public function deletePhoto(PhotoVoiture $photo)
+    {
+        try {
+            $path = str_replace('/storage/', '', $photo->url);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+
+            $voiture = $photo->voiture;
+            if ($photo->principale && $voiture) {
+                $voiture->update(['photo_principale' => null]);
+            }
+
+            $photo->delete();
+            return response()->json(['success' => true, 'message' => 'Archive supprimée']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteVideo(VideoVoiture $video)
+    {
+        try {
+            $path = str_replace('/storage/', '', $video->url);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+            $video->delete();
+            return response()->json(['success' => true, 'message' => 'Vidéo supprimée']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
