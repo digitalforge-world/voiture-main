@@ -13,6 +13,35 @@
         </div>
 
         <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-xl dark:shadow-2xl backdrop-blur-sm transition-all">
+            {{-- Messages d'erreur --}}
+            @if(session('error'))
+                <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-950/20 border-2 border-rose-200 dark:border-rose-900/30 rounded-xl animate-pulse">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="text-sm font-bold text-rose-700 dark:text-rose-400 mb-1">Erreur</p>
+                            <p class="text-sm text-rose-600 dark:text-rose-400">{{ session('error') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-950/20 border-2 border-rose-200 dark:border-rose-900/30 rounded-xl">
+                    <div class="flex items-start gap-3">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5"></i>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold text-rose-700 dark:text-rose-400 mb-2">Erreurs de validation :</p>
+                            <ul class="list-disc list-inside text-sm text-rose-600 dark:text-rose-400 space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <form action="{{ route('tracking.search') }}" method="POST" class="space-y-6">
                 @csrf
                 
@@ -25,11 +54,15 @@
                         <input type="text" 
                                name="tracking_number" 
                                id="tracking_number" 
-                               class="block w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors uppercase tracking-widest font-mono"
-                               placeholder="EX: CAR-2024-X8Y9"
+                               value="{{ old('tracking_number') }}"
+                               class="block w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-colors uppercase tracking-widest font-mono text-lg"
+                               placeholder="EX: REV-2024-A3B7"
                                required
-                               maxlength="14">
+                               maxlength="20">
                     </div>
+                    {{-- <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                        Format: XXX-YYYY-ZZZZ (exemple: REV-2024-A3B7)
+                    </p> --}}
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4 transition-colors">
@@ -51,7 +84,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full flex items-center justify-center gap-2 py-4 px-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-amber-500/20">
+                <button type="submit" class="w-full flex items-center justify-center gap-2 py-4 px-8 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/30">
                     <i data-lucide="search" class="w-5 h-5"></i>
                     Rechercher ma Commande
                 </button>

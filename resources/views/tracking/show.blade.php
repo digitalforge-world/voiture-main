@@ -36,7 +36,13 @@
                             </span>
                         </div>
                         <p class="text-slate-500 dark:text-slate-400 transition-colors">
-                            Commande créée le {{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y à H:i') }}
+                            @php
+                                $createdDate = match($type) {
+                                    'revision' => $order->date_demande ?? $order->created_at ?? now(),
+                                    default => $order->created_at ?? $order->date_demande ?? now()
+                                };
+                            @endphp
+                            Commande créée le {{ \Carbon\Carbon::parse($createdDate)->format('d/m/Y à H:i') }}
                         </p>
                     </div>
                     
@@ -132,23 +138,129 @@
                                 </div>
                             </div>
                         @elseif($type === 'revision')
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-slate-500 dark:text-slate-400">Véhicule:</span>
-                                    <span class="text-slate-900 dark:text-white transition-colors">{{ $order->marque_vehicule }} {{ $order->modele_vehicule }} ({{ $order->annee_vehicule }})</span>
+                            <div class="space-y-4">
+                                {{-- Véhicule Info --}}
+                                <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 transition-colors">
+                                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1">
+                                        <i data-lucide="car" class="w-3 h-3"></i>Véhicule
+                                    </h4>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500 dark:text-slate-400">Marque/Modèle:</span>
+                                            <span class="text-slate-900 dark:text-white font-bold">{{ $order->marque_vehicule }} {{ $order->modele_vehicule }}</span>
+                                        </div>
+                                        @if($order->annee_vehicule)
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500 dark:text-slate-400">Année:</span>
+                                                <span class="text-slate-900 dark:text-white">{{ $order->annee_vehicule }}</span>
+                                            </div>
+                                        @endif
+                                        <div class="flex justify-between text-sm">
+                                            <span class="text-slate-500 dark:text-slate-400">Immatriculation:</span>
+                                            <span class="text-slate-900 dark:text-white font-mono bg-slate-100 dark:bg-slate-800 px-2 rounded">{{ $order->immatriculation ?? 'N/A' }}</span>
+                                        </div>
+                                        @if($order->kilometrage)
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-slate-500 dark:text-slate-400">Kilométrage:</span>
+                                                <span class="text-slate-900 dark:text-white">{{ number_format($order->kilometrage, 0, ',', ' ') }} km</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-slate-500 dark:text-slate-400">Immatriculation:</span>
-                                    <span class="text-slate-900 dark:text-white font-mono bg-slate-100 dark:bg-slate-800 px-2 rounded transition-colors">{{ $order->immatriculation ?? 'N/A' }}</span>
+
+                                {{-- Prix Devis --}}
+                                @if(!empty($order->montant_devis) && $order->montant_devis > 0)
+                                    <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-900/30">
+                                        <div class="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-2 flex items-center gap-1">
+                                            <i data-lucide="dollar-sign" class="w-4 h-4"></i>Devis Estimatif
+                                        </div>
+                                        <div class="text-3xl font-black text-amber-600 dark:text-amber-500">
+                                            {{ number_format($order->montant_devis, 0, ',', ' ') }} <span class="text-sm">FCFA</span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800">
+                                        <div class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Devis</div>
+                                        <div class="text-sm text-slate-500 dark:text-slate-400 italic">En cours d'évaluation par nos techniciens</div>
+                                    </div>
+                                @endif
+
+                                {{-- Problème --}}
+                                <div class="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-100 dark:border-blue-900/20">
+                                    <div class="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-500 mb-2 flex items-center gap-1">
+                                        <i data-lucide="alert-circle" class="w-3 h-3"></i>Problème Signalé
+                                    </div>
+                                    <p class="text-sm text-blue-700 dark:text-blue-400">{{ $order->probleme_description ?? 'Non spécifié' }}</p>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-slate-500 dark:text-slate-400">Date de demande:</span>
-                                    <span class="text-slate-900 dark:text-white transition-colors">{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y') }}</span>
+
+                                {{-- Diagnostic --}}
+                                @if(!empty($order->diagnostic) || !empty($order->diagnostic_technique))
+                                    <div class="p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-100 dark:border-emerald-900/20">
+                                        <div class="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-500 mb-2 flex items-center gap-1">
+                                            <i data-lucide="clipboard-check" class="w-3 h-3"></i>Diagnostic Technique
+                                        </div>
+                                        <p class="text-sm text-emerald-700 dark:text-emerald-400">{{ $order->diagnostic_technique ?? $order->diagnostic }}</p>
+                                    </div>
+                                @endif
+
+                                {{-- Interventions & Pièces --}}
+                                @if(!empty($order->interventions_prevues) || !empty($order->pieces_necessaires))
+                                    <div class="grid md:grid-cols-2 gap-4">
+                                        @if(!empty($order->interventions_prevues))
+                                            <div class="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-100 dark:border-purple-900/20">
+                                                <div class="text-xs font-black uppercase tracking-wider text-purple-600 dark:text-purple-500 mb-2 flex items-center gap-1">
+                                                    <i data-lucide="list-checks" class="w-3 h-3"></i>Interventions Prévues
+                                                </div>
+                                                <p class="text-sm text-purple-700 dark:text-purple-400">{{ $order->interventions_prevues }}</p>
+                                            </div>
+                                        @endif
+
+                                        @if(!empty($order->pieces_necessaires))
+                                            <div class="p-4 bg-indigo-50 dark:bg-indigo-950/20 rounded-lg border border-indigo-100 dark:border-indigo-900/20">
+                                                <div class="text-xs font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-500 mb-2 flex items-center gap-1">
+                                                    <i data-lucide="package" class="w-3 h-3"></i>Pièces Nécessaires
+                                                </div>
+                                                <p class="text-sm text-indigo-700 dark:text-indigo-400">{{ $order->pieces_necessaires }}</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                {{-- Timeline --}}
+                                <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <div class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1">
+                                        <i data-lucide="timeline" class="w-3 h-3"></i>Historique
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                                            <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
+                                            <span class="font-bold">Demande créée:</span>
+                                            <span>{{ \Carbon\Carbon::parse($order->date_demande ?? $order->created_at)->format('d/m/Y à H:i') }}</span>
+                                        </div>
+                                        @if(!empty($order->date_diagnostic))
+                                            <div class="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-500">
+                                                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                                                <span class="font-bold">Diagnostic effectué:</span>
+                                                <span>{{ \Carbon\Carbon::parse($order->date_diagnostic)->format('d/m/Y à H:i') }}</span>
+                                            </div>
+                                        @endif
+                                        @if(!empty($order->date_devis))
+                                            <div class="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-500">
+                                                <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                                <span class="font-bold">Devis envoyé:</span>
+                                                <span>{{ \Carbon\Carbon::parse($order->date_devis)->format('d/m/Y à H:i') }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="mt-4">
-                                    <span class="block text-slate-500 dark:text-slate-400 text-sm mb-1 transition-colors">Description du problème:</span>
-                                    <p class="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg text-sm border border-slate-200 dark:border-slate-800 transition-colors">{{ $order->probleme_description ?? 'Non spécifié' }}</p>
-                                </div>
+
+                                {{-- Notes si disponibles --}}
+                                @if(!empty($order->notes))
+                                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800">
+                                        <div class="text-xs font-black uppercase tracking-wider text-slate-400 mb-2">Notes</div>
+                                        <p class="text-sm text-slate-600 dark:text-slate-400 italic">{{ $order->notes }}</p>
+                                    </div>
+                                @endif
                             </div>
                         @endif
                     </div>

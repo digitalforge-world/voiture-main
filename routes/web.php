@@ -27,11 +27,6 @@ Route::post('/rental/{id}/book', [RentalController::class, 'book'])->name('renta
 Route::get('/revisions', [RevisionController::class, 'create'])->name('revisions.create');
 Route::post('/revisions', [RevisionController::class, 'store'])->name('revisions.store');
 
-// User revisions tracking (requires auth)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/my-revisions', [RevisionController::class, 'index'])->name('revisions.index');
-});
-
 // Nouvelle fonctionnalité : Suivi de Commande (Tracking)
 Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
 Route::post('/tracking/search', [TrackingController::class, 'track'])->name('tracking.search');
@@ -41,6 +36,7 @@ Route::get('/tracking/success', function () {
     }
     return view('tracking.success');
 })->name('tracking.success');
+Route::post('/tracking/pdf', [TrackingController::class, 'downloadPdf'])->name('tracking.pdf');
 
 // Routes Admin (Sécurisées et cachées)
 // URL secrète : /admin/portal/access/login/secure/{token}
