@@ -93,7 +93,76 @@
                 </div>
             </div>
 
-            {{-- Content Details --}}
+            {{-- Payment Status --}}
+            @php
+                $montantTotal = 0;
+                $montantPaye = 0;
+                $showPayment = false;
+
+                if ($type === 'voiture') {
+                    $montantTotal = $order->montant_total ?? 0;
+                    $montantPaye = $order->acompte_verse ?? 0;
+                    $showPayment = true;
+                } elseif ($type === 'revision') {
+                    $montantTotal = $order->montant_final > 0 ? $order->montant_final : ($order->montant_devis ?? 0);
+                    $montantPaye = $order->montant_paye ?? 0;
+                    $showPayment = $montantTotal > 0;
+                } elseif ($type === 'location' || $type === 'piece') {
+                    $montantTotal = $order->montant_total ?? 0;
+                    // TODO: Gérer acompte pour location/pièce si nécessaire
+                    $showPayment = $montantTotal > 0; 
+                }
+
+                $resteAPayer = max(0, $montantTotal - $montantPaye);
+                $isPaid = $resteAPayer <= 0 && $montantTotal > 0;
+            @endphp
+
+            @if($showPayment && $montantTotal > 0)
+            <div class="px-6 md:px-12 py-8 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="w-full md:w-auto">
+                        <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Statut du Paiement</h3>
+                        <div class="flex items-center gap-4">
+                            @if($isPaid)
+                                <div class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500/20">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                    <span class="font-bold">Payé en totalité</span>
+                                </div>
+                            @elseif($resteAPayer > 0)
+                                <div class="bg-amber-500/10 text-amber-600 dark:text-amber-500 px-4 py-2 rounded-xl flex items-center gap-2 border border-amber-500/20">
+                                    <i data-lucide="clock" class="w-5 h-5"></i>
+                                    <span class="font-bold">Paiement partiel</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="w-full md:flex-1 grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Montant Total</div>
+                            <div class="font-bold text-slate-900 dark:text-white">{{ number_format($montantTotal, 0, ',', ' ') }} FCFA</div>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Déjà Payé</div>
+                            <div class="font-bold text-emerald-600 dark:text-emerald-500">{{ number_format($montantPaye, 0, ',', ' ') }} FCFA</div>
+                        </div>
+                        <div class="col-span-2 md:col-span-1 p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30">
+                            <div class="text-xs text-amber-600 dark:text-amber-500 mb-1 font-bold">Reste à Payer</div>
+                            <div class="font-bold text-amber-700 dark:text-amber-500">{{ number_format($resteAPayer, 0, ',', ' ') }} FCFA</div>
+                        </div>
+                    </div>
+
+                    @if($resteAPayer > 0)
+                    <div class="w-full md:w-auto">
+                        <div class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl flex items-center justify-center gap-2 cursor-help" title="Le paiement se fait en agence">
+                            <i data-lucide="store" class="w-5 h-5"></i>
+                            <span class="font-medium text-sm">Paiement en agence</span>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
             <div class="p-6 md:p-8">
                 <div class="grid md:grid-cols-2 gap-8">
                     {{-- Détails de l'article --}}

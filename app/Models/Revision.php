@@ -37,6 +37,8 @@ class Revision extends Model
         'photos',
         'notes',
         'notes_internes',
+        'montant_paye',
+        'statut_paiement',
         'date_diagnostic',
         'date_devis'
     ];

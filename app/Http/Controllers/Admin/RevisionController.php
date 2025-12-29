@@ -86,20 +86,26 @@ class RevisionController extends Controller
             'interventions_prevues' => 'nullable|string',
             'pieces_necessaires' => 'nullable|string',
             'notes_internes' => 'nullable|string',
+            'montant_paye' => 'nullable|numeric|min:0',
+            'statut_paiement' => 'nullable|in:non_paye,partiel,paye',
         ]);
 
         // Update the revision
         $revision->update([
             'statut' => $validated['statut'],
-            'diagnostic' => $validated['diagnostic_technique'],
+            'diagnostic_technique' => $validated['diagnostic_technique'],
+            'diagnostic' => $validated['diagnostic_technique'], // Pour rétrocompatibilité
             'montant_devis' => $validated['montant_devis'] ?? $revision->montant_devis,
             'interventions_prevues' => $validated['interventions_prevues'] ?? $revision->interventions_prevues,
             'pieces_necessaires' => $validated['pieces_necessaires'] ?? $revision->pieces_necessaires,
-            'notes' => $validated['notes_internes'] ?? $revision->notes,
+            'notes_internes' => $validated['notes_internes'] ?? $revision->notes_internes,
+            'notes' => $validated['notes_internes'] ?? $revision->notes, // Pour rétrocompatibilité
+            'montant_paye' => $validated['montant_paye'] ?? 0,
+            'statut_paiement' => $validated['statut_paiement'] ?? 'non_paye',
         ]);
 
         // Update diagnostic date if diagnostic is provided
-        if ($validated['diagnostic_technique']) {
+        if (!empty($validated['diagnostic_technique']) && !$revision->date_diagnostic) {
             $revision->update(['date_diagnostic' => now()]);
         }
 
