@@ -398,7 +398,7 @@
                                                 <div class="text-xs font-bold {{ $progress == 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
                                                     {{ ucfirst(str_replace('_', ' ', $status)) }}
                                                 </div>
-                                                <div class="text-[10px] text-slate-500">Dernière mise à jour : {{ $order->updated_at->format('d/m/Y à H:i') }}</div>
+                                                <div class="text-[10px] text-slate-500">Dernière mise à jour : {{ \Carbon\Carbon::parse($order->updated_at ?? $order->date_demande ?? $order->created_at ?? now())->format('d/m/Y à H:i') }}</div>
                                             </div>
                                         </div>
                                     </div>
