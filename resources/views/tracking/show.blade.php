@@ -21,18 +21,37 @@
                             <h1 class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $tracking }}</h1>
                             @php
                                 $statusColors = [
-                                    'en_attente' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                                    // Default / En attente
+                                    'en_attente' => 'bg-slate-500/10 text-slate-500 border-slate-500/20',
+                                    
+                                    // Validé / Confirmé
                                     'validee' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-                                    'sm' => 'bg-purple-500/10 text-purple-500 border-purple-500/20', // Sur mer pour voiture
-                                    'livree' => 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-                                    'terminee' => 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', // Pour location/révision
+                                    'confirmee' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                                    'devis_envoye' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                                    'accepte' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+
+                                    // En cours
+                                    'en_cours' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                                    'diagnostic_en_cours' => 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+                                    'sm' => 'bg-purple-500/10 text-purple-500 border-purple-500/20', // Sur mer
+                                    'en_intervention' => 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+                                    
+                                    // Terminé
+                                    'livree' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                                    'terminee' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                                    'termine' => 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                                    
+                                    // Annulé / Refusé
                                     'annulee' => 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+                                    'annule' => 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+                                    'refuse' => 'bg-rose-500/10 text-rose-500 border-rose-500/20',
                                 ];
                                 $status = $order->statut ?? 'en_attente';
-                                $colorClass = $statusColors[$status] ?? $statusColors['en_attente'];
+                                $colorClass = $statusColors[$status] ?? 'bg-slate-500/10 text-slate-500 border-slate-500/20';
+                                $statusLabel = ucfirst(str_replace('_', ' ', $status));
                             @endphp
                             <span class="px-3 py-1 rounded-full text-xs font-bold border {{ $colorClass }} uppercase">
-                                {{ str_replace('_', ' ', $status) }}
+                                {{ $statusLabel }}
                             </span>
                         </div>
                         <p class="text-slate-500 dark:text-slate-400 transition-colors">
@@ -66,27 +85,56 @@
                     {{-- Barre de fond --}}
                     <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 rounded-full transition-colors"></div>
                     
-                    {{-- Barre de progression active --}}
+                    {{-- Calcul Progression --}}
                     @php
-                        $progress = match($status) {
-                            'en_attente' => 10,
-                            'validee' => 40,
-                            'sm' => 70, // Sur mer
-                            'en_cours' => 60, // Révision/Location
-                            'livree', 'terminee' => 100,
-                            default => 0
-                        };
+                        $progress = 0;
+                        $bgClass = 'bg-amber-500';
+
+                        // Statuts Étape 1 : Reçu (10%)
+                        if (in_array($status, ['en_attente', 'recu'])) {
+                            $progress = 10;
+                        }
+                        // Statuts Étape 2 : Validé / Diagnostic (40%)
+                        elseif (in_array($status, ['validee', 'confirmee', 'devis_envoye', 'diagnostic_en_cours', 'accepte'])) {
+                            $progress = 40;
+                        }
+                        // Statuts Étape 3 : En cours (70%)
+                        elseif (in_array($status, ['en_cours', 'sm', 'en_intervention', 'expediee', 'en_preparation'])) {
+                            $progress = 70;
+                        }
+                        // Statuts Étape 4 : Terminé (100%)
+                        elseif (in_array($status, ['livree', 'terminee', 'termine', 'disponible'])) {
+                            $progress = 100;
+                            $bgClass = 'bg-emerald-500';
+                        }
+                        // Statuts Annulés : 100% Rouge
+                        elseif (in_array($status, ['annule', 'annulee', 'refuse'])) {
+                            $progress = 100;
+                            $bgClass = 'bg-rose-500';
+                        }
                     @endphp
-                    <div class="absolute top-1/2 left-0 h-1 bg-amber-500 -translate-y-1/2 rounded-full transition-all duration-1000" style="width: {{ $progress }}%"></div>
+                    
+                    <div class="absolute top-1/2 left-0 h-1 {{ $bgClass }} -translate-y-1/2 rounded-full transition-all duration-1000" style="width: {{ $progress }}%"></div>
 
                     {{-- Étapes --}}
                     <div class="relative flex justify-between">
                         @foreach(['Reçu', 'Validé', 'En cours', 'Terminé'] as $index => $step)
+                        @php 
+                            $stepThreshold = $index * 30 + 10;
+                            $isActive = $progress >= $stepThreshold;
+                            $isCompleted = $progress > $stepThreshold;
+                        @endphp
                         <div class="flex flex-col items-center gap-2">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-4 {{ $progress >= ($index * 33 + 10) ? 'bg-amber-500 border-white dark:border-slate-900 text-slate-950' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-500' }} transition-colors">
-                                {{ $index + 1 }}
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-4 {{ $isActive ? ($isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'bg-amber-500 border-white dark:border-slate-900 text-slate-950') : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-500' }} transition-colors shadow-sm">
+                                @if($isCompleted && !in_array($status, ['annule', 'annulee', 'refuse']))
+                                    <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                                @elseif(in_array($status, ['annule', 'annulee', 'refuse']) && $index == 3)
+                                    <i data-lucide="x" class="w-4 h-4 text-rose-500"></i>
+                                @else
+                                    {{ $index + 1 }}
+                                @endif
                             </div>
-                            <span class="text-xs font-medium {{ $progress >= ($index * 33 + 10) ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500' }} transition-colors">{{ $step }}</span>
+                            <span class="text-xs font-medium {{ $isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500' }} transition-colors">{{ $step }}</span>
                         </div>
                         @endforeach
                     </div>
@@ -300,26 +348,59 @@
                                     <div class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1">
                                         <i data-lucide="timeline" class="w-3 h-3"></i>Historique
                                     </div>
-                                    <div class="space-y-2">
-                                        <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                            <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
-                                            <span class="font-bold">Demande créée:</span>
-                                            <span>{{ \Carbon\Carbon::parse($order->date_demande ?? $order->created_at)->format('d/m/Y à H:i') }}</span>
+                                    <div class="space-y-4">
+                                        {{-- Création --}}
+                                        <div class="flex gap-3 relative">
+                                            <div class="flex flex-col items-center">
+                                                <div class="w-2.5 h-2.5 bg-slate-400 rounded-full z-10"></div>
+                                                <div class="h-full w-0.5 bg-slate-200 dark:bg-slate-800 -mt-1"></div>
+                                            </div>
+                                            <div class="pb-2">
+                                                <div class="text-xs font-bold text-slate-900 dark:text-white">Demande Créée</div>
+                                                <div class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($order->date_demande ?? $order->created_at)->format('d/m/Y à H:i') }}</div>
+                                            </div>
                                         </div>
-                                        @if(!empty($order->date_diagnostic))
-                                            <div class="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-500">
-                                                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                                <span class="font-bold">Diagnostic effectué:</span>
-                                                <span>{{ \Carbon\Carbon::parse($order->date_diagnostic)->format('d/m/Y à H:i') }}</span>
+
+                                        {{-- Diagnostic --}}
+                                        @if(!empty($order->date_diagnostic) && $order->date_diagnostic)
+                                            <div class="flex gap-3 relative">
+                                                <div class="flex flex-col items-center">
+                                                    <div class="w-2.5 h-2.5 bg-purple-500 rounded-full z-10"></div>
+                                                    <div class="h-full w-0.5 bg-slate-200 dark:bg-slate-800 -mt-1"></div>
+                                                </div>
+                                                <div class="pb-2">
+                                                    <div class="text-xs font-bold text-purple-600 dark:text-purple-400">Diagnostic Effectué</div>
+                                                    <div class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($order->date_diagnostic)->format('d/m/Y à H:i') }}</div>
+                                                </div>
                                             </div>
                                         @endif
-                                        @if(!empty($order->date_devis))
-                                            <div class="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-500">
-                                                <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
-                                                <span class="font-bold">Devis envoyé:</span>
-                                                <span>{{ \Carbon\Carbon::parse($order->date_devis)->format('d/m/Y à H:i') }}</span>
+
+                                        {{-- Devis --}}
+                                        @if(!empty($order->date_devis) && $order->date_devis)
+                                            <div class="flex gap-3 relative">
+                                                <div class="flex flex-col items-center">
+                                                    <div class="w-2.5 h-2.5 bg-blue-500 rounded-full z-10"></div>
+                                                    <div class="h-full w-0.5 bg-slate-200 dark:bg-slate-800 -mt-1"></div>
+                                                </div>
+                                                <div class="pb-2">
+                                                    <div class="text-xs font-bold text-blue-600 dark:text-blue-400">Devis Envoyé</div>
+                                                    <div class="text-[10px] text-slate-500">{{ \Carbon\Carbon::parse($order->date_devis)->format('d/m/Y à H:i') }}</div>
+                                                </div>
                                             </div>
                                         @endif
+
+                                        {{-- Statut Actuel --}}
+                                        <div class="flex gap-3 relative">
+                                            <div class="flex flex-col items-center">
+                                                <div class="w-2.5 h-2.5 {{ $progress == 100 ? 'bg-emerald-500' : 'bg-amber-500' }} rounded-full z-10 animate-pulse"></div>
+                                            </div>
+                                            <div>
+                                                <div class="text-xs font-bold {{ $progress == 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400' }}">
+                                                    {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                                </div>
+                                                <div class="text-[10px] text-slate-500">Dernière mise à jour : {{ $order->updated_at->format('d/m/Y à H:i') }}</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
