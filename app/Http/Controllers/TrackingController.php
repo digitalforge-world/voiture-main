@@ -62,14 +62,13 @@ class TrackingController extends Controller
 
             case 'location':
                 $order = DB::table('locations')
-                    ->join('voitures', 'locations.voiture_id', '=', 'voitures.id')
+                    ->join('voitures_location', 'locations.voiture_location_id', '=', 'voitures_location.id')
                     ->where('locations.tracking_number', $tracking)
                     ->select(
                         'locations.*',
-                        'voitures.marque',
-                        'voitures.modele',
-                        'voitures.annee',
-                        'voitures.image'
+                        'voitures_location.marque',
+                        'voitures_location.modele',
+                        'voitures_location.photo_principale as image'
                     )
                     ->first();
                 break;

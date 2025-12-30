@@ -15,7 +15,15 @@ class LocationController extends Controller
         $locations = \App\Models\Location::with(['user', 'voiture'])->latest('date_reservation')->paginate(15);
         $users = \App\Models\User::all();
         $voitures = \App\Models\VoitureLocation::where('disponible', true)->get();
-        return view('admin.rentals.index', compact('locations', 'users', 'voitures'));
+
+        $stats = [
+            'total' => \App\Models\Location::count(),
+            'active' => \App\Models\Location::where('statut', 'en_cours')->count(),
+            'pending' => \App\Models\Location::where('statut', 'reserve')->count(),
+            'revenue' => \App\Models\Location::where('statut', 'termine')->sum('montant_total'),
+        ];
+
+        return view('admin.rentals.index', compact('locations', 'users', 'voitures', 'stats'));
     }
 
     /**

@@ -7,13 +7,18 @@ use Illuminate\Http\Request;
 
 class RentalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $voitures = VoitureLocation::where('disponible', true)
-            ->latest()
-            ->paginate(9);
+        $query = VoitureLocation::where('disponible', true);
 
-        return view('rental.index', compact('voitures'));
+        if ($request->has('category') && $request->category != 'all') {
+            $query->where('categorie', $request->category);
+        }
+
+        $voitures = $query->latest()->paginate(9);
+        $categories = ['economique', 'confort', 'premium', 'suv', 'utilitaire'];
+
+        return view('rental.index', compact('voitures', 'categories'));
     }
 
     public function book(Request $request, $id)

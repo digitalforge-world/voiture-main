@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <script>
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -33,12 +33,12 @@
     
     @yield('styles')
 </head>
-<body class="h-full font-sans antialiased text-slate-600 dark:text-slate-200 selection:bg-amber-500/30 bg-white dark:bg-slate-950 transition-colors duration-300">
+<body class="font-sans antialiased text-slate-600 dark:text-slate-200 selection:bg-amber-500/30 bg-white dark:bg-slate-950 transition-colors duration-300">
     <div class="flex flex-col min-h-screen">
         <!-- Navigation -->
-        <header class="sticky top-0 z-50 transition-all duration-300 border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800" id="main-header">
+        <header class="sticky top-0 z-[60] transition-all duration-500 border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800" id="main-header">
             <div class="container px-4 mx-auto lg:px-8">
-                <nav class="flex items-center justify-between h-20">
+                <nav class="flex items-center justify-between h-20 transition-all duration-500" id="main-nav">
                     <div class="flex items-center gap-2">
                         <a href="{{ url('/') }}" class="group flex items-center py-2">
                             @php
@@ -311,12 +311,21 @@
         // Sticky Header Effect
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
+            const nav = document.getElementById('main-nav');
+            const parc = document.getElementById('parc');
+            
             if (window.scrollY > 20) {
-                header.classList.add('dark:bg-slate-950/95', 'bg-white/95', 'shadow-2xl', 'h-16');
-                header.classList.remove('h-20');
+                header.classList.add('shadow-2xl', 'bg-white/95', 'dark:bg-slate-950/95');
+                nav.classList.replace('h-20', 'h-16');
+                if (parc) {
+                    parc.classList.replace('top-[80px]', 'top-[64px]');
+                }
             } else {
-                header.classList.remove('dark:bg-slate-950/95', 'bg-white/95', 'shadow-2xl', 'h-16');
-                header.classList.add('h-20');
+                header.classList.remove('shadow-2xl', 'bg-white/95', 'dark:bg-slate-950/95');
+                nav.classList.replace('h-16', 'h-20');
+                if (parc) {
+                    parc.classList.replace('top-[64px]', 'top-[80px]');
+                }
             }
         });
 

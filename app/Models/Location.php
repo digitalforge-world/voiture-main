@@ -47,6 +47,8 @@ class Location extends Model
         'montant_total' => 'decimal:2',
         'date_reservation' => 'datetime',
         'date_modification' => 'datetime',
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
         'date_debut_reelle' => 'datetime',
         'date_fin_reelle' => 'datetime',
     ];
