@@ -82,9 +82,9 @@
                     
                     <ul class="items-center hidden gap-8 md:flex">
                         <li><a href="{{ url('/') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('/') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Accueil</a></li>
-                        <li><a href="{{ route('cars.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('cars*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
-                        <li><a href="{{ route('parts.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('parts*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
-                        <li><a href="{{ route('rental.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('rental*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
+                        <li><a href="{{ route('cars.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('voitures*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
+                        <li><a href="{{ route('parts.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('pieces*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
+                        <li><a href="{{ route('rental.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('location*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
                         <li><a href="{{ route('revisions.create') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</a></li>
                     </ul>
 
@@ -129,9 +129,9 @@
             <div class="hidden border-t md:hidden border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950" id="mobile-menu">
                 <ul class="flex flex-col p-4 py-6 gap-4">
                     <li><a href="{{ url('/') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('/') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Accueil</a></li>
-                    <li><a href="{{ route('cars.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('cars*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
-                    <li><a href="{{ route('parts.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('parts*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
-                    <li><a href="{{ route('rental.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('rental*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
+                    <li><a href="{{ route('cars.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('voitures*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</a></li>
+                    <li><a href="{{ route('parts.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('pieces*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
+                    <li><a href="{{ route('rental.index') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('location*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
                     <li><a href="{{ route('revisions.create') }}" class="block px-4 py-2 text-base font-medium rounded-lg {{ Request::is('revisions*') ? 'bg-amber-500/10 text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</a></li>
                 </ul>
             </div>

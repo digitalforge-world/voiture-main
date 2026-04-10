@@ -13,30 +13,30 @@ use App\Http\Controllers\TrackingController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Routes Publiques - Services (Maintenant accessibles sans auth)
-Route::get('/cars', [PublicVoitureController::class, 'index'])->name('cars.index');
-Route::get('/cars/{id}', [PublicVoitureController::class, 'show'])->name('cars.show');
-Route::post('/cars/{id}/order', [PublicVoitureController::class, 'order'])->name('cars.order');
+Route::get('/voitures', [PublicVoitureController::class, 'index'])->name('cars.index');
+Route::get('/voitures/{id}', [PublicVoitureController::class, 'show'])->name('cars.show');
+Route::post('/voitures/{id}/order', [PublicVoitureController::class, 'order'])->name('cars.order');
 
-Route::get('/parts', [PublicPieceController::class, 'index'])->name('parts.index');
-Route::get('/parts/compatibility', [PublicPieceController::class, 'searchCompatibility'])->name('parts.compatibility');
-Route::post('/parts/{id}/buy', [PublicPieceController::class, 'buy'])->name('parts.buy');
+Route::get('/pieces', [PublicPieceController::class, 'index'])->name('parts.index');
+Route::get('/pieces/compatibilite', [PublicPieceController::class, 'searchCompatibility'])->name('parts.compatibility');
+Route::post('/pieces/{id}/acheter', [PublicPieceController::class, 'buy'])->name('parts.buy');
 
-Route::get('/rental', [RentalController::class, 'index'])->name('rental.index');
-Route::post('/rental/{id}/book', [RentalController::class, 'book'])->name('rental.book');
+Route::get('/location', [RentalController::class, 'index'])->name('rental.index');
+Route::post('/location/{id}/reserver', [RentalController::class, 'book'])->name('rental.book');
 
 Route::get('/revisions', [RevisionController::class, 'create'])->name('revisions.create');
 Route::post('/revisions', [RevisionController::class, 'store'])->name('revisions.store');
 
 // Nouvelle fonctionnalité : Suivi de Commande (Tracking)
-Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking.index');
-Route::post('/tracking/search', [TrackingController::class, 'track'])->name('tracking.search');
-Route::get('/tracking/success', function () {
+Route::get('/suivi', [TrackingController::class, 'index'])->name('tracking.index');
+Route::post('/suivi/recherche', [TrackingController::class, 'track'])->name('tracking.search');
+Route::get('/suivi/succes', function () {
     if (!session('tracking_number')) {
         return redirect()->route('home');
     }
     return view('tracking.success');
 })->name('tracking.success');
-Route::post('/tracking/pdf', [TrackingController::class, 'downloadPdf'])->name('tracking.pdf');
+Route::post('/suivi/pdf', [TrackingController::class, 'downloadPdf'])->name('tracking.pdf');
 
 // Routes Admin (Sécurisées et cachées)
 // URL secrète : /admin/portal/access/login/secure/{token}

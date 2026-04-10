@@ -14,8 +14,8 @@
                     <span>/</span>
                     <span class="text-amber-500">Stock & Importation</span>
                 </nav>
-                <h1 class="text-4xl font-black text-slate-900 dark:text-white lg:text-5xl transition-colors">Trouvez Votre <span class="text-amber-500">Pépite</span>.</h1>
-                <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 transition-colors">Explorez notre sélection de véhicules premium disponibles à l'importation directe.</p>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white lg:text-4xl transition-colors">Trouvez Votre <span class="text-amber-500">Pépite</span>.</h1>
+                <p class="mt-4 text-base text-slate-600 dark:text-slate-400 transition-colors">Explorez notre sélection de véhicules premium disponibles à l'importation directe.</p>
             </div>
         </div>
     </div>
@@ -23,9 +23,9 @@
     <div class="container px-4 py-12 mx-auto lg:px-8">
         <div class="flex flex-col gap-12 lg:flex-row">
             <!-- Sidebar Filters -->
-            <aside class="w-full lg:w-80 shrink-0">
-                <form action="{{ route('cars.index') }}" method="GET" class="sticky top-28 space-y-8">
-                    <div class="p-8 border bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm dark:shadow-none transition-all">
+            <aside class="w-full lg:w-72 shrink-0">
+                <form action="{{ route('cars.index') }}" method="GET" class="sticky top-28 space-y-6">
+                    <div class="p-6 border bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm dark:shadow-none transition-all">
                         <h3 class="flex items-center gap-2 mb-6 text-lg font-bold text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">
                             <i data-lucide="sliders-horizontal" class="w-5 h-5 text-amber-500"></i>
                             Filtres
@@ -89,23 +89,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @forelse($voitures as $car)
-                        <div class="group bg-slate-950 border border-slate-800 rounded-[2rem] overflow-hidden hover:border-amber-500/30 transition duration-500 flex flex-col shadow-xl">
+                        <div class="group bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition duration-500 flex flex-col shadow-xl">
                             <div class="relative overflow-hidden aspect-[4/3]">
                                 <img src="{{ $car->image ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800' }}" alt="{{ $car->marque }} {{ $car->modele }}" class="object-cover w-full h-full transition duration-700 group-hover:scale-105">
                                 <div class="absolute p-4 flex gap-2 top-0 left-0">
                                     <span class="px-3 py-1 text-[10px] font-black tracking-widest uppercase bg-amber-500 text-slate-950 rounded-full shadow-lg">{{ $car->etat }}</span>
                                 </div>
-                                <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-slate-950/90 to-transparent">
-                                    <div class="text-3xl font-black text-white">
+                                <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950/90 to-transparent">
+                                    <div class="text-xl font-black text-white">
                                         {{ number_format($car->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500">€</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-8 flex-grow flex flex-col bg-white dark:bg-slate-950 transition-colors">
+                            <div class="p-6 flex-grow flex flex-col bg-white dark:bg-slate-950 transition-colors">
                                 <div class="mb-4">
-                                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition tracking-tight">{{ $car->marque }} {{ $car->modele }}</h3>
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition tracking-tight">{{ $car->marque }} {{ $car->modele }}</h3>
                                     <div class="flex items-center gap-2 mt-2 text-slate-500 text-sm font-medium">
                                         <div class="flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 dark:bg-white/5 rounded-md border border-slate-200 dark:border-white/5 uppercase tracking-tighter text-[10px] transition-colors">{{ $car->annee }}</div>
                                         <span class="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full transition-colors"></span>
@@ -146,11 +146,11 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-2 py-32 text-center rounded-[2rem] border-2 border-dashed border-slate-200 dark:border-slate-900 transition-colors">
-                            <i data-lucide="car-front" class="w-16 h-16 mx-auto mb-4 text-slate-200 dark:text-slate-800 transition-colors"></i>
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">Ours ! Aucun trésor ici.</h3>
-                            <p class="text-slate-500 mt-2 transition-colors">Essayez de modifier vos filtres pour trouver votre bonheur.</p>
-                            <a href="{{ route('cars.index') }}" class="inline-block mt-8 px-6 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl hover:bg-amber-400 transition">Voir tout le stock</a>
+                        <div class="col-span-3 py-20 text-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 transition-colors">
+                            <i data-lucide="car-front" class="w-12 h-12 mx-auto mb-4 text-slate-200 dark:text-slate-800 transition-colors"></i>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white transition-colors">Aucun véhicule trouvé</h3>
+                            <p class="text-slate-500 mt-2 text-xs transition-colors">Essayez de modifier vos filtres pour trouver votre bonheur.</p>
+                            <a href="{{ route('cars.index') }}" class="inline-block mt-8 px-6 py-2.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-amber-400 transition">Voir tout le stock</a>
                         </div>
                     @endforelse
                 </div>

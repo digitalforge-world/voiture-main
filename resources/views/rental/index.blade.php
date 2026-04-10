@@ -21,11 +21,11 @@
                 </div>
 
                 <div class="space-y-4 animate-in fade-in slide-in-from-bottom duration-1000">
-                    <h1 class="text-6xl lg:text-9xl font-black leading-[0.85] tracking-tighter text-slate-900 dark:text-white uppercase transition-colors">
+                    <h1 class="text-3xl lg:text-5xl font-black leading-tight tracking-tighter text-slate-900 dark:text-white uppercase transition-colors">
                         L'art du <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 italic font-serif normal-case tracking-normal">Voyage.</span>
                     </h1>
-                    <p class="max-w-2xl text-lg lg:text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium transition-colors">
+                    <p class="max-w-2xl text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium transition-colors">
                         Expérimentez l'excellence au volant de notre sélection exclusive. <br class="hidden lg:block"> Location premium à Lomé avec service de conciergerie personnalisé.
                     </p>
                 </div>
@@ -74,7 +74,7 @@
             @forelse($voitures as $car)
                 <div class="group relative flex flex-col items-stretch space-y-6">
                     <!-- High-End Car Card -->
-                    <div class="relative aspect-[16/10] rounded-[3rem] overflow-hidden bg-slate-100 dark:bg-slate-900 shadow-2xl transition duration-700 hover:-translate-y-2 group-hover:shadow-amber-500/10">
+                    <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 shadow-2xl transition duration-700 hover:-translate-y-2 group-hover:shadow-amber-500/10">
                         <!-- Background Blur Effect -->
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
                             <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" class="absolute inset-0 w-full h-full object-cover scale-150 blur-3xl opacity-20">
@@ -101,15 +101,15 @@
                         </div>
 
                         <!-- Car Identity -->
-                        <div class="absolute bottom-10 left-10 right-10 flex items-end justify-between">
+                        <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between">
                             <div class="space-y-1">
-                                <h3 class="text-3xl font-black text-white uppercase tracking-tighter leading-none italic">{{ $car->marque }}</h3>
-                                <p class="text-lg font-bold text-amber-500 uppercase tracking-widest leading-none">{{ $car->modele }}</p>
+                                <h3 class="text-lg font-black text-white uppercase tracking-tighter leading-none italic">{{ $car->marque }}</h3>
+                                <p class="text-sm font-bold text-amber-500 uppercase tracking-widest leading-none">{{ $car->modele }}</p>
                             </div>
                             <div class="text-right">
                                 <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">À partir de</div>
-                                <div class="text-4xl font-black text-white italic transition group-hover:text-amber-500">
-                                    {{ number_format($car->prix_jour, 0, ',', ' ') }} <span class="text-sm">FCFA</span>
+                                <div class="text-xl font-black text-white italic transition group-hover:text-amber-500">
+                                    {{ number_format($car->prix_jour, 0, ',', ' ') }} <span class="text-xs">FCFA</span>
                                 </div>
                             </div>
                         </div>
@@ -204,13 +204,13 @@
 <div id="bookingModal" class="fixed inset-0 z-[100] hidden overflow-hidden">
     <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-xl transition-opacity animate-in fade-in" onclick="closeModal('bookingModal')"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row transition-colors animate-in zoom-in slide-in-from-bottom duration-500">
+        <div class="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row transition-colors animate-in zoom-in slide-in-from-bottom duration-500">
             <!-- Left Side: Summary -->
-            <div class="w-full md:w-2/5 p-12 bg-slate-50 dark:bg-slate-950/50 border-r border-slate-100 dark:border-white/5 transition-colors">
+            <div class="w-full md:w-2/5 p-8 bg-slate-50 dark:bg-slate-950/50 border-r border-slate-100 dark:border-white/5 transition-colors">
                 <div class="space-y-8">
                     <div class="space-y-2">
                         <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Votre sélection</span>
-                        <h2 id="modal_car_name" class="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none transition-colors italic"></h2>
+                        <h2 id="modal_car_name" class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none transition-colors italic"></h2>
                     </div>
                     <div class="rounded-3xl overflow-hidden shadow-2xl">
                         <img id="modal_car_img" src="" class="w-full h-48 object-cover">
@@ -234,10 +234,10 @@
 
             <!-- Right Side: Form -->
             <div class="w-full md:w-3/5 p-12 bg-white dark:bg-slate-900 transition-colors">
-                <button onclick="closeModal('bookingModal')" class="absolute top-8 right-8 text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+                <button onclick="closeModal('bookingModal')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8 transition-colors italic border-l-4 border-amber-500 pl-4">Données de réservation</h3>
+                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8 transition-colors italic border-l-4 border-amber-500 pl-4">Données de réservation</h3>
                 
                 <form id="bookingForm" method="POST" class="space-y-6">
                     @csrf
@@ -277,13 +277,13 @@
 <div id="detailsModal" class="fixed inset-0 z-[100] hidden overflow-hidden">
     <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-2xl transition-opacity animate-in fade-in" onclick="closeModal('detailsModal')"></div>
     <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative w-full max-w-5xl bg-white dark:bg-slate-950 border border-white/5 rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in slide-in-from-top duration-500">
+        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-950 border border-white/5 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in slide-in-from-top duration-500">
              <div class="w-full md:w-1/2 relative bg-slate-950 overflow-hidden">
                  <img id="details_car_img" src="" class="absolute inset-0 w-full h-full object-cover">
                  <div class="absolute inset-0 bg-gradient-to-r from-slate-950/60 to-transparent"></div>
-                 <div class="absolute bottom-12 left-12 space-y-4">
-                    <span id="details_car_cat" class="px-5 py-2 bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-[0.3em] rounded-full"></span>
-                    <h2 id="details_car_name" class="text-6xl font-black text-white uppercase tracking-tighter leading-none italic"></h2>
+                 <div class="absolute bottom-8 left-8 space-y-4">
+                    <span id="details_car_cat" class="px-4 py-1.5 bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-[0.3em] rounded-full"></span>
+                    <h2 id="details_car_name" class="text-3xl font-black text-white uppercase tracking-tighter leading-none italic"></h2>
                  </div>
              </div>
              <div class="w-full md:w-1/2 p-16 space-y-12 dark:text-white">
@@ -339,7 +339,7 @@
         const modal = document.getElementById('bookingModal');
         const form = document.getElementById('bookingForm');
         
-        form.action = `/location/${car.id}/book`;
+        form.action = `/location/${car.id}/reserver`;
         document.getElementById('modal_car_name').innerText = `${car.marque} ${car.modele}`;
         document.getElementById('modal_car_img').src = car.photo_principale || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000';
         document.getElementById('modal_car_price').innerText = new Intl.NumberFormat('fr-FR').format(car.prix_jour) + ' FCFA';

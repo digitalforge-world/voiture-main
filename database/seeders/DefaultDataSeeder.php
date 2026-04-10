@@ -188,5 +188,19 @@ class DefaultDataSeeder extends Seeder
             'statut' => 'en_attente',
             'reference' => 'REV-SAMPLE-001',
         ]);
+
+        // Paramètres système
+        $settings = [
+            'site_name' => 'AutoImport Hub',
+            'site_description' => 'Plateforme complète pour l\'importation, la location et l\'entretien automobile en Afrique de l\'Ouest.',
+            'site_display_mode' => 'both',
+            'contact_email' => 'contact@auto.com',
+            'contact_phone' => '+228 90 00 00 00',
+            'contact_address' => 'Lomé, Togo',
+        ];
+
+        foreach ($settings as $cle => $valeur) {
+            ParametreSysteme::updateOrCreate(['cle' => $cle], ['valeur' => $valeur]);
+        }
     }
 }

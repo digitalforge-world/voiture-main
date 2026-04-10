@@ -18,19 +18,19 @@
                         </span>
                         <span class="text-sm font-black tracking-[0.2em] uppercase text-amber-500">Magasin de Pièces</span>
                     </div>
-                    <h1 class="text-5xl font-black leading-tight tracking-tight text-slate-900 dark:text-white lg:text-7xl transition-colors">
+                    <h1 class="text-3xl font-black leading-tight tracking-tight text-slate-900 dark:text-white lg:text-5xl transition-colors">
                         Qualité <span class="italic font-serif text-amber-500">Garantie</span> <br>
                         Précision Mécanique.
                     </h1>
-                    <p class="max-w-xl mt-6 text-lg text-slate-600 dark:text-slate-400 transition-colors">
+                    <p class="max-w-xl mt-6 text-base text-slate-600 dark:text-slate-400 transition-colors">
                         Trouvez exactement ce qu'il vous faut grâce à notre vérificateur de compatibilité intelligent. Pièces d'origine et adaptables certifiées.
                     </p>
                 </div>
 
                 <!-- Compatibility Checker Box -->
-                <div class="lg:col-span-5 p-px bg-gradient-to-br from-amber-500/40 to-slate-200 dark:to-transparent rounded-[2.5rem] transition-colors">
-                    <div class="p-10 bg-white dark:bg-slate-950 rounded-[2.4rem] shadow-xl dark:shadow-2xl transition-colors">
-                        <h3 class="flex items-center gap-3 mb-8 text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">
+                <div class="lg:col-span-5 p-px bg-gradient-to-br from-amber-500/40 to-slate-200 dark:to-transparent rounded-2xl transition-colors">
+                    <div class="p-8 bg-white dark:bg-slate-950 rounded-2xl shadow-xl dark:shadow-2xl transition-colors">
+                        <h3 class="flex items-center gap-3 mb-6 text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">
                             <i data-lucide="zap" class="w-5 h-5 text-amber-500"></i>
                             Vérificateur de Compatibilité
                         </h3>
@@ -64,7 +64,7 @@
         <div class="flex flex-col gap-16 lg:flex-row">
             <!-- Sidebar -->
             <aside class="w-full lg:w-72 shrink-0">
-                <div class="sticky p-8 space-y-10 border bg-white dark:bg-slate-900/30 border-slate-100 dark:border-slate-900 rounded-[2.5rem] top-28 shadow-sm dark:shadow-none transition-all">
+                <div class="sticky p-6 space-y-8 border bg-white dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 rounded-2xl top-28 shadow-sm dark:shadow-none transition-all">
                     <div>
                         <h4 class="mb-6 text-sm font-black tracking-widest uppercase text-amber-500">Catégories</h4>
                         <div class="flex flex-wrap gap-3">
@@ -88,8 +88,8 @@
             <div class="flex-grow">
                 <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     @forelse($pieces as $piece)
-                        <div class="group relative bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-900 rounded-[2.5rem] p-4 hover:border-amber-500/30 transition duration-500 flex flex-col h-full shadow-sm dark:shadow-lg">
-                            <div class="relative overflow-hidden aspect-square bg-slate-50 dark:bg-slate-950 rounded-[2rem] mb-6 flex items-center justify-center transition-colors">
+                        <div class="group relative bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-900 rounded-2xl p-4 hover:border-amber-500/30 transition duration-500 flex flex-col h-full shadow-sm dark:shadow-lg">
+                            <div class="relative overflow-hidden aspect-square bg-slate-50 dark:bg-slate-950 rounded-xl mb-6 flex items-center justify-center transition-colors">
                                 @if($piece->image)
                                     <img src="{{ $piece->image }}" alt="{{ $piece->nom }}" class="object-cover w-full h-full transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
                                 @else
@@ -140,11 +140,11 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-3 py-32 text-center border-2 border-dashed border-slate-200 dark:border-slate-900 rounded-[3rem] transition-colors">
-                            <i data-lucide="search-x" class="w-20 h-20 mx-auto mb-6 text-slate-200 dark:text-slate-800 transition-colors"></i>
-                            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tighter transition-colors">Aucune pièce trouvée</h3>
-                            <p class="text-slate-500 text-sm transition-colors">Réessayez avec d'autres critères de recherche ou une autre catégorie.</p>
-                            <a href="{{ route('parts.index') }}" class="inline-block mt-8 px-8 py-3 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition-colors transition-all">Réinitialiser</a>
+                        <div class="col-span-3 py-24 text-center border-2 border-dashed border-slate-200 dark:border-slate-900 rounded-2xl transition-colors">
+                            <i data-lucide="search-x" class="w-16 h-16 mx-auto mb-6 text-slate-200 dark:text-slate-800 transition-colors"></i>
+                            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tighter transition-colors">Aucune pièce trouvée</h3>
+                            <p class="text-slate-500 text-xs transition-colors">Réessayez avec d'autres critères de recherche ou une autre catégorie.</p>
+                            <a href="{{ route('parts.index') }}" class="inline-block mt-8 px-6 py-2.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-amber-400 transition-all">Réinitialiser</a>
                         </div>
                     @endforelse
                 </div>
