@@ -156,7 +156,7 @@
 
                                 {{-- Action Buttons --}}
                                 <div class="grid grid-cols-2 gap-3 pt-2">
-                                    <a href="{{ route('cars.show', $car->slug) }}" class="flex items-center justify-center py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                    <a href="{{ route('cars.show', $car) }}" class="flex items-center justify-center py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                                         Détails
                                     </a>
                                     <button type="button" 

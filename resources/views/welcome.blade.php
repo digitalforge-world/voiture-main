@@ -186,7 +186,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('cars.show', optional($car)->slug ?? '') }}" class="mt-auto py-3 text-[9px] font-black text-slate-900 dark:text-white tracking-[0.2em] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 transition-all text-center">
+                            <a href="{{ route('cars.show', $car) }}" class="mt-auto py-3 text-[9px] font-black text-slate-900 dark:text-white tracking-[0.2em] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 transition-all text-center">
                                 Voir les détails
                             </a>
                         </div>
