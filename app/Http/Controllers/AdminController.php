@@ -71,6 +71,30 @@ class AdminController extends Controller
                 ->orWhere('prenom', 'LIKE', "%{$query}%")
                 ->orWhere('email', 'LIKE', "%{$query}%")
                 ->take(5)->get(),
+            'rentals' => Location::with('voiture')->where('reference', 'LIKE', "%{$query}%")
+                ->orWhere('client_nom', 'LIKE', "%{$query}%")
+                ->orWhereHas('user', function ($q) use ($query) {
+                    $q->where('nom', 'LIKE', "%{$query}%")->orWhere('prenom', 'LIKE', "%{$query}%");
+                })
+                ->orWhereHas('voiture', function($q) use ($query){
+                    $q->where('immatriculation', 'LIKE', "%{$query}%");
+                })
+                ->take(5)->get(),
+            'part_orders' => \App\Models\CommandePiece::with('lignes.piece')->where('reference', 'LIKE', "%{$query}%")
+                ->orWhere('tracking_number', 'LIKE', "%{$query}%")
+                ->orWhere('client_nom', 'LIKE', "%{$query}%")
+                ->orWhereHas('user', function ($q) use ($query) {
+                    $q->where('nom', 'LIKE', "%{$query}%")->orWhere('prenom', 'LIKE', "%{$query}%");
+                })
+                ->orWhereHas('lignes.piece', function($q) use ($query){
+                    $q->where('nom', 'LIKE', "%{$query}%")->orWhere('reference', 'LIKE', "%{$query}%");
+                })
+                ->take(5)->get(),
+            'revisions' => Revision::where('reference', 'LIKE', "%{$query}%")
+                ->orWhere('probleme_description', 'LIKE', "%{$query}%")
+                ->orWhere('immatriculation', 'LIKE', "%{$query}%")
+                ->orWhere('marque_vehicule', 'LIKE', "%{$query}%")
+                ->take(5)->get(),
         ];
 
         return view('admin.search.results', compact('results', 'query'));

@@ -3,250 +3,241 @@
 @section('title', 'Ventes de Pièces - AutoImport Hub')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Header Area -->
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-2">
-        <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic underline decoration-amber-500 decoration-4 underline-offset-8 transition-colors">Ventes de Pièces</h1>
-            <p class="text-slate-500 dark:text-slate-400 font-bold mt-2 uppercase tracking-widest text-[10px] italic transition-colors">Gestion des commandes et expéditions de pièces détachées</p>
-        </div>
-    </div>
+<div class="space-y-6">
+ <!-- Header Area -->
+ <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <div>
+   <h1 class="text-2xl font-semibold text-slate-900 dark:text-white">Ventes de Pièces</h1>
+   <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestion des commandes et expéditions de pièces détachées</p>
+  </div>
+ </div>
 
-    <!-- Orders Table -->
-    <div class="border overflow-hidden bg-white dark:bg-slate-950/50 border-slate-100 dark:border-slate-900 rounded-[4rem] rounded-tl-xl rounded-br-xl shadow-lg dark:shadow-2xl backdrop-blur-sm transition-colors">
-        <table class="w-full text-left">
-            <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-white/5 transition-colors">
-                <tr>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">ID Commande / Client</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Détails Pièce</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Statut</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 italic transition-colors">Total</th>
-                    <th class="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 text-right italic transition-colors">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-white/5 transition-colors">
-                @forelse($orders as $order)
-                <tr class="group hover:bg-slate-50 dark:hover:bg-white/[0.02] transition duration-300 transition-colors">
-                    <td class="px-8 py-6">
-                        <div class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1 italic transition-colors">#PART-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</div>
-                        <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight italic transition-colors">{{ $order->user->prenom }} {{ $order->user->nom }}</div>
-                    </td>
-                    <td class="px-8 py-6">
-                        <div class="text-[11px] font-black text-slate-900 dark:text-white uppercase italic tracking-tight transition-colors">{{ $order->pieceDetachee->nom }}</div>
-                        <div class="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mt-0.5 italic transition-colors">Quantité: {{ $order->quantite }}</div>
-                    </td>
-                    <td class="px-8 py-6">
-                        @php
-                            $statusColor = match($order->statut) {
-                                'en_attente' => 'bg-slate-500/10 text-slate-500 border-slate-500/20',
-                                'valide' => 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-                                'en_expedition' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-                                'livre' => 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20',
-                                'annule' => 'bg-rose-500/10 text-rose-500 border-rose-500/20',
-                                default => 'bg-slate-500/10 text-slate-500 border-slate-500/20',
-                            };
-                        @endphp
-                        <span class="px-3 py-1.5 rounded-lg border {{ $statusColor }} text-[9px] font-black uppercase tracking-widest italic leading-none transition-colors">
-                            {{ str_replace('_', ' ', $order->statut) }}
-                        </span>
-                    </td>
-                    <td class="px-8 py-6 text-sm font-black text-slate-900 dark:text-white italic tracking-tight transition-colors">{{ number_format($order->montant_total, 0, ',', ' ') }} <span class="text-[10px] transition-colors">FCFA</span></td>
-                    <td class="px-8 py-6 text-right">
-                        <div class="flex items-center justify-end gap-3">
-                            <button onclick="openShowPartOrderModal({{ json_encode($order->load(['user', 'pieceDetachee'])) }})" class="p-3 bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition rounded-[1.2rem] border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-xl transition-colors">
-                                <i data-lucide="eye" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
-                            </button>
-                            <button onclick="openEditPartOrderModal({{ json_encode($order) }})" class="p-3 bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:text-white hover:bg-amber-500 transition rounded-[1.2rem] border border-slate-100 dark:border-white/5 shadow-lg dark:shadow-xl transition-colors">
-                                <i data-lucide="package-check" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 dark:text-slate-600 italic font-black uppercase tracking-[0.2em] text-xs transition-colors">Aucune commande de pièce.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+ <!-- Orders Table -->
+ <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+  <div class="overflow-x-auto">
+   <table class="w-full text-left border-collapse">
+    <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+     <tr>
+      <th class="px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">ID Commande / Client</th>
+      <th class="px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Détails Pièce</th>
+      <th class="px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Statut</th>
+      <th class="px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Total</th>
+      <th class="px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider text-right">Actions</th>
+     </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+     @forelse($orders as $order)
+     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+      <td class="px-6 py-4">
+       <div class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded inline-block w-fit mb-1">
+         #PART-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
+        </span>
+        <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $order->user->prenom }} {{ $order->user->nom }}</div>
+       </div>
+      </td>
+      <td class="px-6 py-4">
+       <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $order->pieceDetachee->nom }}</div>
+       <div class="text-xs text-slate-500 mt-1">Quantité: {{ $order->quantite }}</div>
+      </td>
+      <td class="px-6 py-4">
+       @php
+        $statusColors = [
+         'en_attente' => 'bg-slate-100 text-slate-800 dark:bg-slate-500/10 dark:text-slate-400',
+         'valide' => 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400',
+         'en_expedition' => 'bg-blue-100 text-blue-800 dark:bg-blue-500/10 dark:text-blue-400',
+         'livre' => 'bg-indigo-100 text-indigo-800 dark:bg-indigo-500/10 dark:text-indigo-400',
+         'annule' => 'bg-rose-100 text-rose-800 dark:bg-rose-500/10 dark:text-rose-400',
+        ];
+        $colorClass = $statusColors[$order->statut] ?? 'bg-slate-100 text-slate-800';
+       @endphp
+       <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $colorClass }} capitalize">
+        {{ str_replace('_', ' ', $order->statut) }}
+       </span>
+      </td>
+      <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
+       {{ number_format($order->montant_total, 0, ',', ' ') }} <span class="text-xs text-slate-500">FCFA</span>
+      </td>
+      <td class="px-6 py-4 text-right">
+       <div class="flex items-center justify-end gap-2">
+        <button onclick="openShowPartOrderModal({{ json_encode($order->load(['user', 'pieceDetachee'])) }})" class="p-2 text-slate-400 hover:text-blue-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+         <i data-lucide="eye" class="w-4 h-4"></i>
+        </button>
+        <button onclick="openEditPartOrderModal({{ json_encode($order) }})" class="p-2 text-slate-400 hover:text-amber-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+         <i data-lucide="edit-3" class="w-4 h-4"></i>
+        </button>
+       </div>
+      </td>
+     </tr>
+     @empty
+     <tr>
+      <td colspan="5" class="px-6 py-8 text-center text-slate-500 text-sm">
+       Aucune commande de pièce.
+      </td>
+     </tr>
+     @endforelse
+    </tbody>
+   </table>
+  </div>
 
-        <!-- Pagination -->
-        @if($orders->hasPages())
-        <div class="px-8 py-6 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-white/5 transition-colors">
-            {{ $orders->links() }}
-        </div>
-        @endif
-    </div>
+  <!-- Pagination -->
+  @if($orders->hasPages())
+  <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+   {{ $orders->links() }}
+  </div>
+  @endif
+ </div>
 </div>
 
 <!-- Edit Part Order Modal -->
-<div id="editPartOrderModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
-    <div class="fixed inset-0 bg-white/80 dark:bg-slate-950/90 backdrop-blur-xl transition-colors" onclick="closeModal('editPartOrderModal')"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 w-full max-w-xl p-12 shadow-2xl rounded-[4rem] rounded-tr-xl rounded-bl-xl overflow-hidden animate-in zoom-in duration-300 transition-colors">
-            <h2 class="text-3xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter mb-2 transition-colors">Statut Vente</h2>
-            <p class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-[10px] mb-10 italic border-l-2 border-amber-500 pl-4 transition-colors">Fulfillment & expédition des articles</p>
+<div id="editPartOrderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+ <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeModal('editPartOrderModal')"></div>
+ <div class="relative min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
+   <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+    <h2 class="text-lg font-medium text-slate-900 dark:text-white">Statut de la Vente</h2>
+    <button onclick="closeModal('editPartOrderModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+     <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+   </div>
 
-            <form id="editPartOrderForm" method="POST" class="space-y-8 relative">
-                @csrf
-                @method('PUT')
-                
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-2 italic transition-colors">Progression de la vente</label>
-                    <select name="statut" id="edit_per_statut" class="w-full py-5 px-8 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-1 focus:ring-amber-500 transition appearance-none font-black uppercase italic tracking-widest transition-colors">
-                        <option value="en_attente">En Attente de Paiement</option>
-                        <option value="valide">Paiement Validé</option>
-                        <option value="en_expedition">Expédition en Cours</option>
-                        <option value="livre">Colis Livré</option>
-                        <option value="annule">Vente Annulée</option>
-                    </select>
-                </div>
-
-                <div class="pt-10 flex gap-6">
-                    <button type="button" onclick="closeModal('editPartOrderModal')" class="flex-1 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-black italic transition-colors">Fermer</button>
-                    <button type="submit" class="flex-[2] py-6 text-[10px] font-black uppercase tracking-widest text-slate-950 bg-amber-500 rounded-[2.5rem] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition shadow-xl shadow-amber-500/20 font-black italic transition-colors">Actualiser le Statut</button>
-                </div>
-            </form>
-        </div>
+   <form id="editPartOrderForm" method="POST" class="p-6">
+    @csrf
+    @method('PUT')
+    
+    <div class="space-y-4">
+     <div>
+      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Progression de la vente</label>
+      <select name="statut" id="edit_per_statut" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+       <option value="en_attente">En Attente de Paiement</option>
+       <option value="valide">Paiement Validé</option>
+       <option value="en_expedition">Expédition en Cours</option>
+       <option value="livre">Colis Livré</option>
+       <option value="annule">Vente Annulée</option>
+      </select>
+     </div>
     </div>
+
+    <div class="mt-8 flex justify-end gap-3">
+     <button type="button" onclick="closeModal('editPartOrderModal')" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700 transition">Fermer</button>
+     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition">Actualiser</button>
+    </div>
+   </form>
+  </div>
+ </div>
 </div>
 
 <!-- Show Part Order Modal -->
-<div id="showPartOrderModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
-    <div class="fixed inset-0 bg-white/80 dark:bg-slate-950/95 backdrop-blur-2xl transition-colors" onclick="closeModal('showPartOrderModal')"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/10 w-full max-w-4xl shadow-2xl rounded-[5rem] rounded-tl-xl rounded-br-xl overflow-hidden flex flex-col md:flex-row animate-in fade-in slide-in-from-bottom duration-500 transition-colors">
-             <!-- Summary Side -->
-             <div class="w-full md:w-2/5 p-16 bg-slate-50 dark:bg-slate-950 border-r border-slate-100 dark:border-white/5 transition-colors">
-                <div class="mb-12">
-                    <span id="show_per_ref" class="px-4 py-2 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-black uppercase tracking-[0.2em] italic mb-6 inline-block transition-colors"></span>
-                    <h3 class="text-4xl font-black text-slate-900 dark:text-white italic tracking-tighter uppercase leading-tight border-b border-amber-500/30 pb-6 transition-colors">Détails <br> Vente Pièce</h3>
-                </div>
+<div id="showPartOrderModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+ <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeModal('showPartOrderModal')"></div>
+ <div class="relative min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+    <!-- Summary Side -->
+    <div class="w-full md:w-1/2 p-6 bg-slate-50 dark:bg-slate-800/50 border-r border-slate-200 dark:border-slate-800">
+     <div class="mb-6">
+      <span id="show_per_ref" class="px-2.5 py-1 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-500/10 dark:text-amber-500 text-xs font-medium mb-3 inline-block"></span>
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Détails Vente Pièce</h3>
+     </div>
 
-                <div class="space-y-12">
-                    <div>
-                        <div class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-4 italic transition-colors">Client Acheteur</div>
-                        <div class="flex items-center gap-4">
-                            <div id="show_per_user_init" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 flex items-center justify-center font-black text-slate-900 dark:text-white uppercase italic shadow-inner transition-colors"></div>
-                            <div>
-                                <div id="show_per_user_name" class="text-sm font-black text-slate-900 dark:text-white italic transition-colors"></div>
-                                <div id="show_per_user_email" class="text-[10px] text-slate-500 dark:text-slate-400 font-bold italic mt-0.5 transition-colors"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-8 bg-white dark:bg-slate-900/50 rounded-[2.5rem] border border-slate-100 dark:border-white/5 shadow-inner transition-colors">
-                        <div class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-4 italic transition-colors">Total de la transaction</div>
-                        <div id="show_per_total" class="text-3xl font-black text-amber-500 italic tracking-tighter transition-colors"></div>
-                        <div class="mt-4 flex items-center gap-2">
-                             <div id="show_per_status_dot" class="w-2 h-2 rounded-full"></div>
-                             <span id="show_per_status_txt" class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase italic transition-colors"></span>
-                        </div>
-                    </div>
-                </div>
-             </div>
-
-             <!-- Logistics Side -->
-             <div class="w-full md:w-3/5 p-16 bg-white dark:bg-slate-900 relative transition-colors">
-                <button onclick="closeModal('showPartOrderModal')" class="absolute top-10 right-10 p-4 bg-slate-50 dark:bg-white/5 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-2xl transition transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-
-                <div class="space-y-12 mt-4">
-                    <div>
-                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-8 italic transition-colors">L'Article Commandé</h4>
-                        <div class="flex gap-10 items-center p-8 bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-white/5 rounded-[3rem] shadow-xl relative overflow-hidden group transition-colors">
-                             <div class="absolute -right-10 -top-10 w-40 h-40 bg-amber-500 opacity-0 group-hover:opacity-10 blur-3xl transition duration-500"></div>
-                             <img id="show_per_img" src="" class="w-32 h-32 object-contain drop-shadow-2xl">
-                             <div>
-                                <div id="show_per_part_nom" class="text-2xl font-black text-slate-900 dark:text-white italic uppercase tracking-tighter transition-colors"></div>
-                                <div id="show_per_part_cat" class="text-[10px] font-black text-slate-400 dark:text-slate-500 italic uppercase mt-2 transition-colors"></div>
-                                <div id="show_per_qty" class="mt-4 px-4 py-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl text-[10px] font-black text-emerald-500 uppercase w-fit italic transition-colors"></div>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-10 border-t border-slate-100 dark:border-white/5 transition-colors">
-                         <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6 italic transition-colors">Étapes de Fulfillment</h4>
-                         <div class="grid grid-cols-2 gap-6">
-                             <div class="flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-white/5 transition-colors">
-                                 <i data-lucide="shopping-cart" class="w-5 h-5 text-slate-300 dark:text-slate-700 transition-colors"></i>
-                                 <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase italic transition-colors">Commande Créée</span>
-                             </div>
-                             <div class="flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-white/5 transition-colors">
-                                 <i data-lucide="credit-card" class="w-5 h-5 text-slate-300 dark:text-slate-700 transition-colors"></i>
-                                 <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase italic transition-colors">Paiement Partiel</span>
-                             </div>
-                             <div class="flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-white/5 transition-colors">
-                                 <i data-lucide="truck" class="w-5 h-5 text-slate-300 dark:text-slate-700 transition-colors"></i>
-                                 <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase italic transition-colors">Expédition Planifiée</span>
-                             </div>
-                             <div class="flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-white/5 transition-colors">
-                                 <i data-lucide="check-circle-2" class="w-5 h-5 text-slate-300 dark:text-slate-700 transition-colors"></i>
-                                 <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase italic transition-colors">Fin du dossier</span>
-                             </div>
-                         </div>
-                    </div>
-                </div>
-
-                <div class="pt-16 text-center">
-                    <button onclick="closeModal('showPartOrderModal')" class="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-[2rem] text-[10px] font-black uppercase tracking-widest italic hover:bg-amber-500 dark:hover:bg-amber-500 transition duration-300 shadow-2xl transition-colors">Fermer le Dossier</button>
-                </div>
-             </div>
+     <div class="space-y-6">
+      <div>
+       <div class="text-xs font-medium text-slate-500 uppercase mb-2">Client Acheteur</div>
+       <div class="flex items-center gap-3">
+        <div id="show_per_user_init" class="w-10 h-10 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center font-medium text-slate-900 dark:text-white uppercase"></div>
+        <div>
+         <div id="show_per_user_name" class="text-sm font-medium text-slate-900 dark:text-white"></div>
+         <div id="show_per_user_email" class="text-xs text-slate-500"></div>
         </div>
+       </div>
+      </div>
+
+      <div>
+       <div class="text-xs font-medium text-slate-500 uppercase mb-2">Total de la transaction</div>
+       <div class="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+        <div id="show_per_total" class="text-base font-semibold text-amber-600 dark:text-amber-500"></div>
+        <div class="flex items-center gap-2">
+          <div id="show_per_status_dot" class="w-2 h-2 rounded-full"></div>
+          <span id="show_per_status_txt" class="text-xs font-medium text-slate-500 uppercase"></span>
+        </div>
+       </div>
+      </div>
+     </div>
     </div>
+
+    <!-- Logistics Side -->
+    <div class="w-full md:w-1/2 p-6 relative">
+     <button onclick="closeModal('showPartOrderModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+      <i data-lucide="x" class="w-5 h-5"></i>
+     </button>
+
+     <div class="mt-4 mb-6">
+      <h4 class="text-xs font-medium text-slate-500 uppercase mb-4">L'Article Commandé</h4>
+      <div class="flex gap-4 items-center p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+       <img id="show_per_img" src="" class="w-16 h-16 object-contain">
+       <div>
+        <div id="show_per_part_nom" class="text-sm font-medium text-slate-900 dark:text-white"></div>
+        <div id="show_per_part_cat" class="text-xs text-slate-500 mt-1"></div>
+        <div id="show_per_qty" class="mt-2 text-xs font-medium text-emerald-600 dark:text-emerald-500"></div>
+       </div>
+      </div>
+     </div>
+    </div>
+  </div>
+ </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-    }
+ function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+ }
 
-    function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    }
+ function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+ }
 
-    function openEditPartOrderModal(order) {
-        const form = document.getElementById('editPartOrderForm');
-        form.action = `/admin/orders-parts/${order.id}`;
-        document.getElementById('edit_per_statut').value = order.statut;
-        openModal('editPartOrderModal');
-    }
+ function openEditPartOrderModal(order) {
+  const form = document.getElementById('editPartOrderForm');
+  form.action = `/admin/orders-parts/${order.id}`;
+  document.getElementById('edit_per_statut').value = order.statut;
+  openModal('editPartOrderModal');
+ }
 
-    function openShowPartOrderModal(order) {
-        document.getElementById('show_per_ref').innerText = `#PART-${order.id.toString().padStart(5, '0')}`;
-        document.getElementById('show_per_user_name').innerText = `${order.user.prenom} ${order.user.nom}`;
-        document.getElementById('show_per_user_email').innerText = order.user.email;
-        document.getElementById('show_per_user_init').innerText = order.user.prenom[0] + order.user.nom[0];
-        
-        document.getElementById('show_per_total').innerText = new Intl.NumberFormat('fr-FR').format(order.montant_total) + ' FCFA';
-        document.getElementById('show_per_status_txt').innerText = order.statut.replace('_', ' ').toUpperCase();
-        
-        const dot = document.getElementById('show_per_status_dot');
-        const colors = {
-            'en_attente': 'bg-slate-500',
-            'valide': 'bg-emerald-500',
-            'en_expedition': 'bg-blue-500',
-            'livre': 'bg-indigo-500',
-            'annule': 'bg-rose-500'
-        };
-        dot.className = `w-2 h-2 rounded-full ${colors[order.statut] || 'bg-slate-500'}`;
-        
-        document.getElementById('show_per_part_nom').innerText = order.piece_detachee.nom;
-        document.getElementById('show_per_part_cat').innerText = order.piece_detachee.categorie;
-        document.getElementById('show_per_qty').innerText = `${order.quantite} UNITÉS`;
-        document.getElementById('show_per_img').src = order.piece_detachee.photo || '/images/placeholder-part.png';
+ function openShowPartOrderModal(order) {
+  document.getElementById('show_per_ref').innerText = `#PART-${order.id.toString().padStart(5, '0')}`;
+  document.getElementById('show_per_user_name').innerText = `${order.user.prenom} ${order.user.nom}`;
+  document.getElementById('show_per_user_email').innerText = order.user.email;
+  document.getElementById('show_per_user_init').innerText = order.user.prenom[0] + order.user.nom[0];
+  
+  document.getElementById('show_per_total').innerText = new Intl.NumberFormat('fr-FR').format(order.montant_total) + ' FCFA';
+  document.getElementById('show_per_status_txt').innerText = order.statut.replace('_', ' ').toUpperCase();
+  
+  const dot = document.getElementById('show_per_status_dot');
+  const colors = {
+   'en_attente': 'bg-slate-500',
+   'valide': 'bg-emerald-500',
+   'en_expedition': 'bg-blue-500',
+   'livre': 'bg-indigo-500',
+   'annule': 'bg-rose-500'
+  };
+  dot.className = `w-2 h-2 rounded-full ${colors[order.statut] || 'bg-slate-500'}`;
+  
+  document.getElementById('show_per_part_nom').innerText = order.piece_detachee.nom;
+  document.getElementById('show_per_part_cat').innerText = order.piece_detachee.categorie;
+  document.getElementById('show_per_qty').innerText = `${order.quantite} UNITÉS`;
+  document.getElementById('show_per_img').src = order.piece_detachee.photo || '/images/placeholder-part.png';
 
-        openModal('showPartOrderModal');
-    }
+  openModal('showPartOrderModal');
+ }
 
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closeModal('editPartOrderModal');
-            closeModal('showPartOrderModal');
-        }
-    });
+ window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+   closeModal('editPartOrderModal');
+   closeModal('showPartOrderModal');
+  }
+ });
 </script>
 @endsection

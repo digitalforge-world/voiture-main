@@ -77,16 +77,16 @@
                     </div>
                     
                     <div class="p-6 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors">
-                        <h4 class="mb-4 text-xs font-black tracking-widest uppercase text-slate-500">Besoin d'aide ?</h4>
+                        <h4 class="mb-4 text-xs font-black tracking-widest text-slate-500">Besoin d'aide ?</h4>
                         <p class="text-[11px] text-slate-600 dark:text-slate-500 leading-relaxed mb-4 italic transition-colors">Nos techniciens sont disponibles pour identifier la référence exacte de votre pièce sur simple envoi du numéro de châssis.</p>
-                        <a href="#" class="flex items-center justify-center gap-2 py-3 text-xs font-bold border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition font-mono uppercase transition-colors">WhatsApp Support</a>
+                        <a href="#" class="flex items-center justify-center gap-2 py-3 text-xs font-bold border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition font-mono transition-colors">WhatsApp Support</a>
                     </div>
                 </div>
             </aside>
 
             <!-- Grid -->
             <div class="flex-grow">
-                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-3">
                     @forelse($pieces as $piece)
                         <div class="group relative bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-900 rounded-2xl p-4 hover:border-amber-500/30 transition duration-500 flex flex-col h-full shadow-sm dark:shadow-lg">
                             <div class="relative overflow-hidden aspect-square bg-slate-50 dark:bg-slate-950 rounded-xl mb-6 flex items-center justify-center transition-colors">
@@ -97,14 +97,14 @@
                                 @endif
                                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent"></div>
                                 <div class="absolute p-3 top-2 right-2">
-                                    <span class="px-3 py-1 text-[9px] font-black tracking-widest uppercase bg-white/5 text-slate-500 dark:text-slate-400 backdrop-blur rounded-full border border-slate-200 dark:border-white/5 transition-colors">{{ $piece->etat }}</span>
+                                    <span class="px-3 py-1 text-[9px] font-black tracking-widest bg-white/5 text-slate-500 dark:text-slate-400 backdrop-blur rounded-full border border-slate-200 dark:border-white/5 transition-colors">{{ $piece->etat }}</span>
                                 </div>
                             </div>
 
                             <div class="px-4 flex-grow flex flex-col">
                                 <div class="flex items-start justify-between mb-2">
-                                    <span class="text-[10px] font-black tracking-[0.2em] uppercase text-amber-500/80 transition-colors">{{ $piece->categorie }}</span>
-                                    <span class="text-xl font-black text-slate-900 dark:text-white transition-colors">{{ number_format($piece->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500">€</span></span>
+                                    <span class="text-[10px] font-black tracking-[0.2em] text-amber-500/80 transition-colors">{{ $piece->categorie }}</span>
+                                    <span class="text-xl font-black text-slate-900 dark:text-white transition-colors">{{ number_format($piece->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500">FCFA</span></span>
                                 </div>
                                 <h3 class="mb-2 text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition tracking-tight leading-tight transition-colors">{{ $piece->nom }}</h3>
                                 <div class="flex items-center gap-2 mb-4 text-xs font-mono text-slate-500 dark:text-slate-600 transition-colors">
@@ -131,8 +131,8 @@
                                             <input type="text" name="client_nom" required placeholder="Votre Nom" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors">
                                             <input type="tel" name="client_telephone" required placeholder="Votre Téléphone" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500 transition-colors">
                                         </div>
-                                        <button type="submit" class="w-full relative py-4 text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 transition flex items-center justify-center gap-2 overflow-hidden group/buy transition-colors">
-                                            <i data-lucide="shopping-cart" class="w-4 h-4"></i> Acheter Maintenant
+                                        <button type="submit" class="w-full relative py-4 text-xs font-black tracking-widest text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 transition flex items-center justify-center gap-2 overflow-hidden group/buy transition-colors">
+                                            <i data-lucide="shopping-cart" class="w-4 h-4"></i> Acheter maintenant
                                             <div class="absolute inset-0 bg-white/5 opacity-0 group-hover/buy:opacity-100 transition translate-x-[-100%] group-hover/buy:translate-x-[100%] duration-1000"></div>
                                         </button>
                                     </form>

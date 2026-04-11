@@ -5,7 +5,7 @@
 @section('content')
 <div class="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
     <!-- Hero/Header -->
-    <div class="relative py-24 overflow-hidden border-b border-slate-100 dark:border-slate-900 transition-colors">
+    <div class="relative py-12 overflow-hidden border-b border-slate-100 dark:border-slate-900 transition-colors">
         <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-slate-100/40 dark:via-slate-900/40 to-white dark:to-slate-950 transition-colors"></div>
         <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 transition-colors"></div>
         
@@ -24,23 +24,23 @@
                         </span>
                         <span class="text-xs font-black tracking-[0.2em] uppercase text-amber-500">Résultats de Compatibilité</span>
                     </div>
-                    <h1 class="text-4xl font-black text-slate-900 dark:text-white lg:text-5xl transition-colors">
+                    <h1 class="text-xl font-black text-slate-900 dark:text-white lg:text-2xl transition-colors">
                         Pièces <span class="italic font-serif text-amber-500">Compatibles</span>
                     </h1>
-                    <p class="mt-4 text-slate-600 dark:text-slate-400 transition-colors">
-                        Résultats pour : <strong class="text-slate-900 dark:text-white transition-colors">{{ $search['marque'] }} {{ $search['modele'] }} ({{ $search['annee'] }})</strong>
+                    <p class="mt-1 text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-500 transition-colors">
+                        Résultats pour : <span class="text-slate-900 dark:text-white transition-colors">{{ $search['marque'] }} {{ $search['modele'] }} ({{ $search['annee'] }})</span>
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container px-4 py-16 mx-auto lg:px-8">
+    <div class="container px-4 py-8 mx-auto lg:px-8">
         @if($pieces->count() > 0)
             <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach($pieces as $piece)
-                    <div class="group relative bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-900 rounded-[2rem] p-4 hover:border-amber-500/30 transition duration-500 flex flex-col h-full shadow-sm dark:shadow-lg">
-                        <div class="relative overflow-hidden aspect-square bg-slate-50 dark:bg-slate-950 rounded-[1.5rem] mb-6 flex items-center justify-center transition-colors">
+                    <div class="group relative bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-900 rounded-2xl p-4 hover:border-amber-500/30 transition duration-500 flex flex-col h-full shadow-sm dark:shadow-lg">
+                        <div class="relative overflow-hidden aspect-square bg-slate-50 dark:bg-slate-950 rounded-xl mb-6 flex items-center justify-center transition-colors">
                             @if($piece->image)
                                 <img src="{{ $piece->image }}" alt="{{ $piece->nom }}" class="object-cover w-full h-full transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
                             @else
@@ -60,7 +60,7 @@
                             
                             <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 transition-colors">
                                 <div class="flex items-center justify-between gap-4">
-                                    <span class="text-xl font-black text-slate-900 dark:text-white transition-colors">{{ number_format($piece->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500 font-bold">€</span></span>
+                                    <span class="text-xl font-black text-slate-900 dark:text-white transition-colors">{{ number_format($piece->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500 font-bold">FCFA</span></span>
                                     <form action="{{ route('parts.buy', $piece->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-xl hover:bg-amber-500 dark:hover:bg-amber-500 hover:text-white dark:hover:text-white transition-all shadow-lg active:scale-95">
@@ -74,10 +74,10 @@
                 @endforeach
             </div>
         @else
-            <div class="max-w-2xl mx-auto py-32 text-center border-2 border-dashed border-slate-200 dark:border-slate-900 rounded-[3rem] transition-colors">
-                <i data-lucide="search-x" class="w-20 h-20 mx-auto mb-6 text-slate-200 dark:text-slate-800 transition-colors"></i>
-                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter transition-colors">Aucune pièce exacte trouvée</h2>
-                <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-10 transition-colors">Nos techniciens peuvent vous aider à trouver une pièce équivalente ou compatible avec votre véhicule.</p>
+            <div class="max-w-2xl mx-auto py-20 text-center border-2 border-dashed border-slate-200 dark:border-slate-900 rounded-2xl transition-colors">
+                <i data-lucide="search-x" class="w-16 h-16 mx-auto mb-6 text-slate-200 dark:text-slate-800 transition-colors"></i>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter transition-colors">Aucune pièce exacte trouvée</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-10 transition-colors">Nos techniciens peuvent vous aider à trouver une pièce équivalente ou compatible avec votre véhicule.</p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                     <a href="#" class="w-full sm:w-auto px-8 py-4 bg-amber-500 text-slate-950 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-amber-400 transition-all shadow-xl shadow-amber-900/10">Contacter un expert</a>
                     <a href="{{ route('parts.index') }}" class="w-full sm:w-auto px-8 py-4 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500 transition-all">Parcourir tout le catalogue</a>

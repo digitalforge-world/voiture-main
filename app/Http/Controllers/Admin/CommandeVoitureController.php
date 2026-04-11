@@ -16,7 +16,7 @@ class CommandeVoitureController extends Controller
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('numero_suivi', 'LIKE', "%{$search}%")
+                $q->where('tracking_number', 'LIKE', "%{$search}%")
                     ->orWhereHas('user', function ($qu) use ($search) {
                         $qu->where('nom', 'LIKE', "%{$search}%")
                             ->orWhere('prenom', 'LIKE', "%{$search}%");
@@ -41,7 +41,7 @@ class CommandeVoitureController extends Controller
         $order = \App\Models\CommandeVoiture::findOrFail($id);
 
         $validated = $request->validate([
-            'numero_suivi' => 'nullable|string|max:50',
+            'tracking_number' => 'nullable|string|max:50',
             'statut' => 'required|in:en_attente,paye,importation,arrive,livre,annule',
         ]);
 

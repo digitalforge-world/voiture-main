@@ -156,7 +156,7 @@
                             </div>
                             <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5 transition-colors">
                                 <div class="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase transition-colors">{{ $commande->date_commande->format('d/m/Y') }}</div>
-                                <div class="text-sm font-black text-slate-900 dark:text-white transition-colors">{{ number_format($commande->montant_total, 0, ',', ' ') }} €</div>
+                                <div class="text-sm font-black text-slate-900 dark:text-white transition-colors">{{ number_format($commande->montant_total, 0, ',', ' ') }} FCFA</div>
                             </div>
                         </div>
                         @empty
@@ -185,7 +185,7 @@
                                 </div>
                                 <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase">
                                     <div class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 italic"></i> {{ $loc->date_debut->format('d/m') }} - {{ $loc->date_fin->format('d/m') }}</div>
-                                    <div class="flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5 italic"></i> {{ number_format($loc->montant_total, 0, ',', ' ') }} €</div>
+                                    <div class="flex items-center gap-1.5"><i data-lucide="credit-card" class="w-3.5 h-3.5 italic"></i> {{ number_format($loc->montant_total, 0, ',', ' ') }} FCFA</div>
                                 </div>
                             </div>
                             @empty

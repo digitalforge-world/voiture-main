@@ -40,9 +40,12 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'nullable|exists:users,id',
+            'client_nom' => 'nullable|string|max:255|required_without:user_id',
+            'client_telephone' => 'nullable|string|max:20',
+            'client_email' => 'nullable|email|max:255',
             'voiture_location_id' => 'required|exists:voitures_location,id',
-            'date_debut' => 'required|date|after_or_equal:today',
+            'date_debut' => 'required|date',
             'date_fin' => 'required|date|after:date_debut',
             'montant_total' => 'required|numeric|min:0',
             'statut' => 'required|in:reserve,confirme,en_cours,termine,annule',
@@ -56,8 +59,16 @@ class LocationController extends Controller
         $location->caution = $voiture->caution ?? 0;
         $location->montant_location = $validated['montant_total'] - $location->caution;
 
+        // Generate a random reference instead of exposing ID
+        $location->reference = 'LOC-' . strtoupper(\Illuminate\Support\Str::random(8));
+
         // Generating reference is handled by trigger but we can set it if we want
         $location->save();
+
+        // Mettre à jour la disponibilité du véhicule
+        if (in_array($location->statut, ['reserve', 'confirme', 'en_cours'])) {
+            $voiture->update(['disponible' => false]);
+        }
 
         return redirect()->route('admin.rentals.index')->with('success', 'Nouvelle réservation enregistrée.');
     }
@@ -94,6 +105,16 @@ class LocationController extends Controller
 
         $location->update($validated);
 
+        // Gérer la disponibilité du véhicule
+        $voiture = $location->voiture;
+        if ($voiture) {
+            if (in_array($location->statut, ['termine', 'annule'])) {
+                $voiture->update(['disponible' => true]);
+            } else {
+                $voiture->update(['disponible' => false]);
+            }
+        }
+
         return redirect()->route('admin.rentals.index')->with('success', 'Contrat de location mis à jour.');
     }
 
@@ -103,7 +124,14 @@ class LocationController extends Controller
     public function destroy(string $id)
     {
         $location = \App\Models\Location::findOrFail($id);
+        $voiture = $location->voiture;
         $location->delete();
+
+        // Rendre le véhicule disponible à nouveau
+        if ($voiture) {
+            $voiture->update(['disponible' => true]);
+        }
+        
         return redirect()->route('admin.rentals.index')->with('success', 'Réservation supprimée.');
     }
 }

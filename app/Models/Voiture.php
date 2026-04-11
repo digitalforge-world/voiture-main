@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 use App\Traits\LogsActivity;
 
@@ -49,7 +50,8 @@ class Voiture extends Model
         'carnet_entretien_ajour',
         'non_fumeur',
         'classe_environnementale',
-        'equipements_details'
+        'equipements_details',
+        'slug'
     ];
 
     protected $casts = [
@@ -59,6 +61,44 @@ class Voiture extends Model
         'non_fumeur' => 'boolean',
         'equipements_details' => 'array',
     ];
+
+    /**
+     * Utilise le slug au lieu de l'ID dans les URLs.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Génère automatiquement un slug unique à la création.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Voiture $voiture) {
+            if (empty($voiture->slug)) {
+                $voiture->slug = self::generateUniqueSlug($voiture);
+            }
+        });
+    }
+
+    /**
+     * Génère un slug unique : marque-modele-annee-xyz123
+     */
+    public static function generateUniqueSlug(Voiture $voiture): string
+    {
+        $base = Str::slug($voiture->marque . '-' . $voiture->modele . '-' . $voiture->annee);
+        $suffix = Str::lower(Str::random(6));
+        $slug = $base . '-' . $suffix;
+
+        // S'assurer de l'unicité
+        while (self::where('slug', $slug)->exists()) {
+            $suffix = Str::lower(Str::random(6));
+            $slug = $base . '-' . $suffix;
+        }
+
+        return $slug;
+    }
 
     public function portRecommande()
     {

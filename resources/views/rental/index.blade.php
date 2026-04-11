@@ -2,26 +2,47 @@
 
 @section('title', 'Location de Véhicules de Prestige - AutoImport Hub')
 
+@section('styles')
+<style>
+    @keyframes slideInLeft {
+        from { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    .modal-animate-in {
+        animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .modal-animate-out {
+        animation: shake 0.5s ease-in-out, slideOutRight 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.5s forwards;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
     <!-- Rental Hero Section -->
-    <div class="relative py-24 lg:py-40 overflow-hidden">
+    <div class="relative py-12 lg:py-20 overflow-hidden">
         <!-- Background Elements -->
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent opacity-50"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-slate-50/50 dark:from-slate-900/50 to-white dark:to-slate-950 transition-colors"></div>
         
         <div class="container relative px-4 mx-auto lg:px-8">
             <div class="max-w-4xl space-y-10">
-                <div class="inline-flex items-center gap-3 px-5 py-2 bg-white/10 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-full shadow-2xl animate-in fade-in slide-in-from-left duration-700">
+                <div class="inline-flex items-center gap-3 px-5 py-2  dark:border-white/10 rounded-full shadow-2xl animate-in fade-in slide-in-from-left duration-700">
                     <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                     </span>
-                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 dark:text-slate-400">Parc Automobile de Prestige</span>
                 </div>
 
                 <div class="space-y-4 animate-in fade-in slide-in-from-bottom duration-1000">
-                    <h1 class="text-3xl lg:text-5xl font-black leading-tight tracking-tighter text-slate-900 dark:text-white uppercase transition-colors">
+                    <h1 class="text-2xl lg:text-3xl font-black leading-tight tracking-tighter text-slate-900 dark:text-white uppercase transition-colors">
                         L'art du <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 italic font-serif normal-case tracking-normal">Voyage.</span>
                     </h1>
@@ -60,85 +81,101 @@
                     @endforeach
                 </div>
 
-                <div class="flex items-center gap-4 text-slate-400 dark:text-slate-600 text-[10px] font-black uppercase tracking-widest italic transition-colors">
+                <div class="flex items-center gap-4 text-slate-400 dark:text-slate-600 text-[10px] font-black tracking-widest italic transition-colors">
                     <i data-lucide="info" class="w-4 h-4"></i>
-                    {{ $voitures->total() }} Véhicules disponibles
+                    {{ $voitures->total() }} véhicules disponibles
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Multi-Column Parc Grid -->
-    <div class="container px-4 py-20 mx-auto lg:px-8">
-        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+    <div class="container px-4 py-10 mx-auto lg:px-8">
+        <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
             @forelse($voitures as $car)
-                <div class="group relative flex flex-col items-stretch space-y-6">
-                    <!-- High-End Car Card -->
-                    <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 shadow-2xl transition duration-700 hover:-translate-y-2 group-hover:shadow-amber-500/10">
-                        <!-- Background Blur Effect -->
+                <div class="group relative bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col h-full animate-in fade-in slide-in-from-bottom duration-700">
+                    {{-- Card Image Section --}}
+                    <div class="relative aspect-[16/10] overflow-hidden">
+                        {{-- Hover Background Blur --}}
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
                             <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" class="absolute inset-0 w-full h-full object-cover scale-150 blur-3xl opacity-20">
                         </div>
 
-                        <!-- Main Image -->
+                        {{-- Main Vehicle Image --}}
                         <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" 
                              alt="{{ $car->marque }}" 
                              class="absolute inset-0 object-cover w-full h-full transition duration-1000 group-hover:scale-110">
                         
-                        <!-- Premium Overlays -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                        {{-- Dark Overlay --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
                         
-                        <!-- Badges -->
-                        <div class="absolute top-8 left-8 flex flex-col gap-2">
-                            <span class="px-4 py-1.5 bg-slate-950/40 backdrop-blur-xl border border-white/10 text-[9px] font-black text-white uppercase tracking-[0.2em] rounded-full w-fit">
+                        {{-- Badges --}}
+                        <div class="absolute top-4 left-4 flex flex-col gap-2">
+                            <span class="px-3 py-1 bg-slate-950/60 backdrop-blur-md border border-white/10 text-[8px] font-black text-white tracking-[0.2em] rounded-full">
                                 {{ $car->transmission }}
                             </span>
                             @if($car->categorie == 'premium' || $car->categorie == 'suv')
-                            <span class="px-4 py-1.5 bg-amber-500/80 backdrop-blur border border-white/10 text-[9px] font-black text-slate-950 uppercase tracking-[0.2em] rounded-full w-fit shadow-xl shadow-amber-500/20">
-                                Best Seller
+                            <span class="px-3 py-1 bg-amber-500 text-slate-950 text-[8px] font-black tracking-[0.2em] rounded-full shadow-lg shadow-amber-500/20">
+                                Luxe
                             </span>
                             @endif
                         </div>
 
-                        <!-- Car Identity -->
-                        <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+                        {{-- Year Badge --}}
+                        <div class="absolute top-4 right-4">
+                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black text-white rounded-lg">
+                                {{ $car->annee ?? '2024' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Card Body --}}
+                    <div class="p-6 flex-grow flex flex-col space-y-6">
+                        {{-- Header: Brand & Price --}}
+                        <div class="flex items-start justify-between gap-4">
                             <div class="space-y-1">
-                                <h3 class="text-lg font-black text-white uppercase tracking-tighter leading-none italic">{{ $car->marque }}</h3>
-                                <p class="text-sm font-bold text-amber-500 uppercase tracking-widest leading-none">{{ $car->modele }}</p>
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tighter italic leading-none transition-colors">
+                                    {{ $car->marque }}
+                                </h3>
+                                <p class="text-[10px] font-black text-amber-500 tracking-[0.3em] leading-none">
+                                    {{ $car->modele }}
+                                </p>
                             </div>
                             <div class="text-right">
-                                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">À partir de</div>
-                                <div class="text-xl font-black text-white italic transition group-hover:text-amber-500">
-                                    {{ number_format($car->prix_jour, 0, ',', ' ') }} <span class="text-xs">FCFA</span>
-                                </div>
+                                <span class="block text-[8px] font-black text-slate-400 dark:text-slate-600 tracking-widest mb-1 italic">Par jour</span>
+                                <span class="text-lg font-black text-slate-900 dark:text-white italic transition-colors group-hover:text-amber-500">
+                                    {{ number_format($car->prix_jour, 0, ',', ' ') }}<span class="ml-1 text-[10px] font-bold">CFA</span>
+                                </span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Technical Specs Pills -->
-                    <div class="flex flex-wrap gap-2 px-6">
-                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-white/5 flex items-center gap-2 transition-colors">
-                            <i data-lucide="users" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-black uppercase text-slate-500">{{ $car->nombre_places }} places</span>
+                        {{-- Technical Specs Pills --}}
+                        <div class="flex flex-wrap gap-2">
+                            <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg flex items-center gap-2 transition-colors">
+                                <i data-lucide="users" class="w-3 h-3 text-slate-400"></i>
+                                <span class="text-[9px] font-bold text-slate-500">{{ $car->nombre_places }} places</span>
+                            </div>
+                            <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg flex items-center gap-2 transition-colors">
+                                <i data-lucide="fuel" class="w-3 h-3 text-slate-400"></i>
+                                <span class="text-[9px] font-bold text-slate-500">{{ $car->carburant }}</span>
+                            </div>
+                            <div class="px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-lg flex items-center gap-2 transition-colors">
+                                <i data-lucide="shield-check" class="w-3 h-3 text-amber-500"></i>
+                                <span class="text-[9px] font-bold text-amber-500">Inclus</span>
+                            </div>
                         </div>
-                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-white/5 flex items-center gap-2 transition-colors">
-                            <i data-lucide="fuel" class="w-3.5 h-3.5 text-slate-400"></i>
-                            <span class="text-[10px] font-black uppercase text-slate-500">{{ $car->carburant }}</span>
-                        </div>
-                        <div class="px-4 py-2 bg-amber-500/10 rounded-xl border border-amber-500/20 flex items-center gap-2 transition-colors">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-500"></i>
-                            <span class="text-[10px] font-black uppercase text-amber-500">Premium</span>
-                        </div>
-                    </div>
 
-                    <!-- Actions -->
-                    <div class="px-4 flex gap-3">
-                        <button onclick='openBookingModal(@json($car))' class="flex-[2] py-5 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl transition hover:bg-amber-500 hover:text-slate-950 group/rent">
-                            Réserver maintenant
-                        </button>
-                        <button onclick='openDetailsModal(@json($car))' class="flex-1 p-5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-[1.5rem] transition">
-                            <i data-lucide="plus" class="w-5 h-5 mx-auto"></i>
-                        </button>
+                        {{-- Actions Section --}}
+                        <div class="pt-4 flex items-center gap-2">
+                            <button onclick='openDetailsModal(@json($car))' 
+                                class="flex-1 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl text-[8px] font-black tracking-widest hover:border-amber-500 hover:text-amber-500 transition-all">
+                                Détails
+                            </button>
+                            <button onclick='openBookingModal(@json($car))' 
+                                class="flex-1 py-3.5 bg-amber-500 text-slate-950 rounded-xl text-[8px] font-black tracking-widest shadow-lg transition-all transform active:scale-[0.98] hover:bg-slate-950 hover:text-white">
+                                Réserver
+                            </button>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -165,34 +202,34 @@
     </div>
 
     <!-- Features Row -->
-    <div class="py-32 bg-slate-50 dark:bg-slate-900/30 transition-colors">
+    <div class="py-16 bg-slate-50 dark:bg-slate-900/30 transition-colors">
         <div class="container px-4 mx-auto lg:px-8">
             <div class="grid grid-cols-1 gap-16 md:grid-cols-3">
                 <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-3xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
+                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
                         <i data-lucide="shield-check" class="w-8 h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors text-[24px]">Sécurité Totale</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed font-medium">Chaque véhicule bénéficie d'une assurance tous risques et d'un entretien rigoureux.</p>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Sécurité Totale</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Chaque véhicule bénéficie d'une assurance tous risques et d'un entretien rigoureux.</p>
                     </div>
                 </div>
                 <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-3xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
+                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
                         <i data-lucide="star" class="w-8 h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors text-[24px]">Service Premium</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed font-medium">Chauffeur en option, bouteille d'eau offerte et livraison à domicile ou aéroport.</p>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Service Premium</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Chauffeur en option, bouteille d'eau offerte et livraison à domicile ou aéroport.</p>
                     </div>
                 </div>
                 <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-3xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
+                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
                         <i data-lucide="key" class="w-8 h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors text-[24px]">Flexibilité</h4>
-                        <p class="text-sm text-slate-500 leading-relaxed font-medium">Prolongation facile, annulation sans frais jusqu'à 24h et paiement sécurisé.</p>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Flexibilité</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Prolongation facile, annulation sans frais jusqu'à 24h et paiement sécurisé.</p>
                     </div>
                 </div>
             </div>
@@ -202,15 +239,15 @@
 
 <!-- Booking Modal -->
 <div id="bookingModal" class="fixed inset-0 z-[100] hidden overflow-hidden">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-xl transition-opacity animate-in fade-in" onclick="closeModal('bookingModal')"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row transition-colors animate-in zoom-in slide-in-from-bottom duration-500">
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" onclick="requestClose('bookingModal')"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4 pointer-events-none">
+        <div id="bookingModalContent" class="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row transition-colors pointer-events-auto">
             <!-- Left Side: Summary -->
-            <div class="w-full md:w-2/5 p-8 bg-slate-50 dark:bg-slate-950/50 border-r border-slate-100 dark:border-white/5 transition-colors">
-                <div class="space-y-8">
-                    <div class="space-y-2">
-                        <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Votre sélection</span>
-                        <h2 id="modal_car_name" class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none transition-colors italic"></h2>
+            <div class="w-full md:w-2/5 p-6 bg-slate-50 dark:bg-slate-950/50 border-r border-slate-100 dark:border-white/5 transition-colors">
+                <div class="space-y-6">
+                    <div class="space-y-1">
+                        <span class="text-[8px] font-black text-amber-500 uppercase tracking-widest italic">Votre sélection</span>
+                        <h2 id="modal_car_name" class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none transition-colors italic"></h2>
                     </div>
                     <div class="rounded-3xl overflow-hidden shadow-2xl">
                         <img id="modal_car_img" src="" class="w-full h-48 object-cover">
@@ -233,11 +270,11 @@
             </div>
 
             <!-- Right Side: Form -->
-            <div class="w-full md:w-3/5 p-12 bg-white dark:bg-slate-900 transition-colors">
-                <button onclick="closeModal('bookingModal')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+            <div class="w-full md:w-3/5 p-8 bg-white dark:bg-slate-900 transition-colors">
+                <button onclick="requestClose('bookingModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-900 dark:hover:text-white transition group/close">
+                    <i data-lucide="x" class="w-5 h-5 transition-transform group-hover/close:rotate-90"></i>
                 </button>
-                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-8 transition-colors italic border-l-4 border-amber-500 pl-4">Données de réservation</h3>
+                <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-6 transition-colors italic border-l-4 border-amber-500 pl-4">Données de réservation</h3>
                 
                 <form id="bookingForm" method="POST" class="space-y-6">
                     @csrf
@@ -264,7 +301,7 @@
                         En cliquant sur confirmer, vous initiez une demande de réservation. Notre service conciergerie vous contactera sous 30 minutes pour validation.
                     </p>
 
-                    <button type="submit" class="w-full py-5 bg-amber-500 text-slate-950 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-amber-500/20 transition hover:bg-slate-950 hover:text-white group/submit">
+                    <button type="submit" class="w-full py-5 bg-amber-500 text-slate-950 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-amber-500/20 transition hover:bg-slate-950 hover:text-white group/submit">
                         Confirmer la réservation
                     </button>
                 </form>
@@ -275,54 +312,56 @@
 
 <!-- Details Modal -->
 <div id="detailsModal" class="fixed inset-0 z-[100] hidden overflow-hidden">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-2xl transition-opacity animate-in fade-in" onclick="closeModal('detailsModal')"></div>
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-950 border border-white/5 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in slide-in-from-top duration-500">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity" onclick="requestClose('detailsModal')"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4 pointer-events-none">
+        <div id="detailsModalContent" class="relative w-full max-w-2xl bg-white dark:bg-slate-950 border border-white/5 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row pointer-events-auto">
              <div class="w-full md:w-1/2 relative bg-slate-950 overflow-hidden">
                  <img id="details_car_img" src="" class="absolute inset-0 w-full h-full object-cover">
                  <div class="absolute inset-0 bg-gradient-to-r from-slate-950/60 to-transparent"></div>
-                 <div class="absolute bottom-8 left-8 space-y-4">
-                    <span id="details_car_cat" class="px-4 py-1.5 bg-amber-500 text-slate-950 text-[10px] font-black uppercase tracking-[0.3em] rounded-full"></span>
-                    <h2 id="details_car_name" class="text-3xl font-black text-white uppercase tracking-tighter leading-none italic"></h2>
+                 <div class="absolute bottom-6 left-6 space-y-2">
+                    <span id="details_car_cat" class="px-3 py-1 bg-amber-500 text-slate-950 text-[8px] font-black uppercase tracking-[0.3em] rounded-full"></span>
+                    <h2 id="details_car_name" class="text-xl font-black text-white uppercase tracking-tighter leading-none italic"></h2>
                  </div>
              </div>
-             <div class="w-full md:w-1/2 p-16 space-y-12 dark:text-white">
-                <button onclick="closeModal('detailsModal')" class="absolute top-10 right-10 text-slate-400 hover:text-white transition"><i data-lucide="x" class="w-8 h-8"></i></button>
+             <div class="w-full md:w-1/2 p-10 space-y-8 dark:text-white">
+                <button onclick="requestClose('detailsModal')" class="absolute top-6 right-6 text-slate-400 hover:text-white transition group/close">
+                    <i data-lucide="x" class="w-6 h-6 transition-transform group-hover/close:rotate-90"></i>
+                </button>
                 
-                <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] italic">Spécifications Techniques</h3>
-                    <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-3">
+                    <h3 class="text-[8px] font-black text-amber-500 uppercase tracking-[0.3em] italic">Spécifications</h3>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase block mb-1">Transmission</span>
-                            <div id="details_transmission" class="text-sm font-black uppercase italic"></div>
+                            <span class="text-[8px] font-black text-slate-500 uppercase block mb-0.5">Transmission</span>
+                            <div id="details_transmission" class="text-xs font-black uppercase italic"></div>
                         </div>
                         <div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase block mb-1">Carburant</span>
-                            <div id="details_fuel" class="text-sm font-black uppercase italic"></div>
+                            <span class="text-[8px] font-black text-slate-500 uppercase block mb-0.5">Carburant</span>
+                            <div id="details_fuel" class="text-xs font-black uppercase italic"></div>
                         </div>
                         <div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase block mb-1">Capacité</span>
-                            <div id="details_capacity" class="text-sm font-black uppercase italic"></div>
+                            <span class="text-[8px] font-black text-slate-500 uppercase block mb-0.5">Capacité</span>
+                            <div id="details_capacity" class="text-xs font-black uppercase italic"></div>
                         </div>
                         <div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase block mb-1">État</span>
-                            <div id="details_condition" class="text-sm font-black uppercase italic"></div>
+                            <span class="text-[8px] font-black text-slate-500 uppercase block mb-0.5">État</span>
+                            <div id="details_condition" class="text-xs font-black uppercase italic"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
-                    <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] italic">Équipements Inclus</h3>
-                    <p id="details_equipments" class="text-sm text-slate-500 leading-relaxed font-medium italic"></p>
+                <div class="space-y-3">
+                    <h3 class="text-[8px] font-black text-amber-500 uppercase tracking-[0.3em] italic">Équipements</h3>
+                    <p id="details_equipments" class="text-xs text-slate-500 leading-relaxed font-medium italic"></p>
                 </div>
 
-                <div class="pt-8 border-t border-white/5 space-y-8">
+                <div class="pt-6 border-t border-white/5 space-y-6">
                      <div class="flex justify-between items-baseline">
-                        <span class="text-xs font-black uppercase tracking-widest text-slate-500">Tarif Journalier</span>
-                        <div class="text-5xl font-black text-amber-500 italic"><span id="details_price"></span> <span class="text-sm">FCFA</span></div>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Tarif / jour</span>
+                        <div class="text-2xl font-black text-amber-500 italic"><span id="details_price"></span> <span class="text-xs">CFA</span></div>
                      </div>
-                     <button onclick="closeDetailsAndOpenBook()" class="w-full py-6 bg-white text-slate-950 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-white/5 transition hover:bg-amber-500 active:scale-95">
-                        Réserver ce véhicule
+                     <button onclick="closeDetailsAndOpenBook()" class="w-full py-4 bg-white text-slate-950 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-white/5 transition hover:bg-amber-500 active:scale-95">
+                        Réserver maintenant
                      </button>
                 </div>
              </div>
@@ -337,6 +376,7 @@
     function openBookingModal(car) {
         currentCar = car;
         const modal = document.getElementById('bookingModal');
+        const content = document.getElementById('bookingModalContent');
         const form = document.getElementById('bookingForm');
         
         form.action = `/location/${car.id}/reserver`;
@@ -346,6 +386,8 @@
         document.getElementById('modal_car_caution').innerText = new Intl.NumberFormat('fr-FR').format(car.caution) + ' FCFA';
         
         modal.classList.remove('hidden');
+        content.classList.remove('modal-animate-out');
+        content.classList.add('modal-animate-in');
         document.body.style.overflow = 'hidden';
         calculateTotal();
     }
@@ -353,6 +395,8 @@
     function openDetailsModal(car) {
         currentCar = car;
         const modal = document.getElementById('detailsModal');
+        const content = document.getElementById('detailsModalContent');
+        
         document.getElementById('details_car_img').src = car.photo_principale || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000';
         document.getElementById('details_car_name').innerText = `${car.marque} ${car.modele}`;
         document.getElementById('details_car_cat').innerText = (car.categorie || 'SÉLECTION').toUpperCase();
@@ -364,7 +408,21 @@
         document.getElementById('details_price').innerText = new Intl.NumberFormat('fr-FR').format(car.prix_jour);
 
         modal.classList.remove('hidden');
+        content.classList.remove('modal-animate-out');
+        content.classList.add('modal-animate-in');
         document.body.style.overflow = 'hidden';
+    }
+
+    function requestClose(id) {
+        const contentId = id + 'Content';
+        const content = document.getElementById(contentId);
+        content.classList.remove('modal-animate-in');
+        content.classList.add('modal-animate-out');
+        
+        // Wait for animations: 0.5s shake + 0.5s slideOut = 1s
+        setTimeout(() => {
+            closeModal(id);
+        }, 1000);
     }
 
     function closeModal(id) {
@@ -374,8 +432,8 @@
 
     function closeDetailsAndOpenBook() {
         if(!currentCar) return;
-        closeModal('detailsModal');
-        setTimeout(() => openBookingModal(currentCar), 300);
+        requestClose('detailsModal');
+        setTimeout(() => openBookingModal(currentCar), 1100);
     }
 
     function calculateTotal() {

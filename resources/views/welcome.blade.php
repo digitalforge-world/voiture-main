@@ -14,10 +14,6 @@
         <div class="container relative px-4 mx-auto max-w-7xl">
             <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
                 <div class="space-y-7">
-                    <span class="inline-block px-4 py-1.5 text-sm font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded-full">
-                        🚗 Leader en Afrique de l'Ouest
-                    </span>
-                    
                     <h1 class="text-3xl font-extrabold leading-tight text-slate-900 dark:text-white lg:text-4xl transition-colors">
                         Importation, Location et <br class="hidden sm:block">
                         Pièces Automobiles
@@ -101,7 +97,7 @@
                 </p>
             </div>
 
-            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
                 @php
                     $services = [
                         ['icon' => 'ship', 'title' => 'Importation', 'desc' => 'Catalogues Europe & Asie, expédition directe'],
@@ -139,45 +135,58 @@
                 
                 <div class="hidden md:flex gap-3">
                     <select class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none transition-all">
-                        <option>Marque</option>
-                        <option>Toyota</option>
-                        <option>Mercedes</option>
-                        <option>BMW</option>
+                        <option value="">Marque</option>
+                        @foreach($marques ?? [] as $marque)
+                            <option value="{{ $marque }}">{{ $marque }}</option>
+                        @endforeach
                     </select>
                     <select class="px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-sm focus:border-amber-500 focus:outline-none transition-all">
-                        <option>Pays</option>
-                        <option>Allemagne</option>
-                        <option>France</option>
-                        <option>Japon</option>
+                        <option value="">Pays</option>
+                        @foreach($pays ?? [] as $p)
+                            <option value="{{ $p }}">{{ $p }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
 
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
                 @forelse($featuredCars ?? [] as $car)
-                    <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all group shadow-sm dark:shadow-none">
-                        <div class="relative aspect-[4/3] overflow-hidden">
-                            <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=600' }}" 
-                                 alt="{{ $car->marque }} {{ $car->modele }}" 
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            <div class="absolute top-3 left-3">
-                                <span class="px-2 py-1 bg-amber-500 text-slate-950 text-xs font-bold rounded">{{ data_get($car, 'annee', '2024') }}</span>
-                            </div>
-                        </div>
-                        <div class="p-5">
-                            <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 transition-colors">{{ $car->marque }} {{ $car->modele }}</h3>
-                            <p class="text-sm text-slate-500 mb-4 transition-colors">
-                                <i data-lucide="map-pin" class="w-3 h-3 inline"></i>
-                                {{ $car->ville_origine ?? 'Port' }}, {{ $car->pays_origine }}
-                            </p>
+                    <div class="group relative bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-amber-500/50 transition-all duration-700 shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col h-full animate-in fade-in slide-in-from-bottom duration-1000">
+                        {{-- Image Section --}}
+                        <div class="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-900">
+                            <img src="{{ optional($car)->photo_principale ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=600' }}" 
+                                 alt="{{ optional($car)->marque }} {{ optional($car)->modele }}" 
+                                 class="w-full h-full object-cover transition duration-1000 group-hover:scale-110">
                             
-                            <div class="flex items-baseline justify-between mb-4">
-                                <div class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
-                                    {{ number_format($car->prix, 0, ',', ' ') }}<span class="text-sm text-amber-500"> XOF</span>
+                            {{-- Price Overlay --}}
+                            <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent">
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-xl font-black text-white italic tracking-tighter">{{ number_format(optional($car)->prix ?? 0, 0, ',', ' ') }}</span>
+                                    <span class="text-[9px] font-black text-amber-500 tracking-widest">FCFA</span>
                                 </div>
                             </div>
-                            
-                            <a href="{{ route('cars.show', $car->id) }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all">
+
+                            {{-- Badges --}}
+                            <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[9px] font-black text-white rounded-lg">
+                                    {{ optional($car)->annee ?? '2024' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Content Section --}}
+                        <div class="p-5 flex-grow flex flex-col space-y-4">
+                            <div>
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white tracking-tighter italic leading-none transition-colors group-hover:text-amber-500">
+                                    {{ optional($car)->marque }} {{ optional($car)->modele }}
+                                </h3>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <i data-lucide="map-pin" class="w-2.5 h-2.5 text-slate-400"></i>
+                                    <span class="text-[9px] font-bold text-slate-500 tracking-widest">{{ optional($car)->ville_origine ?? 'Port' }}, {{ optional($car)->pays_origine ?? 'Europe' }}</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('cars.show', optional($car)->slug ?? '') }}" class="mt-auto py-3 text-[9px] font-black text-slate-900 dark:text-white tracking-[0.2em] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 transition-all text-center">
                                 Voir les détails
                             </a>
                         </div>
@@ -211,7 +220,7 @@
                             
                             <div class="flex items-baseline justify-between mb-4">
                                 <div class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
-                                    {{ number_format($demo['price'], 0, ',', ' ') }}<span class="text-sm text-amber-500">€</span>
+                                    {{ number_format($demo['price'], 0, ',', ' ') }}<span class="text-sm text-amber-500"> FCFA</span>
                                 </div>
                             </div>
                             
@@ -243,7 +252,7 @@
                 </p>
             </div>
 
-            <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-3">
                 @php
                     $ports = [
                         ['name' => 'Lomé', 'country' => 'Togo', 'flag' => '🇹🇬', 'delay' => '25-35j', 'popular' => true],
@@ -291,40 +300,70 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Durée flexible • Paiement sécurisé • Véhicules récents</p>
             </div>
 
-            <div class="grid gap-6 md:grid-cols-3">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
                 @foreach($featuredRentals as $rental)
-                <div class="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all shadow-sm dark:shadow-none">
-                    <div class="relative aspect-video overflow-hidden">
-                        <img src="{{ $rental->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=600' }}" 
-                             alt="{{ $rental->marque }} {{ $rental->modele }}" 
-                             class="w-full h-full object-cover">
-                        <span class="absolute top-3 right-3 px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded transition-colors">
-                            Disponible
-                        </span>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 transition-colors">{{ $rental->marque }} {{ $rental->modele }}</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-500 mb-4 transition-colors">{{ ucfirst($rental->categorie) }}</p>
+                <div class="group relative bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:border-amber-500/50 transition-all duration-700 shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col h-full animate-in fade-in slide-in-from-bottom duration-1000">
+                    {{-- Card Image Section --}}
+                    <div class="relative aspect-[16/10] overflow-hidden">
+                        {{-- Main Vehicle Image --}}
+                        <img src="{{ $rental->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" 
+                             alt="{{ $rental->marque }}" 
+                             class="absolute inset-0 object-cover w-full h-full transition duration-1000 group-hover:scale-110">
                         
-                        <div class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800 transition-colors">
-                            <span class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ number_format($rental->prix_jour, 0, ' ', ' ') }}</span>
-                            <span class="text-sm text-slate-500 dark:text-slate-400 transition-colors"> FCFA/jour</span>
+                        {{-- Dark Overlay --}}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-60"></div>
+                        
+                        {{-- Availability Badge --}}
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 bg-emerald-500 text-slate-950 text-[8px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-emerald-500/20">
+                                Disponible
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Card Body --}}
+                    <div class="p-5 flex-grow flex flex-col space-y-4">
+                        {{-- Brand & Model --}}
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="space-y-1">
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter italic leading-none transition-colors group-hover:text-amber-500">
+                                    {{ $rental->marque }}
+                                </h3>
+                                <p class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] leading-none">
+                                    {{ $rental->modele }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5">/ jour</span>
+                                <span class="text-sm font-black text-slate-900 dark:text-white italic transition-colors group-hover:text-amber-500">
+                                    {{ number_format($rental->prix_jour, 0, ',', ' ') }}<span class="ml-0.5 text-[8px] font-bold">CFA</span>
+                                </span>
+                            </div>
                         </div>
 
-                        <div class="space-y-2 mb-5 text-sm text-slate-400">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="check" class="w-4 h-4 text-green-500"></i>
-                                Assurance tous risques
+                        {{-- Technical Specs Pills --}}
+                        <div class="flex flex-wrap gap-2">
+                            <div class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg flex items-center gap-1.5 transition-colors">
+                                <i data-lucide="users" class="w-2.5 h-2.5 text-slate-400"></i>
+                                <span class="text-[8px] font-bold uppercase text-slate-500">{{ $rental->nombre_places }} places</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="check" class="w-4 h-4 text-green-500"></i>
-                                Kilométrage illimité
+                            <div class="px-2 py-1 bg-amber-500/5 border border-amber-500/10 rounded-lg flex items-center gap-1.5 transition-colors">
+                                <i data-lucide="shield-check" class="w-2.5 h-2.5 text-amber-500"></i>
+                                <span class="text-[8px] font-bold uppercase text-amber-500">Premium</span>
                             </div>
                         </div>
-                        
-                        <a href="{{ route('rental.index') }}" class="block w-full py-2.5 text-center text-sm font-semibold bg-amber-500 text-slate-950 rounded-lg hover:bg-amber-400 transition-colors">
-                            Réserver
-                        </a>
+
+                        {{-- Actions Section --}}
+                        <div class="pt-2 flex items-center gap-2 flex-nowrap">
+                            <a href="{{ route('rental.index') }}" 
+                                class="w-1/2 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl text-[7px] font-black uppercase tracking-widest hover:border-amber-500 hover:text-amber-500 transition-all text-center">
+                                Détails
+                            </a>
+                            <a href="{{ route('rental.index') }}" 
+                                class="w-1/2 py-2.5 bg-amber-500 text-slate-950 rounded-xl text-[7px] font-black uppercase tracking-widest shadow-lg transition-all hover:bg-slate-950 hover:text-white text-center">
+                                Réserver
+                            </a>
+                        </div>
                     </div>
                 </div>
                 @endforeach
@@ -435,7 +474,7 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400 transition-colors">Diagnostic • Devis • Suivi en temps réel</p>
             </div>
 
-            <div class="grid gap-6 md:grid-cols-4">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
                 @php
                     $steps = [
                         ['icon' => 'file-text', 'title' => 'Demande', 'desc' => 'Remplissez le formulaire en ligne'],
@@ -477,7 +516,7 @@
                 <p class="text-slate-500 dark:text-slate-400 transition-colors">Transparence et professionnalisme à chaque étape</p>
             </div>
 
-            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
                 @php
                     $points = [
                         ['icon' => 'map', 'title' => 'Processus Transparent', 'desc' => 'Suivi en temps réel de votre commande'],

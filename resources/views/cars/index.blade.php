@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-white dark:bg-slate-950 min-h-screen transition-colors duration-500">
     <!-- Header Section -->
-    <div class="relative py-20 overflow-hidden bg-slate-50 dark:bg-slate-900/50 transition-colors">
+    {{-- <div class="relative py-20 overflow-hidden bg-slate-50 dark:bg-slate-900/50 transition-colors">
         <div class="absolute inset-0 bg-gradient-to-b from-amber-500/5 to-transparent"></div>
         <div class="container relative px-4 mx-auto lg:px-8">
             <div class="max-w-3xl">
@@ -18,7 +18,7 @@
                 <p class="mt-4 text-base text-slate-600 dark:text-slate-400 transition-colors">Explorez notre sélection de véhicules premium disponibles à l'importation directe.</p>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <div class="container px-4 py-12 mx-auto lg:px-8">
         <div class="flex flex-col gap-12 lg:flex-row">
@@ -58,7 +58,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="relative flex-grow">
                                         <input type="number" name="prix_max" value="{{ request('prix_max') }}" placeholder="Max" class="w-full py-3 px-4 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600">
-                                        <span class="absolute right-3.5 top-3.5 text-xs font-bold text-amber-500">€</span>
+                                        <span class="absolute right-3.5 top-3.5 text-[10px] font-bold text-amber-500">FCFA</span>
                                     </div>
                                 </div>
                             </div>
@@ -72,16 +72,15 @@
                     </div>
                 </form>
             </aside>
-
             <!-- Main Listing Grid -->
-            <div class="flex-grow">
-                <div class="flex items-center justify-between mb-8">
-                    <div class="text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors">
-                        <span class="text-slate-900 dark:text-white font-bold transition-colors">{{ $voitures->count() }}</span> véhicules trouvés
+            <div class="flex-grow min-w-0">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                    <div class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                        Total: <span class="text-slate-900 dark:text-white font-black">{{ $voitures->count() }}</span> véhicules premium
                     </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold tracking-widest uppercase text-slate-500">Trier par:</span>
-                        <select class="py-1 px-3 text-xs bg-transparent border-none text-white focus:ring-0 cursor-pointer hover:text-amber-500 transition">
+                    <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                        <span class="text-[10px] font-black tracking-widest text-slate-400 uppercase ml-2">Trier par</span>
+                        <select class="py-1.5 px-3 text-[10px] font-bold bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-900 dark:text-white focus:ring-0 focus:border-amber-500 cursor-pointer appearance-none transition-all">
                             <option>Plus récents</option>
                             <option>Prix croissant</option>
                             <option>Prix décroissant</option>
@@ -89,67 +88,97 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                     @forelse($voitures as $car)
-                        <div class="group bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/30 transition duration-500 flex flex-col shadow-xl">
-                            <div class="relative overflow-hidden aspect-[4/3]">
-                                <img src="{{ $car->image ?? 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800' }}" alt="{{ $car->marque }} {{ $car->modele }}" class="object-cover w-full h-full transition duration-700 group-hover:scale-105">
-                                <div class="absolute p-4 flex gap-2 top-0 left-0">
-                                    <span class="px-3 py-1 text-[10px] font-black tracking-widest uppercase bg-amber-500 text-slate-950 rounded-full shadow-lg">{{ $car->etat }}</span>
-                                </div>
-                                <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950/90 to-transparent">
-                                    <div class="text-xl font-black text-white">
-                                        {{ number_format($car->prix, 0, ',', ' ') }} <span class="text-xs text-amber-500">€</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-6 flex-grow flex flex-col bg-white dark:bg-slate-950 transition-colors">
-                                <div class="mb-4">
-                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition tracking-tight">{{ $car->marque }} {{ $car->modele }}</h3>
-                                    <div class="flex items-center gap-2 mt-2 text-slate-500 text-sm font-medium">
-                                        <div class="flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 dark:bg-white/5 rounded-md border border-slate-200 dark:border-white/5 uppercase tracking-tighter text-[10px] transition-colors">{{ $car->annee }}</div>
-                                        <span class="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full transition-colors"></span>
-                                        <span class="transition-colors">{{ $car->ville_origine }}, {{ $car->pays_origine }}</span>
-                                    </div>
-                                </div>
+                        <div class="group relative bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden hover:border-amber-500/30 transition-all duration-700 shadow-sm hover:shadow-2xl hover:shadow-amber-500/5 flex flex-col h-full">
+                            {{-- Image Section --}}
+                            <div class="relative aspect-[16/11] overflow-hidden bg-slate-100 dark:bg-slate-900">
+                                <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800' }}" 
+                                     alt="{{ $car->marque }} {{ $car->modele }}" 
+                                     class="w-full h-full object-cover transition duration-1000 group-hover:scale-105">
                                 
-                                <div class="grid grid-cols-2 gap-4 pb-6 mt-4 border-b border-slate-100 dark:border-white/5 transition-colors">
-                                    <div class="flex items-center gap-2.5 text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
-                                        <div class="p-2 bg-slate-50 dark:bg-slate-900 rounded-lg transition-colors"><i data-lucide="gauge-circle" class="w-4 h-4 text-amber-500"></i></div>
-                                        {{ number_format($car->kilometrage, 0, ',', ' ') }} km
-                                    </div>
-                                    <div class="flex items-center gap-2.5 text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
-                                        <div class="p-2 bg-slate-50 dark:bg-slate-900 rounded-lg transition-colors"><i data-lucide="fuel" class="w-4 h-4 text-amber-500"></i></div>
-                                        {{ $car->carburant }}
-                                    </div>
-                                    <div class="flex items-center gap-2.5 text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
-                                        <div class="p-2 bg-slate-50 dark:bg-slate-900 rounded-lg transition-colors"><i data-lucide="settings-2" class="w-4 h-4 text-amber-500"></i></div>
-                                        {{ $car->transmission }}
-                                    </div>
-                                    <div class="flex items-center gap-2.5 text-xs font-medium text-slate-500 dark:text-slate-400 transition-colors">
-                                        <div class="p-2 bg-slate-50 dark:bg-slate-900 rounded-lg transition-colors"><i data-lucide="ship" class="w-4 h-4 text-amber-500"></i></div>
-                                        {{ $car->portRecommande->nom ?? 'Port Togo' }}
+                                {{-- Price Badge --}}
+                                <div class="absolute bottom-4 left-4">
+                                    <div class="px-4 py-2 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-white/10 flex items-baseline gap-1.5">
+                                        <span class="text-lg font-black text-white tracking-tighter">{{ number_format($car->prix, 0, ',', ' ') }}</span>
+                                        <span class="text-[9px] font-black text-amber-500 uppercase">FCFA</span>
                                     </div>
                                 </div>
 
-                                <div class="mt-auto pt-6 flex gap-3">
-                                    <a href="{{ route('cars.show', $car->id) }}" class="flex-grow flex items-center justify-center py-4 text-sm font-bold transition border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700">
+                                {{-- Badges --}}
+                                <div class="absolute top-4 left-4">
+                                    <span class="px-3 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black text-white rounded-xl">
+                                        {{ $car->annee }}
+                                    </span>
+                                </div>
+                                <div class="absolute top-4 right-4">
+                                    <div class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-slate-950 text-[10px] font-black tracking-widest rounded-xl shadow-lg shadow-amber-500/20">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-slate-950 animate-pulse"></div>
+                                        {{ strtoupper($car->disponibilite) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Content Section --}}
+                            <div class="p-6 flex-grow flex flex-col justify-between space-y-6">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">{{ $car->marque }}</span>
+                                        <div class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ $car->transmission ?? 'AUTO' }}</span>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter leading-none group-hover:text-amber-500 transition-colors">
+                                        {{ $car->modele }}
+                                    </h3>
+                                    <div class="flex items-center gap-2 mt-4 text-slate-400">
+                                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                        <span class="text-[10px] font-bold tracking-widest uppercase italic">{{ $car->ville_origine }}, {{ $car->pays_origine }}</span>
+                                    </div>
+                                </div>
+
+                                {{-- Technical Specs --}}
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
+                                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Kilométrage</p>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="gauge" class="w-4 h-4 text-amber-500"></i>
+                                            <span class="text-xs font-black text-slate-800 dark:text-slate-200">{{ number_format($car->kilometrage, 0, ',', ' ') }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
+                                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Carburant</p>
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="fuel" class="w-4 h-4 text-amber-500"></i>
+                                            <span class="text-xs font-black text-slate-800 dark:text-slate-200">{{ $car->carburant }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Action Buttons --}}
+                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                    <a href="{{ route('cars.show', $car->slug) }}" class="flex items-center justify-center py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                                         Détails
                                     </a>
-                                    <form action="{{ route('cars.order', $car->id) }}" method="POST" class="flex-grow">
-                                        @csrf
-                                        <button type="submit" class="w-full flex items-center justify-center gap-2 py-4 text-sm font-bold bg-amber-500 text-slate-950 rounded-xl hover:bg-amber-400 transition shadow-lg shadow-amber-900/10">
-                                            Acheter <i data-lucide="zap" class="w-4 h-4"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" 
+                                            onclick="openOrderModal({
+                                                id: {{ $car->id }},
+                                                marque: '{{ addslashes($car->marque) }}',
+                                                modele: '{{ addslashes($car->modele) }}',
+                                                prix: {{ $car->prix }},
+                                                photo: '{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=800' }}',
+                                                slug: '{{ $car->slug }}'
+                                            })"
+                                            class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-amber-500/20 transition-all active:scale-95">
+                                        Commander
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-3 py-20 text-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 transition-colors">
-                            <i data-lucide="car-front" class="w-12 h-12 mx-auto mb-4 text-slate-200 dark:text-slate-800 transition-colors"></i>
-                            <h3 class="text-lg font-bold text-slate-900 dark:text-white transition-colors">Aucun véhicule trouvé</h3>
-                            <p class="text-slate-500 mt-2 text-xs transition-colors">Essayez de modifier vos filtres pour trouver votre bonheur.</p>
+                        <div class="col-span-full py-20 text-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                            <i data-lucide="car-front" class="w-12 h-12 mx-auto mb-4 text-slate-200 dark:text-slate-800"></i>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Aucun véhicule trouvé</h3>
+                            <p class="text-slate-500 mt-2 text-xs">Essayez de modifier vos filtres pour trouver votre bonheur.</p>
                             <a href="{{ route('cars.index') }}" class="inline-block mt-8 px-6 py-2.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-xl hover:bg-amber-400 transition">Voir tout le stock</a>
                         </div>
                     @endforelse

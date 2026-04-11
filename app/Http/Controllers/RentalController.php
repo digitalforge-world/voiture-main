@@ -59,6 +59,9 @@ class RentalController extends Controller
             'reference' => 'LOC-' . strtoupper(\Illuminate\Support\Str::random(8)),
         ]);
 
+        // Mettre à jour la disponibilité du véhicule de location
+        $car->update(['disponible' => false]);
+
         return redirect()->route('tracking.success')->with('tracking_number', $trackingNumber);
     }
 }

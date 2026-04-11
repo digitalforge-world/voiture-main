@@ -17,9 +17,21 @@ class HomeController extends Controller
 
         $featuredRentals = VoitureLocation::where('disponible', true)
             ->latest()
-            ->take(3)
+            ->take(4)
             ->get();
 
-        return view('welcome', compact('featuredCars', 'featuredRentals'));
+        // Marques depuis la configuration admin
+        $marquesSetting = \App\Models\ParametreSysteme::where('cle', 'marques_disponibles')->value('valeur');
+        $marques = $marquesSetting
+            ? collect(array_map('trim', explode(',', $marquesSetting)))->sort()->values()
+            : Voiture::distinct()->pluck('marque')->filter()->sort()->values();
+
+        // Pays depuis la configuration admin ou depuis les voitures
+        $paysSetting = \App\Models\ParametreSysteme::where('cle', 'pays_disponibles')->value('valeur');
+        $pays = $paysSetting
+            ? collect(array_map('trim', explode(',', $paysSetting)))->sort()->values()
+            : Voiture::distinct()->pluck('pays_origine')->filter()->sort()->values();
+
+        return view('welcome', compact('featuredCars', 'featuredRentals', 'marques', 'pays'));
     }
 }

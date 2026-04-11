@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\TrackingHelper;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TrackingController extends Controller
 {
@@ -23,6 +24,10 @@ class TrackingController extends Controller
     {
         $request->validate([
             'tracking_number' => 'required|string|min:10|max:20'
+        ], [
+            'tracking_number.required' => 'Le numéro de suivi est obligatoire.',
+            'tracking_number.min' => 'Le numéro de suivi doit contenir au moins 10 caractères.',
+            'tracking_number.max' => 'Le numéro de suivi ne peut pas dépasser 20 caractères.',
         ]);
 
         $tracking = strtoupper(trim($request->tracking_number));
@@ -55,7 +60,7 @@ class TrackingController extends Controller
                         'voitures.modele',
                         'voitures.annee',
                         'voitures.prix',
-                        'voitures.image'
+                        'voitures.photo_principale as image'
                     )
                     ->first();
                 break;
@@ -130,23 +135,23 @@ class TrackingController extends Controller
         // Rechercher selon le type
         switch ($type) {
             case 'voiture':
-                $order = \DB::table('commandes_voitures')
+                $order = DB::table('commandes_voitures')
                     ->join('voitures', 'commandes_voitures.voiture_id', '=', 'voitures.id')
                     ->where('commandes_voitures.tracking_number', $tracking)
-                    ->select('commandes_voitures.*', 'voitures.marque', 'voitures.modele', 'voitures.annee', 'voitures.prix', 'voitures.image')
+                    ->select('commandes_voitures.*', 'voitures.marque', 'voitures.modele', 'voitures.annee', 'voitures.prix', 'voitures.photo_principale as image')
                     ->first();
                 break;
 
             case 'location':
-                $order = \DB::table('locations')
-                    ->join('voitures', 'locations.voiture_id', '=', 'voitures.id')
+                $order = DB::table('locations')
+                    ->join('voitures_location', 'locations.voiture_location_id', '=', 'voitures_location.id')
                     ->where('locations.tracking_number', $tracking)
-                    ->select('locations.*', 'voitures.marque', 'voitures.modele', 'voitures.annee', 'voitures.image')
+                    ->select('locations.*', 'voitures_location.marque', 'voitures_location.modele', 'voitures_location.photo_principale as image')
                     ->first();
                 break;
 
             case 'piece':
-                $order = \DB::table('commandes_pieces')
+                $order = DB::table('commandes_pieces')
                     ->join('ligne_commandes_pieces', 'commandes_pieces.id', '=', 'ligne_commandes_pieces.commande_piece_id')
                     ->join('pieces_detachees', 'ligne_commandes_pieces.piece_id', '=', 'pieces_detachees.id')
                     ->where('commandes_pieces.tracking_number', $tracking)
@@ -155,7 +160,7 @@ class TrackingController extends Controller
                 break;
 
             case 'revision':
-                $order = \DB::table('revisions')
+                $order = DB::table('revisions')
                     ->where('revisions.tracking_number', $tracking)
                     ->first();
                 break;
@@ -166,7 +171,7 @@ class TrackingController extends Controller
         }
 
         // Générer le PDF
-        $pdf = \PDF::loadView('tracking.pdf', [
+        $pdf = Pdf::loadView('tracking.pdf', [
             'order' => $order,
             'type' => $type,
             'tracking' => $tracking

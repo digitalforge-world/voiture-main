@@ -12,32 +12,35 @@ class VoitureController extends Controller
     {
         $query = Voiture::query();
 
-        if ($request->has('marque')) {
+        if ($request->filled('marque')) {
             $query->where('marque', 'like', '%' . $request->marque . '%');
         }
 
-        if ($request->has('prix_max')) {
+        if ($request->filled('prix_max')) {
             $query->where('prix', '<=', $request->prix_max);
         }
 
-        $voitures = $query->whereIn('disponibilite', ['disponible', 'en_transit'])
-            ->latest()
+        // Les voitures à vendre sont toujours visibles (catalogue illimité).
+        $voitures = $query->latest()
             ->paginate(9);
 
-        $marques = Voiture::distinct()->pluck('marque');
+        // Marques depuis la configuration admin
+        $marquesSetting = \App\Models\ParametreSysteme::where('cle', 'marques_disponibles')->value('valeur');
+        $marques = $marquesSetting
+            ? collect(array_map('trim', explode(',', $marquesSetting)))->sort()->values()
+            : Voiture::distinct()->pluck('marque')->sort()->values();
 
         return view('cars.index', compact('voitures', 'marques'));
     }
 
-    public function show($id)
+    public function show(Voiture $voiture)
     {
-        $voiture = Voiture::findOrFail($id);
         $ports = Port::where('actif', true)->get();
 
         return view('cars.show', compact('voiture', 'ports'));
     }
 
-    public function order(Request $request, $id)
+    public function order(Request $request, Voiture $voiture)
     {
         $request->validate([
             'port_id' => 'required|exists:ports,id',
@@ -46,7 +49,6 @@ class VoitureController extends Controller
             'client_email' => 'nullable|email|max:255',
         ]);
 
-        $voiture = Voiture::findOrFail($id);
         $port = Port::findOrFail($request->port_id);
 
         // Calculate fees
@@ -74,8 +76,8 @@ class VoitureController extends Controller
             'client_email' => $request->client_email,
         ]);
 
-        // Update car availability
-        $voiture->update(['disponibilite' => 'reserve']);
+        // Note: Les voitures à vendre restent toujours visibles au catalogue (stock illimité / sur commande).
+        // Seules les voitures de location changent de disponibilité.
 
         // Redirect to success page with tracking number
         return redirect()->route('tracking.success')->with('tracking_number', $trackingNumber);

@@ -22,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
         if (!app()->runningInConsole() && \Illuminate\Support\Facades\Schema::hasTable('parametres_systeme')) {
             $settings = \App\Models\ParametreSysteme::all()->pluck('valeur', 'cle')->toArray();
             view()->share('siteSettings', $settings);
+            
+            if (\Illuminate\Support\Facades\Schema::hasTable('ports')) {
+                $ports = \App\Models\Port::where('actif', true)->get();
+                view()->share('allPorts', $ports);
+            }
         }
 
         // Authentication Logging

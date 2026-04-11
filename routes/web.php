@@ -11,11 +11,12 @@ use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\TrackingController;
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/api/global-search', [App\Http\Controllers\GlobalSearchController::class, 'search'])->name('api.global-search');
 
 // Routes Publiques - Services (Maintenant accessibles sans auth)
 Route::get('/voitures', [PublicVoitureController::class, 'index'])->name('cars.index');
-Route::get('/voitures/{id}', [PublicVoitureController::class, 'show'])->name('cars.show');
-Route::post('/voitures/{id}/order', [PublicVoitureController::class, 'order'])->name('cars.order');
+Route::get('/voitures/{voiture}', [PublicVoitureController::class, 'show'])->name('cars.show');
+Route::post('/voitures/{voiture}/order', [PublicVoitureController::class, 'order'])->name('cars.order');
 
 Route::get('/pieces', [PublicPieceController::class, 'index'])->name('parts.index');
 Route::get('/pieces/compatibilite', [PublicPieceController::class, 'searchCompatibility'])->name('parts.compatibility');

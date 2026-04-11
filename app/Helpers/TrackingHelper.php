@@ -29,6 +29,7 @@ class TrackingHelper
             'location' => 'LOC',     // Location
             'piece' => 'PCE',        // Pièce détachée
             'revision' => 'REV',     // Révision
+            'tracking' => 'TRK',     // Tracking générique
         ];
     }
 
@@ -69,8 +70,8 @@ class TrackingHelper
      */
     public static function isValid(string $tracking): bool
     {
-        // Format: XXX-YYYY-ZZZZ
-        $pattern = '/^[A-Z]{3}-\d{4}-[A-Z0-9]{4}$/';
+        // Format: AAA-YYYY-XXXX ou AAA-YYYYMMDD-XXXX (plus flexible)
+        $pattern = '/^[A-Z]{3}-[\d]+-[A-Z0-9]+$/';
         return preg_match($pattern, $tracking) === 1;
     }
 
@@ -86,6 +87,11 @@ class TrackingHelper
         $prefix = substr($tracking, 0, 3);
         $prefixes = array_flip(self::prefixes());
 
-        return $prefixes[$prefix] ?? null;
+        $type = $prefixes[$prefix] ?? null;
+        
+        // TRK est traité comme une voiture par défaut ou une recherche globale
+        if ($prefix === 'TRK') return 'voiture';
+
+        return $type;
     }
 }

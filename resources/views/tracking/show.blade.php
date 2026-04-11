@@ -3,7 +3,7 @@
 @section('title', 'Détails de la Commande ' . $tracking)
 
 @section('content')
-<div class="min-h-screen pt-24 pb-12 bg-white dark:bg-slate-950 transition-colors duration-500">
+<div class="min-h-screen pb-12 bg-white dark:bg-slate-950 transition-colors duration-500">
     <div class="container px-4 mx-auto max-w-4xl">
         <div class="mb-8">
             <a href="{{ route('tracking.index') }}" class="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-amber-500 transition-colors">
@@ -18,7 +18,7 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-3 mb-2">
-                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white transition-colors">{{ $tracking }}</h1>
+                            <h1 class="text-xl font-bold text-slate-900 dark:text-white transition-colors">{{ $tracking }}</h1>
                             @php
                                 $statusColors = [
                                     // Default / En attente
@@ -80,7 +80,7 @@
             </div>
 
             {{-- Progress Bar --}}
-            <div class="py-12 px-6 md:px-12 bg-white dark:bg-slate-950/30 border-b border-slate-100 dark:border-slate-800 transition-colors">
+            <div class="py-10 px-6 md:px-12 bg-white dark:bg-slate-950/30 border-b border-slate-100 dark:border-slate-800 transition-colors">
                 <div class="relative">
                     {{-- Barre de fond --}}
                     <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 rounded-full transition-colors"></div>
@@ -166,7 +166,7 @@
             @endphp
 
             @if($showPayment && $montantTotal > 0)
-            <div class="px-6 md:px-12 py-8 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
+            <div class="px-6 md:px-12 py-6 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 transition-colors">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div class="w-full md:w-auto">
                         <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Statut du Paiement</h3>
@@ -186,17 +186,17 @@
                     </div>
 
                     <div class="w-full md:flex-1 grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
-                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Montant Total</div>
-                            <div class="font-bold text-slate-900 dark:text-white">{{ number_format($montantTotal, 0, ',', ' ') }} FCFA</div>
+                        <div class="p-2 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">Montant Total</div>
+                            <div class="font-bold text-sm text-slate-900 dark:text-white">{{ number_format($montantTotal, 0, ',', ' ') }} FCFA</div>
                         </div>
-                        <div class="p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
-                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Déjà Payé</div>
-                            <div class="font-bold text-emerald-600 dark:text-emerald-500">{{ number_format($montantPaye, 0, ',', ' ') }} FCFA</div>
+                        <div class="p-2 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800">
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">Déjà Payé</div>
+                            <div class="font-bold text-sm text-emerald-600 dark:text-emerald-500">{{ number_format($montantPaye, 0, ',', ' ') }} FCFA</div>
                         </div>
-                        <div class="col-span-2 md:col-span-1 p-3 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30">
-                            <div class="text-xs text-amber-600 dark:text-amber-500 mb-1 font-bold">Reste à Payer</div>
-                            <div class="font-bold text-amber-700 dark:text-amber-500">{{ number_format($resteAPayer, 0, ',', ' ') }} FCFA</div>
+                        <div class="col-span-2 md:col-span-1 p-2 bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30">
+                            <div class="text-[10px] text-amber-600 dark:text-amber-500 mb-0.5 font-bold">Reste à Payer</div>
+                            <div class="font-bold text-sm text-amber-700 dark:text-amber-500">{{ number_format($resteAPayer, 0, ',', ' ') }} FCFA</div>
                         </div>
                     </div>
 
@@ -223,7 +223,7 @@
                                 <div>
                                     <h4 class="font-bold text-slate-900 dark:text-white text-lg transition-colors">{{ $order->marque }} {{ $order->modele }}</h4>
                                     <p class="text-slate-500 dark:text-slate-400 transition-colors">{{ $order->annee }}</p>
-                                    <div class="mt-2 text-amber-500 font-bold">{{ number_format($order->prix, 0, ',', ' ') }} €</div>
+                                    <div class="mt-2 text-amber-500 font-bold">{{ number_format($order->prix, 0, ',', ' ') }} FCFA</div>
                                 </div>
                             </div>
                         @elseif($type === 'location')
@@ -288,10 +288,10 @@
                                 {{-- Prix Devis --}}
                                 @if(!empty($order->montant_devis) && $order->montant_devis > 0)
                                     <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-900/30">
-                                        <div class="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-2 flex items-center gap-1">
+                                        <div class="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-1 flex items-center gap-1">
                                             <i data-lucide="dollar-sign" class="w-4 h-4"></i>Devis Estimatif
                                         </div>
-                                        <div class="text-3xl font-black text-amber-600 dark:text-amber-500">
+                                        <div class="text-xl font-black text-amber-600 dark:text-amber-500">
                                             {{ number_format($order->montant_devis, 0, ',', ' ') }} <span class="text-sm">FCFA</span>
                                         </div>
                                     </div>
