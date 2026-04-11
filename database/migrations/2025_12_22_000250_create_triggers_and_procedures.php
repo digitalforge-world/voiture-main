@@ -12,6 +12,33 @@ return new class extends Migration
             return;
         }
 
+        $triggers = [
+            'before_insert_commande_voiture',
+            'before_insert_location',
+            'before_insert_commande_piece',
+            'before_insert_revision',
+            'before_insert_echange_piece',
+            'before_insert_paiement',
+            'after_insert_ligne_commande_piece',
+            'after_update_commande_piece_annulee',
+            'after_insert_commande_voiture_update_dispo',
+        ];
+
+        $procs = [
+            'sp_rechercher_pieces_compatibles',
+            'sp_calculer_frais_import',
+            'sp_stats_mensuelles',
+            'sp_rechercher_par_tracking',
+        ];
+
+        foreach ($triggers as $t) {
+            DB::unprepared("DROP TRIGGER IF EXISTS {$t};");
+        }
+
+        foreach ($procs as $p) {
+            DB::unprepared("DROP PROCEDURE IF EXISTS {$p};");
+        }
+
         $statements = [
             // Triggers
             "CREATE TRIGGER before_insert_commande_voiture
