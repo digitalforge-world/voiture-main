@@ -10,13 +10,14 @@ use App\Models\VoitureLocation;
 use App\Models\ParametreSysteme;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DefaultDataSeeder extends Seeder
 {
     public function run(): void
     {
         echo "Seeding Users...\n";
-        // Administrateur
+        // Administrateur par défaut
         User::updateOrCreate(
             ['email' => 'admin@autoimport.com'],
             [
@@ -30,36 +31,40 @@ class DefaultDataSeeder extends Seeder
         );
 
         echo "Seeding Ports...\n";
-        // Ports
+        // Ports de destination
         $ports = [
-            ['nom' => 'Port Autonome de Lomé', 'code' => 'LOME', 'pays' => 'Togo', 'ville' => 'Lomé', 'type' => 'maritime', 'frais_base' => 500000, 'delai_moyen_jours' => 30],
-            ['nom' => 'Port de Cotonou', 'code' => 'COTO', 'pays' => 'Bénin', 'ville' => 'Cotonou', 'type' => 'maritime', 'frais_base' => 550000, 'delai_moyen_jours' => 32],
-            ['nom' => 'Port de Tema', 'code' => 'TEMA', 'pays' => 'Ghana', 'ville' => 'Tema', 'type' => 'maritime', 'frais_base' => 600000, 'delai_moyen_jours' => 28],
-            ['nom' => 'Port d\'Abidjan', 'code' => 'ABID', 'pays' => 'Côte d\'Ivoire', 'ville' => 'Abidjan', 'type' => 'maritime', 'frais_base' => 650000, 'delai_moyen_jours' => 35],
-            ['nom' => 'Livraison Burkina Faso', 'code' => 'OUAG', 'pays' => 'Burkina Faso', 'ville' => 'Ouagadougou', 'type' => 'terrestre', 'frais_base' => 800000, 'delai_moyen_jours' => 45],
+            ['nom' => 'Port Autonome de Lomé', 'code' => 'LOME', 'pays' => 'Togo', 'ville' => 'Lomé', 'type' => 'maritime', 'frais_base' => 500000, 'delai_moyen_jours' => 30, 'actif' => true],
+            ['nom' => 'Port de Cotonou', 'code' => 'COTO', 'pays' => 'Bénin', 'ville' => 'Cotonou', 'type' => 'maritime', 'frais_base' => 550000, 'delai_moyen_jours' => 32, 'actif' => true],
+            ['nom' => 'Port de Tema', 'code' => 'TEMA', 'pays' => 'Ghana', 'ville' => 'Tema', 'type' => 'maritime', 'frais_base' => 600000, 'delai_moyen_jours' => 28, 'actif' => true],
+            ['nom' => 'Port d\'Abidjan', 'code' => 'ABID', 'pays' => 'Côte d\'Ivoire', 'ville' => 'Abidjan', 'type' => 'maritime', 'frais_base' => 650000, 'delai_moyen_jours' => 35, 'actif' => true],
+            ['nom' => 'Livraison Ouagadougou', 'code' => 'OUAG', 'pays' => 'Burkina Faso', 'ville' => 'Ouagadougou', 'type' => 'terrestre', 'frais_base' => 800000, 'delai_moyen_jours' => 45, 'actif' => true],
         ];
 
         foreach ($ports as $port) {
             Port::updateOrCreate(['code' => $port['code']], $port);
         }
 
-        echo "Seeding Params...\n";
-        // Paramètres système
-        $params = [
-            ['cle' => 'taux_tva', 'valeur' => '18', 'type' => 'number', 'description' => 'Taux de TVA en pourcentage'],
-            ['cle' => 'devise', 'valeur' => 'XOF', 'type' => 'string', 'description' => 'Devise principale (Franc CFA)'],
-            ['cle' => 'email_contact', 'valeur' => 'contact@autoimport.com', 'type' => 'string', 'description' => 'Email de contact'],
-            ['cle' => 'telephone_support', 'valeur' => '+22890000000', 'type' => 'string', 'description' => 'Téléphone support'],
+        echo "Seeding Config Settings...\n";
+        // Paramètres système globaux
+        $settings = [
+            'site_name' => 'AutoImport Hub',
+            'site_description' => 'Plateforme complète pour l\'importation, la location et l\'entretien automobile en Afrique de l\'Ouest.',
+            'site_display_mode' => 'both',
+            'contact_email' => 'contact@auto.com',
+            'contact_phone' => '+228 90 00 00 00',
+            'contact_address' => 'Lomé, Togo',
+            'marques_disponibles' => 'Toyota, Mercedes-Benz, BMW, Hyundai, Volkswagen, Peugeot, Audi, Lexus, Honda, Kia',
+            'pays_disponibles' => 'Japon, Allemagne, Corée du Sud, France, Etats-Unis, Chine',
+            'devise' => 'FCFA',
+            'taux_tva' => '18'
         ];
 
-        foreach ($params as $param) {
-            ParametreSysteme::updateOrCreate(['cle' => $param['cle']], $param);
+        foreach ($settings as $cle => $valeur) {
+            ParametreSysteme::updateOrCreate(['cle' => $cle], ['valeur' => $valeur]);
         }
 
         echo "Seeding Voitures...\n";
-        // ...
-
-        // Voitures
+        // Véhicules à l'importation
         $voitures = [
             [
                 'marque' => 'Toyota',
@@ -68,6 +73,7 @@ class DefaultDataSeeder extends Seeder
                 'kilometrage' => 15000,
                 'prix' => 15000000,
                 'pays_origine' => 'Japon',
+                'ville_origine' => 'Osaka',
                 'etat' => 'excellent',
                 'carburant' => 'essence',
                 'transmission' => 'automatique',
@@ -81,6 +87,7 @@ class DefaultDataSeeder extends Seeder
                 'kilometrage' => 5000,
                 'prix' => 85000000,
                 'pays_origine' => 'Allemagne',
+                'ville_origine' => 'Stuttgart',
                 'etat' => 'neuf',
                 'carburant' => 'essence',
                 'transmission' => 'automatique',
@@ -94,6 +101,7 @@ class DefaultDataSeeder extends Seeder
                 'kilometrage' => 35000,
                 'prix' => 12000000,
                 'pays_origine' => 'Corée du Sud',
+                'ville_origine' => 'Seoul',
                 'etat' => 'bon',
                 'carburant' => 'diesel',
                 'transmission' => 'automatique',
@@ -102,11 +110,25 @@ class DefaultDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($voitures as $voiture) {
-            Voiture::create($voiture);
+        foreach ($voitures as $vData) {
+            $voiture = Voiture::firstOrNew([
+                'marque' => $vData['marque'],
+                'modele' => $vData['modele'],
+                'annee' => $vData['annee']
+            ]);
+            
+            $voiture->fill($vData);
+            
+            // Force la génération d'un slug si celui-ci est vide
+            if (empty($voiture->slug)) {
+                $voiture->slug = Voiture::generateUniqueSlug($voiture);
+            }
+            
+            $voiture->save();
         }
 
-        // Voitures Location
+        echo "Seeding Rental Vehicles...\n";
+        // Véhicules de location
         $locations = [
             [
                 'marque' => 'Toyota',
@@ -130,10 +152,11 @@ class DefaultDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($locations as $loc) {
-            VoitureLocation::create($loc);
+        foreach ($locations as $locData) {
+            VoitureLocation::updateOrCreate(['immatriculation' => $locData['immatriculation']], $locData);
         }
 
+        echo "Seeding Spare Parts...\n";
         // Pièces détachées
         $pieces = [
             [
@@ -144,6 +167,7 @@ class DefaultDataSeeder extends Seeder
                 'categorie' => 'moteur',
                 'prix' => 5000,
                 'stock' => 50,
+                'disponible' => true,
             ],
             [
                 'nom' => 'Plaquettes de frein Mercedes',
@@ -152,55 +176,14 @@ class DefaultDataSeeder extends Seeder
                 'categorie' => 'freinage',
                 'prix' => 45000,
                 'stock' => 20,
+                'disponible' => true,
             ],
         ];
 
-        foreach ($pieces as $piece) {
-            PieceDetachee::create($piece);
-        }
-        // Sample Orders
-        $v1 = Voiture::first();
-        $p1 = Port::first();
-        
-        if ($v1 && $p1) {
-            \App\Models\CommandeVoiture::create([
-                'user_id' => 1,
-                'voiture_id' => $v1->id,
-                'port_destination_id' => $p1->id,
-                'prix_voiture' => $v1->prix,
-                'frais_port' => $p1->frais_base,
-                'frais_douane' => $v1->prix * 0.1,
-                'montant_total' => $v1->prix * 1.1 + $p1->frais_base,
-                'reste_a_payer' => 0,
-                'statut' => 'en_transit',
-                'reference' => 'CV-ORDER-001',
-            ]);
+        foreach ($pieces as $pData) {
+            PieceDetachee::updateOrCreate(['reference' => $pData['reference']], $pData);
         }
 
-        // Sample Revisions
-        \App\Models\Revision::create([
-            'user_id' => 1,
-            'marque_vehicule' => 'Toyota',
-            'modele_vehicule' => 'RAV4',
-            'annee_vehicule' => 2019,
-            'probleme_description' => 'Bruit suspect au niveau du train avant et vidange complète.',
-            'type_revision' => 'complete',
-            'statut' => 'en_attente',
-            'reference' => 'REV-SAMPLE-001',
-        ]);
-
-        // Paramètres système
-        $settings = [
-            'site_name' => 'AutoImport Hub',
-            'site_description' => 'Plateforme complète pour l\'importation, la location et l\'entretien automobile en Afrique de l\'Ouest.',
-            'site_display_mode' => 'both',
-            'contact_email' => 'contact@auto.com',
-            'contact_phone' => '+228 90 00 00 00',
-            'contact_address' => 'Lomé, Togo',
-        ];
-
-        foreach ($settings as $cle => $valeur) {
-            ParametreSysteme::updateOrCreate(['cle' => $cle], ['valeur' => $valeur]);
-        }
+        echo "Database Seeding Completed Successfully.\n";
     }
 }
