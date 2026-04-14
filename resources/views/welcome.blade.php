@@ -5,21 +5,24 @@
 @section('content')
 <div class="min-h-screen">
     {{-- Hero Section --}}
-    <section class="relative pt-24 pb-20 overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 transition-colors duration-500">
-        <div class="absolute inset-0 opacity-20">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-amber-500/30 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 right-20 w-96 h-96 bg-amber-600/20 rounded-full blur-3xl"></div>
+    <section class="relative pt-24 pb-28 overflow-hidden bg-slate-900">
+        {{-- Background Image --}}
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920" 
+                 alt="Background Hero" 
+                 class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent"></div>
         </div>
 
-        <div class="container relative px-4 mx-auto max-w-7xl">
-            <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div class="container relative px-4 mx-auto max-w-7xl z-10">
+            <div class="max-w-2xl">
                 <div class="space-y-7">
-                    <h1 class="text-3xl font-extrabold leading-tight text-slate-900 dark:text-white lg:text-4xl transition-colors">
+                    <h1 class="text-3xl font-extrabold leading-tight text-white lg:text-5xl transition-colors">
                         Importation, Location et <br class="hidden sm:block">
                         Pièces Automobiles
                     </h1>
                     
-                    <p class="text-base leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl transition-colors">
+                    <p class="text-base leading-relaxed text-slate-300 max-w-xl transition-colors">
                         Simplifiez vos besoins automobiles. Importez depuis l'Europe ou l'Asie, 
                         louez un véhicule ou trouvez la pièce parfaite - tout ça sur une seule plateforme.
                     </p>
@@ -31,55 +34,35 @@
                             Commander une voiture
                         </a>
                         
-                        <a href="{{ route('rental.index') }}" class="inline-flex items-center px-6 py-3.5 text-base font-semibold text-slate-700 dark:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                        <a href="{{ route('rental.index') }}" class="inline-flex items-center px-6 py-3.5 text-base font-semibold text-white bg-white/10 backdrop-blur border border-white/20 rounded-lg hover:bg-white/20 transition-all">
                             <i data-lucide="key" class="w-5 h-5 mr-2"></i>
                             Louer un véhicule
                         </a>
                     </div>
 
                     <div class="flex gap-4 pt-4">
-                        <a href="{{ route('parts.index') }}" class="text-sm font-medium text-slate-400 hover:text-amber-500 transition-colors underline underline-offset-4">
+                        <a href="{{ route('parts.index') }}" class="text-sm font-medium text-slate-300 hover:text-amber-500 transition-colors underline underline-offset-4">
                             Trouver une pièce détachée
                         </a>
-                        <span class="text-slate-700">•</span>
-                        <a href="{{ route('revisions.create') }}" class="text-sm font-medium text-slate-400 hover:text-amber-500 transition-colors underline underline-offset-4">
+                        <span class="text-slate-500">•</span>
+                        <a href="{{ route('revisions.create') }}" class="text-sm font-medium text-slate-300 hover:text-amber-500 transition-colors underline underline-offset-4">
                             Demander une révision
                         </a>
                     </div>
 
                     {{-- Stats --}}
-                    <div class="flex gap-8 pt-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
+                    <div class="flex gap-8 pt-6 border-t border-white/10 transition-colors">
                         <div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white">500+</div>
-                            <div class="text-sm text-slate-500">Voitures livrées</div>
+                            <div class="text-2xl font-bold text-white">500+</div>
+                            <div class="text-sm text-slate-400">Voitures livrées</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white">12</div>
-                            <div class="text-sm text-slate-500">Ports couverts</div>
+                            <div class="text-2xl font-bold text-white">12</div>
+                            <div class="text-sm text-slate-400">Ports couverts</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-slate-900 dark:text-white">4.9★</div>
-                            <div class="text-sm text-slate-500">Note moyenne</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative hidden lg:block">
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=900" 
-                         alt="Voiture de luxe" 
-                         class="rounded-2xl shadow-2xl"
-                         style="mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 30%, transparent 95%);">
-                    
-                    {{-- Floating badge --}}
-                    <div class="absolute top-8 -right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-200 dark:border-amber-500/30 rounded-xl p-4 shadow-xl">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-amber-500 rounded-lg p-2">
-                                <i data-lucide="percent" class="w-6 h-6 text-slate-950"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs text-slate-400">Économisez</div>
-                                <div class="text-xl font-bold text-amber-500">jusqu'à 25%</div>
-                            </div>
+                            <div class="text-2xl font-bold text-white">4.9★</div>
+                            <div class="text-sm text-slate-400">Note moyenne</div>
                         </div>
                     </div>
                 </div>

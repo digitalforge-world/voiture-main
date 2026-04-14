@@ -1,10 +1,18 @@
 <?php
 
+require __DIR__.'/vendor/autoload.php';
+
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+$kernel->bootstrap();
+
 /**
  * Script de test pour créer une révision et obtenir le tracking number
- * 
+ *
  * Utilisation:
- * php artisan tinker < create_test_revision.php
+ * php create_test_revision.php
  */
 
 use App\Models\Revision;

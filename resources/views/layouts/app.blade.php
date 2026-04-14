@@ -38,6 +38,42 @@
             width: 100%;
             animation: loading-bar 2s infinite ease-in-out;
         }
+
+        /* Hide body content while preloader is visible */
+        body {
+            overflow: hidden;
+        }
+
+        /* Preloader CSS pour assurer la visibilité et la disparition */
+        #preloader {
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+            z-index: 9999;
+        }
+
+        #preloader.opacity-0 {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Hide main content until preloader is gone */
+        main {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        main.show {
+            opacity: 1;
+        }
+
+        #preloader-content {
+            opacity: 0;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        #preloader-content.opacity-100 {
+            opacity: 1;
+        }
     </style>
     
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -52,7 +88,7 @@
         </video>
         {{-- Overlay sombre pour lisibilité sans flou --}}
         <div class="absolute inset-0 bg-slate-950/40"></div>
-        
+
         <div id="preloader-content" class="relative z-10 flex flex-col items-center opacity-0 transition-opacity duration-700">
             <div class="flex items-center text-4xl tracking-tighter leading-none mb-4">
                 <span class="font-black text-white">Auto</span>
@@ -126,37 +162,27 @@
                                     <i data-lucide="layout-dashboard" class="w-3 h-3 lg:w-4 lg:h-4"></i>
                                     <span class="hidden sm:inline">Dashboard</span>
                                 </a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="p-2 text-slate-400 hover:text-white transition">
-                                        <i data-lucide="log-out" class="w-5 h-5"></i>
-                                    </button>
-                                </form>
                             </div>
                         @else
-                            <!-- Client anonyme : Bouton de Tracking -->
-                            <a href="{{ route('tracking.index') }}" class="flex items-center gap-2 px-3 lg:px-5 py-2 lg:py-2.5 text-xs lg:text-sm font-bold transition bg-slate-800 text-white border border-slate-700 rounded-xl hover:bg-amber-500 hover:text-slate-950 hover:border-amber-500 group">
-                                <i data-lucide="package" class="w-4 h-4 text-amber-500 group-hover:text-slate-950 transition-colors"></i>
-                                <span class="hidden lg:inline">Suivre ma commande</span>
+                            <!-- Suivi (Visible même sur mobile en haut à droite) -->
+                            <a href="{{ route('tracking.index') }}" class="p-2 lg:px-5 lg:py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-amber-500 hover:text-slate-950 transition-all">
+                                <i data-lucide="package" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                                <span class="hidden lg:inline ml-2 text-xs font-bold">Suivi</span>
                             </a>
                         @endauth
                         
-                        <button id="global-search-btn" class="p-1.5 lg:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                        <!-- Recherche (Caché sur mobile car présent en bas) -->
+                        <button id="global-search-btn" class="hidden md:flex p-1.5 lg:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800">
                             <i data-lucide="search" class="w-4 h-4 lg:w-5 lg:h-5"></i>
                         </button>
 
-                        <button id="theme-toggle" class="p-1.5 lg:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800">
+                        <button id="theme-toggle" class="p-2 lg:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800">
                             <i data-lucide="sun" class="w-4 h-4 lg:w-5 lg:h-5 hidden dark:block"></i>
                             <i data-lucide="moon" class="w-4 h-4 lg:w-5 lg:h-5 block dark:hidden"></i>
-                        </button>
-
-                        <button id="mobile-menu-btn" class="p-1.5 lg:p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-amber-500 hover:text-slate-950 dark:hover:bg-amber-500 dark:hover:text-slate-950 transition-all duration-300 border border-slate-200 dark:border-slate-800 md:hidden">
-                            <i data-lucide="menu" class="w-4 h-4 lg:w-5 lg:h-5"></i>
                         </button>
                     </div>
                 </nav>
             </div>
-            
         </header>
 
         <!-- Mobile Menu Modal -->
@@ -212,7 +238,7 @@
         </div>
 
         <!-- Main Content -->
-        <main class="flex-grow">
+        <main class="flex-grow pb-24 lg:pb-0">
             <!-- Flash Messages -->
             <div class="fixed top-24 right-4 z-[100] w-full max-w-sm pointer-events-none">
                 @if(session('success'))
@@ -521,14 +547,18 @@
         const preContent = document.getElementById('preloader-content');
         if (preVideo && preContent) {
             preVideo.onplaying = () => {
-                preContent.classList.remove('opacity-0');
+                preContent.classList.add('opacity-100');
             };
+            // Fallback: show content after 500ms even if video doesn't play
+            setTimeout(() => {
+                preContent.classList.add('opacity-100');
+            }, 500);
         }
         
         // Handling Preloader (Minimum 1 seconds, Max 3 seconds)
         const preloader = document.getElementById('preloader');
+        const mainContent = document.querySelector('main');
         if (preloader) {
-            document.body.style.overflow = 'hidden';
             const preloaderStartTime = Date.now();
             
             const hidePreloader = () => {
@@ -538,6 +568,10 @@
                 
                 setTimeout(() => {
                     preloader.classList.add('opacity-0');
+                    // Show main content
+                    if (mainContent) {
+                        mainContent.classList.add('show');
+                    }
                     document.body.style.overflow = 'auto';
                     setTimeout(() => {
                         preloader.style.display = 'none';
@@ -545,7 +579,11 @@
                 }, remainingTime);
             };
 
-            window.addEventListener('load', hidePreloader);
+            if (document.readyState === 'loading') {
+                window.addEventListener('load', hidePreloader);
+            } else {
+                hidePreloader();
+            }
             // Fallback: hide preloader after 3 seconds anyway
             setTimeout(hidePreloader, 3000);
         }
@@ -786,7 +824,56 @@
             if (e.key === 'Escape' && orderModal && !orderModal.classList.contains('hidden')) closeOrderModal();
         });
 
+        // Initialisation globale des icônes au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
     </script>
+    {{-- Bottom Navigation Bar (Mobile Only) --}}
+    <div class="fixed bottom-0 left-0 right-0 z-[150] lg:hidden">
+        <div class="bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 pb-6 pt-3 px-1 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+            <div class="flex items-center justify-around">
+                {{-- Accueil --}}
+                <a href="{{ url('/') }}" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="home" class="w-5 h-5 {{ Request::is('/') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}"></i>
+                    <span class="text-[8px] font-bold tracking-tighter {{ Request::is('/') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Accueil</span>
+                </a>
+
+                {{-- Recherche --}}
+                <button onclick="openSearchModal()" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
+                    <span class="text-[8px] font-bold tracking-tighter text-slate-500 dark:text-slate-400">Recherche</span>
+                </button>
+
+                {{-- Stock (Voitures) --}}
+                <a href="{{ route('cars.index') }}" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="car" class="w-5 h-5 {{ Request::is('voitures*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}"></i>
+                    <span class="text-[8px] font-bold tracking-tighter {{ Request::is('voitures*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Voitures</span>
+                </a>
+
+                {{-- Pièces --}}
+                <a href="{{ route('parts.index') }}" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="settings" class="w-5 h-5 {{ Request::is('pieces*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}"></i>
+                    <span class="text-[8px] font-bold tracking-tighter {{ Request::is('pieces*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</span>
+                </a>
+
+                {{-- Location --}}
+                <a href="{{ route('rental.index') }}" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="key" class="w-5 h-5 {{ Request::is('location*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}"></i>
+                    <span class="text-[8px] font-bold tracking-tighter {{ Request::is('location*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</span>
+                </a>
+
+                {{-- Révision --}}
+                <a href="{{ route('revisions.create') }}" class="flex flex-col items-center gap-1 min-w-[58px]">
+                    <i data-lucide="wrench" class="w-5 h-5 {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}"></i>
+                    <span class="text-[8px] font-bold tracking-tighter {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     @yield('scripts')
 </body>
 </html>

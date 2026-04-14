@@ -21,6 +21,7 @@ Route::post('/voitures/{voiture}/order', [PublicVoitureController::class, 'order
 Route::get('/pieces', [PublicPieceController::class, 'index'])->name('parts.index');
 Route::get('/pieces/compatibilite', [PublicPieceController::class, 'searchCompatibility'])->name('parts.compatibility');
 Route::post('/pieces/{id}/acheter', [PublicPieceController::class, 'buy'])->name('parts.buy');
+Route::post('/api/pieces/checkout', [PublicPieceController::class, 'apiCheckout'])->name('parts.api.checkout');
 
 Route::get('/location', [RentalController::class, 'index'])->name('rental.index');
 Route::post('/location/{id}/reserver', [RentalController::class, 'book'])->name('rental.book');

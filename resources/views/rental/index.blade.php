@@ -23,39 +23,48 @@
     .modal-animate-out {
         animation: shake 0.5s ease-in-out, slideOutRight 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.5s forwards;
     }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 @endsection
 
 @section('content')
-<div class="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
-    <!-- Rental Hero Section -->
-    <div class="relative py-12 lg:py-20 overflow-hidden">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent opacity-50"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-slate-50/50 dark:from-slate-900/50 to-white dark:to-slate-950 transition-colors"></div>
+<div class="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">    <!-- Rental Hero Section -->
+    <div class="hidden lg:flex relative py-24 lg:py-40 items-center overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=2000" 
+                 class="w-full h-full object-cover" 
+                 alt="Luxury Car Rental">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+        </div>
         
         <div class="container relative px-4 mx-auto lg:px-8">
-            <div class="max-w-4xl space-y-10">
-                <div class="inline-flex items-center gap-3 px-5 py-2  dark:border-white/10 rounded-full shadow-2xl animate-in fade-in slide-in-from-left duration-700">
+            <div class="max-w-3xl space-y-8">
+                <div class="inline-flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-full backdrop-blur-md animate-in fade-in slide-in-from-left duration-700">
                     <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                     </span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500">Service VIP Disponible</span>
                 </div>
 
                 <div class="space-y-4 animate-in fade-in slide-in-from-bottom duration-1000">
-                    <h1 class="text-2xl lg:text-3xl font-black leading-tight tracking-tighter text-slate-900 dark:text-white uppercase transition-colors">
+                    <h1 class="text-4xl lg:text-7xl font-black leading-[0.9] tracking-tighter text-white uppercase italic">
                         L'art du <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 italic font-serif normal-case tracking-normal">Voyage.</span>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600 not-italic font-serif normal-case tracking-normal">Voyage.</span>
                     </h1>
-                    <p class="max-w-2xl text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium transition-colors">
+                    <p class="max-w-xl text-sm lg:text-lg text-slate-300 leading-relaxed font-medium">
                         Expérimentez l'excellence au volant de notre sélection exclusive. <br class="hidden lg:block"> Location premium à Lomé avec service de conciergerie personnalisé.
                     </p>
                 </div>
 
                 <div class="flex flex-wrap gap-4 pt-4 animate-in fade-in slide-in-from-bottom duration-1000 delay-300">
-                    <a href="#parc" class="group relative px-10 py-5 bg-amber-500 rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/20 transition-transform active:scale-95">
-                        <div class="absolute inset-0 bg-slate-950 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                        <span class="relative text-xs font-black uppercase tracking-widest text-slate-950 group-hover:text-white transition-colors flex items-center gap-3">
-                            Découvrir le parc <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <a href="#parc" class="group relative px-8 lg:px-10 py-4 lg:py-5 bg-amber-500 rounded-2xl overflow-hidden shadow-2xl shadow-amber-500/20 transition-transform active:scale-95">
+                        <div class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                        <span class="relative text-[10px] lg:text-xs font-black uppercase tracking-widest text-slate-950 transition-colors flex items-center gap-3">
+                            Explorer le parc <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
                         </span>
                     </a>
                 </div>
@@ -63,19 +72,30 @@
         </div>
     </div>
 
+    <!-- Mobile Search Bar & Filters Trigger -->
+    <div class="lg:hidden container px-4 pt-2 mx-auto">
+        <button onclick="openSearchModal()" class="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl transition-all">
+            <div class="flex items-center gap-3">
+                <i data-lucide="search" class="w-4 h-4 text-amber-500"></i>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Options de recherche...</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+        </button>
+    </div>
+
     <!-- Filter & Categories Bar -->
-    <div id="parc" class="sticky top-[80px] lg:top-[80px] z-[40] bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border-y border-slate-100 dark:border-white/5 py-6 transition-all duration-300">
+    <div id="parc" class="lg:sticky top-[80px] z-[40] bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-y border-slate-100 dark:border-white/5 py-4 lg:py-6 transition-all duration-300">
         <div class="container px-4 mx-auto lg:px-8">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <!-- Tabs -->
-                <div class="flex items-center gap-1 p-1 bg-slate-50 dark:bg-slate-900/50 rounded-2xl w-fit border border-slate-100 dark:border-white/5 transition-colors">
+                <!-- Scrollable Tabs on Mobile -->
+                <div class="flex items-center gap-1 p-1 bg-slate-50 dark:bg-slate-900/50 rounded-2xl overflow-x-auto no-scrollbar scroll-smooth border border-slate-100 dark:border-white/5 transition-colors max-w-full">
                     <a href="{{ route('rental.index', ['category' => 'all']) }}" 
-                       class="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition {{ !request('category') || request('category') == 'all' ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-xl shadow-black/5 dark:shadow-black' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                       class="whitespace-nowrap px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition {{ !request('category') || request('category') == 'all' ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-xl shadow-black/5 dark:shadow-black' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
                         Tous
                     </a>
                     @foreach($categories as $cat)
                     <a href="{{ route('rental.index', ['category' => $cat]) }}" 
-                       class="px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition {{ request('category') == $cat ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-xl shadow-black/5 dark:shadow-black' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                       class="whitespace-nowrap px-6 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition {{ request('category') == $cat ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-xl shadow-black/5 dark:shadow-black' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
                         {{ $cat }}
                     </a>
                     @endforeach
@@ -90,89 +110,54 @@
     </div>
 
     <!-- Multi-Column Parc Grid -->
-    <div class="container px-4 py-10 mx-auto lg:px-8">
-        <div class="grid grid-cols-2 gap-4 lg:gap-8 lg:grid-cols-4">
+    <div class="container px-4 py-6 lg:py-10 mx-auto lg:px-8 mt-2 lg:mt-0">
+        <div class="grid grid-cols-2 gap-3 lg:gap-8 lg:grid-cols-4">
             @forelse($voitures as $car)
                 <div class="group relative bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col h-full animate-in fade-in slide-in-from-bottom duration-700">
                     {{-- Card Image Section --}}
                     <div class="relative aspect-[16/10] overflow-hidden">
-                        {{-- Hover Background Blur --}}
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
-                            <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" class="absolute inset-0 w-full h-full object-cover scale-150 blur-3xl opacity-20">
-                        </div>
-
                         {{-- Main Vehicle Image --}}
                         <img src="{{ $car->photo_principale ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=1000' }}" 
                              alt="{{ $car->marque }}" 
-                             class="absolute inset-0 object-cover w-full h-full transition duration-1000 group-hover:scale-110">
+                             class="absolute inset-0 object-cover w-full h-full">
                         
                         {{-- Dark Overlay --}}
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent opacity-80"></div>
                         
                         {{-- Badges --}}
-                        <div class="absolute top-4 left-4 flex flex-col gap-2">
-                            <span class="px-3 py-1 bg-slate-950/60 backdrop-blur-md border border-white/10 text-[8px] font-black text-white tracking-[0.2em] rounded-full">
-                                {{ $car->transmission }}
-                            </span>
+                        <div class="absolute top-2 left-2 flex flex-col gap-1">
                             @if($car->categorie == 'premium' || $car->categorie == 'suv')
-                            <span class="px-3 py-1 bg-amber-500 text-slate-950 text-[8px] font-black tracking-[0.2em] rounded-full shadow-lg shadow-amber-500/20">
-                                Luxe
-                            </span>
+                            <span class="px-2 py-0.5 bg-amber-500 text-slate-950 text-[7px] font-black tracking-widest rounded-full uppercase">Luxe</span>
                             @endif
                         </div>
 
-                        {{-- Year Badge --}}
-                        <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black text-white rounded-lg">
-                                {{ $car->annee ?? '2024' }}
-                            </span>
+                        {{-- Price Badge on Mobile --}}
+                        <div class="absolute bottom-2 left-2">
+                             <div class="text-[10px] lg:text-lg font-black text-white italic transition-colors leading-none">
+                                {{ number_format($car->prix_jour, 0, ',', ' ') }}<span class="ml-1 text-[7px] font-bold">CFA</span>
+                            </div>
                         </div>
                     </div>
-
+                    
                     {{-- Card Body --}}
-                    <div class="p-6 flex-grow flex flex-col space-y-6">
-                        {{-- Header: Brand & Price --}}
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="space-y-1">
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tighter italic leading-none transition-colors">
-                                    {{ $car->marque }}
-                                </h3>
-                                <p class="text-[10px] font-black text-amber-500 tracking-[0.3em] leading-none">
-                                    {{ $car->modele }}
-                                </p>
-                            </div>
-                            <div class="text-right">
-                                <span class="block text-[8px] font-black text-slate-400 dark:text-slate-600 tracking-widest mb-1 italic">Par jour</span>
-                                <span class="text-lg font-black text-slate-900 dark:text-white italic transition-colors group-hover:text-amber-500">
-                                    {{ number_format($car->prix_jour, 0, ',', ' ') }}<span class="ml-1 text-[10px] font-bold">CFA</span>
-                                </span>
-                            </div>
+                    <div class="p-3 lg:p-6 flex-grow flex flex-col space-y-3">
+                        <div class="space-y-0.5">
+                            <h3 class="text-sm lg:text-xl font-black text-slate-900 dark:text-white tracking-tighter italic leading-none uppercase truncate">
+                                {{ $car->marque }}
+                            </h3>
+                            <p class="text-[8px] font-black text-amber-500 tracking-[0.2em] leading-none uppercase truncate">
+                                {{ $car->modele }}
+                            </p>
                         </div>
-
-                        {{-- Technical Specs Pills --}}
-                        <div class="flex flex-wrap gap-2">
-                            <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg flex items-center gap-2 transition-colors">
-                                <i data-lucide="users" class="w-3 h-3 text-slate-400"></i>
-                                <span class="text-[9px] font-bold text-slate-500">{{ $car->nombre_places }} places</span>
-                            </div>
-                            <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-lg flex items-center gap-2 transition-colors">
-                                <i data-lucide="fuel" class="w-3 h-3 text-slate-400"></i>
-                                <span class="text-[9px] font-bold text-slate-500">{{ $car->carburant }}</span>
-                            </div>
-                            <div class="px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-lg flex items-center gap-2 transition-colors">
-                                <i data-lucide="shield-check" class="w-3 h-3 text-amber-500"></i>
-                                <span class="text-[9px] font-bold text-amber-500">Inclus</span>
-                            </div>
-                        </div>
-
-                        {{-- Actions Section --}}
-                        <div class="pt-4 flex items-center gap-2">
+ 
+                        {{-- Actions --}}
+                        <div class="pt-1 flex items-center gap-1.5">
                             <button onclick='openDetailsModal(@json($car))' 
-                                class="flex-1 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl text-[8px] font-black tracking-widest hover:border-amber-500 hover:text-amber-500 transition-all">
-                                Détails
+                                class="w-10 h-10 flex items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-500">
+                                <i data-lucide="info" class="w-4 h-4"></i>
                             </button>
                             <button onclick='openBookingModal(@json($car))' 
-                                class="flex-1 py-3.5 bg-amber-500 text-slate-950 rounded-xl text-[8px] font-black tracking-widest shadow-lg transition-all transform active:scale-[0.98] hover:bg-slate-950 hover:text-white">
+                                class="flex-1 py-3 bg-amber-500 text-slate-950 rounded-xl text-[8px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/10">
                                 Réserver
                             </button>
                         </div>

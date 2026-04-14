@@ -11,6 +11,8 @@ class LigneCommandePiece extends Model
 
     protected $table = 'lignes_commandes_pieces';
 
+    public $timestamps = false;
+
     protected $fillable = ['commande_piece_id','piece_id','quantite','prix_unitaire','montant_ligne'];
 
     protected $casts = [

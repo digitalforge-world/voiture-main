@@ -28,7 +28,7 @@ class PieceController extends Controller
             ->latest()
             ->paginate(12);
 
-        $categories = ['moteur', 'transmission', 'suspension', 'freinage', 'carrosserie', 'electricite', 'interieur', 'pneumatique'];
+        $categories = ['moteur', 'transmission', 'suspension', 'freinage', 'carrosserie', 'electricite', 'interieur', 'pneumatique', 'optique_eclairage', 'filtration'];
 
         return view('parts.index', compact('pieces', 'categories'));
     }
@@ -105,5 +105,60 @@ class PieceController extends Controller
         // Stock update is handled by DB trigger after_insert_ligne_commande_piece
 
         return redirect()->route('tracking.success')->with('tracking_number', $trackingNumber);
+    }
+
+    public function apiCheckout(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'client_nom' => 'required|string|max:255',
+            'client_telephone' => 'required|string|max:20',
+        ]);
+
+        $trackingNumber = \App\Helpers\TrackingHelper::forPart();
+        $total = 0;
+
+        foreach($request->items as $item) {
+            $total += $item['prix'];
+        }
+
+        try {
+            return DB::transaction(function () use ($request, $trackingNumber, $total) {
+                // Insertion de la commande parente
+                $commandeId = DB::table('commandes_pieces')->insertGetId([
+                    'reference' => 'CP-' . strtoupper(\Illuminate\Support\Str::random(8)),
+                    'tracking_number' => $trackingNumber,
+                    'client_nom' => $request->client_nom,
+                    'client_telephone' => $request->client_telephone,
+                    'montant_total' => $total,
+                    'statut' => 'en_attente',
+                    'date_commande' => now(),
+                    'frais_livraison' => 0,
+                    'type_livraison' => 'retrait',
+                    'adresse_livraison' => 'A définir'
+                ]);
+
+                // Insertion des lignes de commande
+                foreach ($request->items as $item) {
+                    DB::table('lignes_commandes_pieces')->insert([
+                        'commande_piece_id' => $commandeId,
+                        'piece_id' => $item['id'],
+                        'quantite' => 1,
+                        'prix_unitaire' => $item['prix'],
+                        'montant_ligne' => $item['prix'],
+                    ]);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'tracking_number' => $trackingNumber
+                ]);
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'enregistrement : ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

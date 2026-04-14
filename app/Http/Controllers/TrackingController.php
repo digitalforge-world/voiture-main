@@ -80,14 +80,14 @@ class TrackingController extends Controller
 
             case 'piece':
                 $order = DB::table('commandes_pieces')
-                    ->join('ligne_commandes_pieces', 'commandes_pieces.id', '=', 'ligne_commandes_pieces.commande_piece_id')
-                    ->join('pieces_detachees', 'ligne_commandes_pieces.piece_id', '=', 'pieces_detachees.id')
+                    ->join('lignes_commandes_pieces', 'commandes_pieces.id', '=', 'lignes_commandes_pieces.commande_piece_id')
+                    ->join('pieces_detachees', 'lignes_commandes_pieces.piece_id', '=', 'pieces_detachees.id')
                     ->where('commandes_pieces.tracking_number', $tracking)
                     ->select(
                         'commandes_pieces.*',
                         'pieces_detachees.nom as nom_piece',
                         'pieces_detachees.reference as ref_piece',
-                        'ligne_commandes_pieces.quantite'
+                        'lignes_commandes_pieces.quantite'
                     )
                     ->first();
                 break;
@@ -152,10 +152,10 @@ class TrackingController extends Controller
 
             case 'piece':
                 $order = DB::table('commandes_pieces')
-                    ->join('ligne_commandes_pieces', 'commandes_pieces.id', '=', 'ligne_commandes_pieces.commande_piece_id')
-                    ->join('pieces_detachees', 'ligne_commandes_pieces.piece_id', '=', 'pieces_detachees.id')
+                    ->join('lignes_commandes_pieces', 'commandes_pieces.id', '=', 'lignes_commandes_pieces.commande_piece_id')
+                    ->join('pieces_detachees', 'lignes_commandes_pieces.piece_id', '=', 'pieces_detachees.id')
                     ->where('commandes_pieces.tracking_number', $tracking)
-                    ->select('commandes_pieces.*', 'pieces_detachees.nom as nom_piece', 'pieces_detachees.reference as ref_piece', 'ligne_commandes_pieces.quantite')
+                    ->select('commandes_pieces.*', 'pieces_detachees.nom as nom_piece', 'pieces_detachees.reference as ref_piece', 'lignes_commandes_pieces.quantite')
                     ->first();
                 break;
 
