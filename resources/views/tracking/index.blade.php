@@ -40,7 +40,7 @@
 
     <!-- Right: Form and Features Section -->
     <div class="w-full lg:w-1/2 flex flex-col h-full overflow-hidden">
-        <div class="flex-grow flex flex-col justify-center p-6 sm:p-10 lg:p-12 xl:p-16">
+        <div id="search-section" class="flex-grow flex flex-col justify-center p-6 sm:p-10 lg:p-12 xl:p-16">
             {{-- Mobile Header --}}
             <div class="mb-6 lg:hidden">
                 <div class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold tracking-widest mb-2">
@@ -104,8 +104,15 @@
                     <i data-lucide="arrow-right" class="w-3 h-3 transition-transform group-hover/btn:translate-x-1"></i>
                 </button>
                 
+                <div id="error-container" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div class="flex items-center gap-2 text-rose-500">
+                        <i data-lucide="octagon-alert" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                        <p id="error-text" class="text-[10px] font-bold leading-tight"></p>
+                    </div>
+                </div>
+
                 @if(session('error') || $errors->any())
-                    <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div id="session-error-container" class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl animate-in fade-in slide-in-from-top-4 duration-500">
                         <div class="flex flex-col gap-1.5">
                             @if(session('error'))
                                 <div class="flex items-center gap-2 text-rose-500">
@@ -125,8 +132,18 @@
             </form>
         </div>
 
+        <div id="results-section" class="hidden flex-grow flex flex-col overflow-y-auto p-6 sm:p-10 lg:p-12 xl:p-16">
+            <div class="mb-6">
+                <button id="btn-back-search" class="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-amber-500 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i>
+                    Retour à la recherche
+                </button>
+            </div>
+            <div id="results-content"></div>
+        </div>
+
         {{-- Features Grid at the bottom of the right section --}}
-        <div class="px-8 py-6 lg:px-12 lg:py-8 mt-auto border-t border-slate-100 dark:border-slate-800 bg-slate-50/30">
+        <div id="features-grid" class="px-8 py-6 lg:px-12 lg:py-8 mt-auto border-t border-slate-100 dark:border-slate-800 bg-slate-50/30">
             <div class="grid grid-cols-3 gap-4">
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500">
@@ -159,4 +176,131 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const searchSection = document.getElementById('search-section');
+    const resultsSection = document.getElementById('results-section');
+    const resultsContent = document.getElementById('results-content');
+    const featuresGrid = document.getElementById('features-grid');
+    const errorContainer = document.getElementById('error-container');
+    const errorText = document.getElementById('error-text');
+    const sessionErrorContainer = document.getElementById('session-error-container');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const trackingInput = document.getElementById('tracking_number');
+    const btnBackSearch = document.getElementById('btn-back-search');
+    
+    // Original button innerHTML
+    const originalBtnHtml = submitBtn.innerHTML;
+    const originalTitle = document.title;
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Clear previous error
+        errorContainer.classList.add('hidden');
+        errorText.textContent = '';
+        if (sessionErrorContainer) {
+            sessionErrorContainer.classList.add('hidden');
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+            <span class="inline-flex items-center gap-2">
+                <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-[10px] uppercase tracking-widest">Recherche en cours...</span>
+            </span>
+        `;
+        
+        const trackingNumber = trackingInput.value.trim();
+        const csrfToken = form.querySelector('input[name="_token"]').value;
+        
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                tracking_number: trackingNumber
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Restore button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHtml;
+            
+            if (data.success) {
+                // Populate results
+                resultsContent.innerHTML = data.html;
+                
+                // Hide search form and features grid
+                searchSection.classList.add('hidden');
+                featuresGrid.classList.add('hidden');
+                
+                // Show results section
+                resultsSection.classList.remove('hidden');
+                
+                // Reinitialize Lucide icons for dynamically loaded HTML
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                
+                // Update page title
+                document.title = 'Détails de la Commande ' + data.tracking;
+                
+                // Track back to search inside dynamically loaded content
+                const dynamicBackBtn = resultsContent.querySelector('.back-to-search');
+                if (dynamicBackBtn) {
+                    dynamicBackBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        goBackToSearch();
+                    });
+                }
+            } else {
+                showError(data.error || 'Une erreur est survenue.');
+            }
+        })
+        .catch(err => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHtml;
+            showError(err.error || 'Une erreur est survenue lors de la recherche. Veuillez vérifier votre connexion.');
+        });
+    });
+    
+    function goBackToSearch() {
+        resultsSection.classList.add('hidden');
+        searchSection.classList.remove('hidden');
+        featuresGrid.classList.remove('hidden');
+        document.title = originalTitle;
+    }
+    
+    if (btnBackSearch) {
+        btnBackSearch.addEventListener('click', function(e) {
+            e.preventDefault();
+            goBackToSearch();
+        });
+    }
+    
+    function showError(message) {
+        errorText.textContent = message;
+        errorContainer.classList.remove('hidden');
+    }
+});
+</script>
 @endsection

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Revision; // Added this line
+use App\Models\Revision;
+use App\Models\PhotoRevision;
+use Illuminate\Support\Facades\Storage;
 
 class RevisionController extends Controller
 {
@@ -13,7 +15,7 @@ class RevisionController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Revision::with('user');
+        $query = Revision::with(['user', 'photosMedia']);
 
         // Search by client name, car model, or plate
         if ($request->filled('search')) {
@@ -88,6 +90,8 @@ class RevisionController extends Controller
             'notes_internes' => 'nullable|string',
             'montant_paye' => 'nullable|numeric|min:0',
             'statut_paiement' => 'nullable|in:non_paye,partiel,paye',
+            'photos.*' => 'nullable|image|max:5120',
+            'photo_type' => 'nullable|in:avant,apres,diagnostic,autre',
         ]);
 
         // Update the revision
@@ -104,6 +108,23 @@ class RevisionController extends Controller
             'statut_paiement' => $validated['statut_paiement'] ?? 'non_paye',
         ]);
 
+        // Handle multi-photo uploads
+        if ($request->hasFile('photos')) {
+            $photoType = $request->input('photo_type', 'autre');
+            foreach ($request->file('photos') as $index => $file) {
+                $path = $file->store('revisions', 'public');
+                $url = '/storage/' . $path;
+
+                PhotoRevision::create([
+                    'revision_id' => $revision->id,
+                    'url' => $url,
+                    'ordre' => $revision->photosMedia()->count() + 1,
+                    'principale' => $revision->photosMedia()->count() === 0 && $index === 0,
+                    'type' => $photoType,
+                ]);
+            }
+        }
+
         // Update diagnostic date if diagnostic is provided
         if (!empty($validated['diagnostic_technique']) && !$revision->date_diagnostic) {
             $revision->update(['date_diagnostic' => now()]);
@@ -117,11 +138,24 @@ class RevisionController extends Controller
         // TODO: Send notification to client if notify_client is checked
         if ($request->has('notify_client') && $request->notify_client) {
             // Implement email/SMS notification here
-            // Example: Mail::to($revision->user->email)->send(new RevisionUpdated($revision));
         }
 
         return redirect()->route('admin.revisions.index')
-            ->with('success', 'Révision mise à jour avec succès ! Le client sera notifié.');
+            ->with('success', 'Révision mise à jour avec succès !');
+    }
+
+    public function deletePhoto(PhotoRevision $photo)
+    {
+        try {
+            $path = str_replace('/storage/', '', $photo->url);
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+            $photo->delete();
+            return response()->json(['success' => true, 'message' => 'Photo supprimée']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

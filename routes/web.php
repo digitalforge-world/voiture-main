@@ -28,6 +28,9 @@ Route::post('/location/{id}/reserver', [RentalController::class, 'book'])->name(
 
 Route::get('/revisions', [RevisionController::class, 'create'])->name('revisions.create');
 Route::post('/revisions', [RevisionController::class, 'store'])->name('revisions.store');
+Route::post('/revisions/chat/start', [RevisionController::class, 'startChat'])->name('revisions.chat.start');
+Route::post('/revisions/chat/send', [RevisionController::class, 'sendMessage'])->name('revisions.chat.send');
+Route::post('/revisions/chat/close', [RevisionController::class, 'closeChat'])->name('revisions.chat.close');
 
 // Nouvelle fonctionnalité : Suivi de Commande (Tracking)
 Route::get('/suivi', [TrackingController::class, 'index'])->name('tracking.index');
@@ -91,11 +94,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Gestion des Pièces
     Route::resource('parts-inventory', App\Http\Controllers\Admin\PieceController::class);
 
-    // Media Deletion
+    // Media Deletion - Voitures
     Route::delete('cars/photos/{photo}', [App\Http\Controllers\Admin\VoitureController::class, 'deletePhoto'])->name('cars.photos.destroy');
     Route::delete('cars/videos/{video}', [App\Http\Controllers\Admin\VoitureController::class, 'deleteVideo'])->name('cars.videos.destroy');
+
+    // Media Deletion - Pièces
     Route::delete('parts-inventory/photos/{photo}', [App\Http\Controllers\Admin\PieceController::class, 'deletePhoto'])->name('parts-inventory.photos.destroy');
     Route::delete('parts-inventory/videos/{video}', [App\Http\Controllers\Admin\PieceController::class, 'deleteVideo'])->name('parts-inventory.videos.destroy');
+
+    // Gestion de la Flotte de Location (véhicules)
+    Route::resource('fleet', App\Http\Controllers\Admin\FleetController::class);
+    Route::delete('fleet/photos/{photo}', [App\Http\Controllers\Admin\FleetController::class, 'deletePhoto'])->name('fleet.photos.destroy');
+
+    // Media Deletion - Révisions
+    Route::delete('revisions/photos/{photo}', [App\Http\Controllers\Admin\RevisionController::class, 'deletePhoto'])->name('revisions.photos.destroy');
 
     // Gestion des Commandes Pièces
     Route::resource('orders-parts', App\Http\Controllers\Admin\CommandePieceController::class);

@@ -22,28 +22,55 @@ class TrackingController extends Controller
      */
     public function track(Request $request)
     {
-        $request->validate([
-            'tracking_number' => 'required|string|min:10|max:20'
-        ], [
-            'tracking_number.required' => 'Le numéro de suivi est obligatoire.',
-            'tracking_number.min' => 'Le numéro de suivi doit contenir au moins 10 caractères.',
-            'tracking_number.max' => 'Le numéro de suivi ne peut pas dépasser 20 caractères.',
-        ]);
+        $isAjax = $request->ajax() || $request->wantsJson();
+
+        if ($isAjax) {
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'tracking_number' => 'required|string|min:10|max:20'
+            ], [
+                'tracking_number.required' => 'Le numéro de suivi est obligatoire.',
+                'tracking_number.min' => 'Le numéro de suivi doit contenir au moins 10 caractères.',
+                'tracking_number.max' => 'Le numéro de suivi ne peut pas dépasser 20 caractères.',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $validator->errors()->first('tracking_number')
+                ], 422);
+            }
+        } else {
+            $request->validate([
+                'tracking_number' => 'required|string|min:10|max:20'
+            ], [
+                'tracking_number.required' => 'Le numéro de suivi est obligatoire.',
+                'tracking_number.min' => 'Le numéro de suivi doit contenir au moins 10 caractères.',
+                'tracking_number.max' => 'Le numéro de suivi ne peut pas dépasser 20 caractères.',
+            ]);
+        }
 
         $tracking = strtoupper(trim($request->tracking_number));
 
         if (!TrackingHelper::isValid($tracking)) {
+            $errorMsg = 'Format de numéro de tracking invalide. Format attendu: XXX-YYYY-ZZZZ (ex: REV-2024-A3B7)';
+            if ($isAjax) {
+                return response()->json(['success' => false, 'error' => $errorMsg], 400);
+            }
             return back()
                 ->withInput()
-                ->with('error', 'Format de numéro de tracking invalide. Format attendu: XXX-YYYY-ZZZZ (ex: REV-2024-A3B7)');
+                ->with('error', $errorMsg);
         }
 
         $type = TrackingHelper::getType($tracking);
 
         if (!$type) {
+            $errorMsg = 'Type de service non reconnu. Vérifiez que le numéro commence par CAR-, LOC-, PCE- ou REV-';
+            if ($isAjax) {
+                return response()->json(['success' => false, 'error' => $errorMsg], 400);
+            }
             return back()
                 ->withInput()
-                ->with('error', 'Type de service non reconnu. Vérifiez que le numéro commence par CAR-, LOC-, PCE- ou REV-');
+                ->with('error', $errorMsg);
         }
 
         $order = null;
@@ -100,15 +127,38 @@ class TrackingController extends Controller
                 break;
 
             default:
+                $errorMsg = 'Type de service non reconnu.';
+                if ($isAjax) {
+                    return response()->json(['success' => false, 'error' => $errorMsg], 400);
+                }
                 return back()
                     ->withInput()
-                    ->with('error', 'Type de service non reconnu.');
+                    ->with('error', $errorMsg);
         }
 
         if (!$order) {
+            $errorMsg = "Aucune commande trouvée avec ce numéro de tracking. Vérifiez que vous avez bien entré le numéro complet (ex: $tracking)";
+            if ($isAjax) {
+                return response()->json(['success' => false, 'error' => $errorMsg], 404);
+            }
             return back()
                 ->withInput()
-                ->with('error', "Aucune commande trouvée avec ce numéro de tracking. Vérifiez que vous avez bien entré le numéro complet (ex: $tracking)");
+                ->with('error', $errorMsg);
+        }
+
+        if ($isAjax) {
+            $html = view('tracking.partials.details', [
+                'order' => $order,
+                'type' => $type,
+                'tracking' => $tracking
+            ])->render();
+
+            return response()->json([
+                'success' => true,
+                'html' => $html,
+                'type' => $type,
+                'tracking' => $tracking
+            ]);
         }
 
         return view('tracking.show', [

@@ -43,4 +43,9 @@ class VoitureLocation extends Model
     {
         return $this->hasMany(Location::class, 'voiture_location_id');
     }
+
+    public function photos()
+    {
+        return $this->hasMany(PhotoVoitureLocation::class, 'voiture_location_id');
+    }
 }

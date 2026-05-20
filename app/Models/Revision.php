@@ -59,4 +59,9 @@ class Revision extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function photosMedia()
+    {
+        return $this->hasMany(PhotoRevision::class, 'revision_id');
+    }
 }

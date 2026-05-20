@@ -189,32 +189,32 @@
     <!-- Features Row -->
     <div class="py-16 bg-slate-50 dark:bg-slate-900/30 transition-colors">
         <div class="container px-4 mx-auto lg:px-8">
-            <div class="grid grid-cols-1 gap-16 md:grid-cols-3">
-                <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
-                        <i data-lucide="shield-check" class="w-8 h-8"></i>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+                <div class="col-span-1 space-y-6 bg-white dark:bg-slate-900/50 p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-white/5 hover:border-amber-500/30 transition-colors shadow-sm">
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 bg-amber-500/10 rounded-2xl shadow-sm flex items-center justify-center text-amber-500 transition-colors">
+                        <i data-lucide="shield-check" class="w-6 h-6 lg:w-8 lg:h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Sécurité Totale</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Chaque véhicule bénéficie d'une assurance tous risques et d'un entretien rigoureux.</p>
+                        <h4 class="text-sm lg:text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Sécurité Totale</h4>
+                        <p class="text-xs lg:text-sm text-slate-500 leading-relaxed font-medium">Chaque véhicule bénéficie d'une assurance tous risques et d'un entretien rigoureux.</p>
                     </div>
                 </div>
-                <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
-                        <i data-lucide="star" class="w-8 h-8"></i>
+                <div class="col-span-1 space-y-6 bg-white dark:bg-slate-900/50 p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-white/5 hover:border-amber-500/30 transition-colors shadow-sm">
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 bg-amber-500/10 rounded-2xl shadow-sm flex items-center justify-center text-amber-500 transition-colors">
+                        <i data-lucide="star" class="w-6 h-6 lg:w-8 lg:h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Service Premium</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Chauffeur en option, bouteille d'eau offerte et livraison à domicile ou aéroport.</p>
+                        <h4 class="text-sm lg:text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Service Premium</h4>
+                        <p class="text-xs lg:text-sm text-slate-500 leading-relaxed font-medium">Chauffeur en option, bouteille d'eau offerte et livraison à domicile ou aéroport.</p>
                     </div>
                 </div>
-                <div class="space-y-6">
-                    <div class="w-16 h-16 bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex items-center justify-center text-amber-500 transition-colors">
-                        <i data-lucide="key" class="w-8 h-8"></i>
+                <div class="col-span-2 lg:col-span-1 space-y-6 bg-white dark:bg-slate-900/50 p-6 lg:p-8 rounded-3xl border border-slate-100 dark:border-white/5 hover:border-amber-500/30 transition-colors shadow-sm">
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 bg-amber-500/10 rounded-2xl shadow-sm flex items-center justify-center text-amber-500 transition-colors">
+                        <i data-lucide="key" class="w-6 h-6 lg:w-8 lg:h-8"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Flexibilité</h4>
-                        <p class="text-xs text-slate-500 leading-relaxed font-medium">Prolongation facile, annulation sans frais jusqu'à 24h et paiement sécurisé.</p>
+                        <h4 class="text-sm lg:text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">Flexibilité Totale</h4>
+                        <p class="text-xs lg:text-sm text-slate-500 leading-relaxed font-medium">Prolongation facile, annulation sans frais jusqu'à 24h et paiement sécurisé.</p>
                     </div>
                 </div>
             </div>

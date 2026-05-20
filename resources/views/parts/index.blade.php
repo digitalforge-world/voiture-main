@@ -20,7 +20,7 @@
     </style>
 
     <!-- HERO SECTION -->
-    <section class="relative min-h-[60vh] lg:min-h-[70vh] flex items-center bg-slate-950 overflow-hidden">
+    {{-- <section class="relative min-h-[60vh] lg:min-h-[70vh] flex items-center bg-slate-950 overflow-hidden">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2000" class="w-full h-full object-cover opacity-10 grayscale">
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
@@ -60,10 +60,10 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- SECTION CATALOGUE -->
-    <section id="inventaire" class="py-16 bg-slate-50 dark:bg-slate-950">
+    <section id="inventaire" class="py-4 bg-slate-50 dark:bg-slate-950">
         <div class="container mx-auto px-6">
             
             <!-- Filtres -->
@@ -160,16 +160,30 @@
                     <p class="text-center py-10 font-black uppercase tracking-widest text-slate-400 text-[10px]">Le panier est vide</p>
                 </template>
                 <div class="space-y-3">
-                    <template x-for="(item, index) in cart" :key="index">
-                        <div class="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
-                            <div class="w-10 h-10 bg-white dark:bg-slate-900 flex items-center justify-center rounded-lg shadow-sm">
-                                <i data-lucide="package" class="w-5 h-5 text-amber-500"></i>
+                    <template x-for="(item, index) in cart" :key="item.id + '-' + index">
+                        <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                            <div class="w-10 h-10 bg-white dark:bg-slate-900 flex items-center justify-center rounded-lg shadow-sm flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-500"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/></svg>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 min-w-0">
                                 <h4 class="font-black text-[10px] text-slate-900 dark:text-white uppercase truncate" x-text="item.nom"></h4>
-                                <div class="text-[9px] font-black text-amber-500 italic" x-text="formatPrice(item.prix)"></div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[9px] font-black text-amber-500 italic" x-text="formatPrice(item.prix * item.qty)"></span>
+                                    <span class="text-[8px] text-slate-400" x-show="item.qty > 1" x-text="'(' + item.qty + ' × ' + formatPrice(item.prix) + ')'"></span>
+                                </div>
                             </div>
-                            <button @click="removeFromCart(index)" class="p-2 text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="flex items-center gap-1 flex-shrink-0">
+                                <button @click="decreaseQty(index)" class="w-7 h-7 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-amber-500 hover:border-amber-500 transition-all text-sm font-bold">
+                                    −
+                                </button>
+                                <span class="w-6 text-center text-[10px] font-black text-slate-900 dark:text-white" x-text="item.qty"></span>
+                                <button @click="increaseQty(index)" class="w-7 h-7 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-amber-500 hover:border-amber-500 transition-all text-sm font-bold">
+                                    +
+                                </button>
+                            </div>
+                            <button @click="removeFromCart(index)" class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all flex-shrink-0" title="Retirer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                            </button>
                         </div>
                     </template>
                 </div>
@@ -216,7 +230,13 @@
 <script>
     function cartSystem() {
         return {
-            cart: [], isCartOpen: false, isSuccessOpen: false, trackingNumber: '', cartCount: 0, cartTotal: 0,
+            cart: [],
+            isCartOpen: false,
+            isSuccessOpen: false,
+            trackingNumber: '',
+            cartCount: 0,
+            cartTotal: 0,
+
             handleAddToCart(event, piece) {
                 const btn = event.currentTarget;
                 const rect = btn.getBoundingClientRect();
@@ -224,31 +244,85 @@
                 const cartRect = cartBtn.getBoundingClientRect();
                 const fly = document.createElement('div');
                 fly.className = 'fly-item bg-amber-500 w-6 h-6 rounded-full flex items-center justify-center shadow-xl';
-                fly.innerHTML = '<i data-lucide="package" style="width:12px;height:12px;color:black"></i>';
-                fly.style.left = rect.left + 'px'; fly.style.top = rect.top + 'px';
-                document.body.appendChild(fly); lucide.createIcons();
+                fly.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/></svg>';
+                fly.style.left = rect.left + 'px';
+                fly.style.top = rect.top + 'px';
+                document.body.appendChild(fly);
                 setTimeout(() => {
-                    fly.style.left = (cartRect.left + 15) + 'px'; fly.style.top = (cartRect.top + 15) + 'px';
-                    fly.style.transform = 'scale(0.1) rotate(180deg)'; fly.style.opacity = '0';
+                    fly.style.left = (cartRect.left + 15) + 'px';
+                    fly.style.top = (cartRect.top + 15) + 'px';
+                    fly.style.transform = 'scale(0.1) rotate(180deg)';
+                    fly.style.opacity = '0';
                 }, 10);
                 setTimeout(() => { document.body.removeChild(fly); this.addToCart(piece); }, 800);
             },
-            addToCart(item) { this.cart.push(item); this.updateTotals(); },
-            removeFromCart(index) { this.cart.splice(index, 1); this.updateTotals(); },
-            updateTotals() { this.cartCount = this.cart.length; this.cartTotal = this.cart.reduce((sum, item) => sum + parseFloat(item.prix), 0); },
-            formatPrice(price) { return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA'; },
+
+            addToCart(item) {
+                // Check if item already in cart, increase qty
+                const existing = this.cart.find(i => i.id === item.id);
+                if (existing) {
+                    existing.qty++;
+                } else {
+                    this.cart.push({ ...item, qty: 1 });
+                }
+                this.updateTotals();
+            },
+
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.updateTotals();
+            },
+
+            increaseQty(index) {
+                this.cart[index].qty++;
+                this.updateTotals();
+            },
+
+            decreaseQty(index) {
+                if (this.cart[index].qty > 1) {
+                    this.cart[index].qty--;
+                } else {
+                    this.cart.splice(index, 1);
+                }
+                this.updateTotals();
+            },
+
+            updateTotals() {
+                this.cartCount = this.cart.reduce((sum, item) => sum + item.qty, 0);
+                this.cartTotal = this.cart.reduce((sum, item) => sum + (parseFloat(item.prix) * item.qty), 0);
+            },
+
+            formatPrice(price) {
+                return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
+            },
+
             checkout() {
                 const clientNom = document.querySelector('input[placeholder="NOM COMPLET"]').value;
                 const clientTel = document.querySelector('input[placeholder="TÉLÉPHONE"]').value;
                 if (!clientNom || !clientTel) return;
+
+                // Expand cart items with qty for backend
+                const expandedItems = [];
+                this.cart.forEach(item => {
+                    for (let i = 0; i < item.qty; i++) expandedItems.push(item);
+                });
+
                 fetch('/api/pieces/checkout', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
-                    body: JSON.stringify({ items: this.cart, client_nom: clientNom, client_telephone: clientTel })
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ items: expandedItems, client_nom: clientNom, client_telephone: clientTel })
                 }).then(r => r.json()).then(data => {
                     if (data.success) {
-                        this.trackingNumber = data.tracking_number; this.isCartOpen = false;
-                        setTimeout(() => { this.isSuccessOpen = true; this.cart = []; this.updateTotals(); }, 300);
+                        this.trackingNumber = data.tracking_number;
+                        this.isCartOpen = false;
+                        setTimeout(() => {
+                            this.isSuccessOpen = true;
+                            this.cart = [];
+                            this.updateTotals();
+                        }, 300);
                     }
                 });
             }
