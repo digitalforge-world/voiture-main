@@ -184,23 +184,50 @@
                 <div class="relative overflow-hidden rounded-3xl bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-white/5 group gallery-main shadow-2xl shadow-slate-200/50 dark:shadow-slate-950/50">
                     @php
                         $mainImage = $voiture->photo_principale ?: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1200';
-                        $galleryImages = $voiture->photos->pluck('url')->toArray();
-                        if (empty($galleryImages)) {
-                            $galleryImages = [$mainImage];
-                        } else {
-                            array_unshift($galleryImages, $mainImage);
+                        
+                        $mediaItems = [];
+                        
+                        // Main photo as first item
+                        $mediaItems[] = [
+                            'url' => $mainImage,
+                            'type' => 'image'
+                        ];
+                        
+                        // Remaining photos (excluding main image to avoid duplicates)
+                        foreach ($voiture->photos as $photo) {
+                            if ($photo->url !== $mainImage) {
+                                $mediaItems[] = [
+                                    'url' => $photo->url,
+                                    'type' => 'image'
+                                ];
+                            }
+                        }
+                        
+                        // All videos
+                        foreach ($voiture->videos as $video) {
+                            $mediaItems[] = [
+                                'url' => $video->url,
+                                'type' => 'video'
+                            ];
                         }
                     @endphp
 
-                    <div id="heroImageContainer" class="relative w-full aspect-[16/10] overflow-hidden cursor-zoom-in" onclick="openLightbox()">
+                    <div id="heroImageContainer" class="relative w-full aspect-[16/10] overflow-hidden bg-slate-900 flex items-center justify-center">
                         <img id="heroImage"
                              src="{{ $mainImage }}"
                              alt="{{ $voiture->marque }} {{ $voiture->modele }}"
-                             class="object-cover w-full h-full group-hover:scale-[1.03] transition-transform duration-[1.5s]">
+                             class="object-cover w-full h-full group-hover:scale-[1.03] transition-all duration-[1.5s] cursor-zoom-in"
+                             onclick="openLightbox()">
 
-                        {{-- Cinematic gradient overlays --}}
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
-                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/20 via-transparent to-transparent"></div>
+                        <video id="heroVideo"
+                               src=""
+                               controls
+                               class="hidden w-full h-full object-cover"
+                               playsinline></video>
+
+                        {{-- Cinematic gradient overlays (using pointer-events-none so users can click video controls) --}}
+                        <div id="heroOverlay" class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none"></div>
+                        <div id="heroOverlayLeft" class="absolute inset-0 bg-gradient-to-r from-slate-950/20 via-transparent to-transparent pointer-events-none"></div>
                     </div>
 
                     {{-- Top-left badges --}}
@@ -251,7 +278,7 @@
                     </div>
 
                     {{-- Navigation arrows (for gallery) --}}
-                    @if(count($galleryImages) > 1)
+                    @if(count($mediaItems) > 1)
                         <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2.5 bg-white/10 backdrop-blur-xl border border-white/15 rounded-full text-white hover:bg-white/25 transition-all opacity-0 group-hover:opacity-100 duration-300">
                             <i data-lucide="chevron-left" class="w-5 h-5"></i>
                         </button>
@@ -261,21 +288,32 @@
                     @endif
 
                     {{-- Image counter --}}
-                    @if(count($galleryImages) > 1)
+                    @if(count($mediaItems) > 1)
                         <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 px-3 py-1 bg-slate-950/50 backdrop-blur-xl rounded-full border border-white/10">
-                            <span class="text-[10px] font-bold text-white/80"><span id="currentImageIdx">1</span> / {{ count($galleryImages) }}</span>
+                            <span class="text-[10px] font-bold text-white/80"><span id="currentImageIdx">1</span> / {{ count($mediaItems) }}</span>
                         </div>
                     @endif
                 </div>
 
                 {{-- Thumbnail Strip --}}
-                @if(count($galleryImages) > 1)
+                @if(count($mediaItems) > 1)
                     <div class="flex gap-2.5 overflow-x-auto pb-2 thumb-scroll">
-                        @foreach($galleryImages as $idx => $img)
-                            <button onclick="setImage({{ $idx }})"
+                        @foreach($mediaItems as $idx => $item)
+                            <button onclick="setMedia({{ $idx }})"
                                     class="thumb-item relative flex-shrink-0 w-20 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300 {{ $idx === 0 ? 'border-amber-500 scale-105' : 'border-transparent hover:border-amber-500/50 opacity-60 hover:opacity-100' }}"
                                     data-idx="{{ $idx }}">
-                                <img src="{{ $img }}" alt="Photo {{ $idx + 1 }}" class="w-full h-full object-cover">
+                                @if($item['type'] === 'image')
+                                    <img src="{{ $item['url'] }}" alt="Photo {{ $idx + 1 }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="relative w-full h-full bg-slate-950">
+                                        <video src="{{ $item['url'] }}#t=0.5" class="w-full h-full object-cover opacity-80" preload="metadata" muted playsinline></video>
+                                        <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-colors">
+                                            <div class="p-1 bg-amber-500 rounded-full text-slate-950 shadow-md">
+                                                <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </button>
                         @endforeach
                     </div>
@@ -595,12 +633,14 @@
 
         <img id="lightboxImage" src="" alt="Lightbox" class="relative z-[305] max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl">
 
+        <video id="lightboxVideo" src="" controls class="hidden relative z-[305] max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl" playsinline></video>
+
         <button onclick="nextImage()" class="absolute right-6 top-1/2 -translate-y-1/2 z-[310] p-3 bg-white/10 backdrop-blur-xl border border-white/15 rounded-full text-white hover:bg-white/20 transition-all">
             <i data-lucide="chevron-right" class="w-6 h-6"></i>
         </button>
 
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-[310] px-4 py-2 bg-white/10 backdrop-blur-xl rounded-full border border-white/15">
-            <span class="text-xs font-bold text-white"><span id="lightboxIdx">1</span> / {{ count($galleryImages ?? [1]) }}</span>
+            <span class="text-xs font-bold text-white"><span id="lightboxIdx">1</span> / {{ count($mediaItems ?? [1]) }}</span>
         </div>
     </div>
 </div>
@@ -641,17 +681,42 @@
     // ═══════════════════════════════════════════════
     //  IMAGE GALLERY
     // ═══════════════════════════════════════════════
-    const galleryImages = @json($galleryImages ?? []);
+    const mediaItems = @json($mediaItems ?? []);
     let currentIdx = 0;
 
-    function setImage(idx) {
+    function setMedia(idx) {
         currentIdx = idx;
+        const item = mediaItems[idx];
+        
         const heroImg = document.getElementById('heroImage');
-        heroImg.style.opacity = '0';
-        setTimeout(() => {
-            heroImg.src = galleryImages[idx];
-            heroImg.style.opacity = '1';
-        }, 250);
+        const heroVideo = document.getElementById('heroVideo');
+        
+        // Pause and clear video if playing
+        if (heroVideo) {
+            heroVideo.pause();
+            heroVideo.src = '';
+            heroVideo.classList.add('hidden');
+        }
+
+        if (item.type === 'image') {
+            if (heroImg) {
+                heroImg.style.opacity = '0';
+                heroImg.classList.remove('hidden');
+                heroImg.src = item.url;
+                setTimeout(() => {
+                    heroImg.style.opacity = '1';
+                }, 100);
+            }
+        } else if (item.type === 'video') {
+            if (heroImg) {
+                heroImg.classList.add('hidden');
+            }
+            if (heroVideo) {
+                heroVideo.src = item.url;
+                heroVideo.classList.remove('hidden');
+                heroVideo.play().catch(err => console.log("Auto-play blocked", err));
+            }
+        }
 
         // Update counter
         const counter = document.getElementById('currentImageIdx');
@@ -670,17 +735,45 @@
 
         // Lightbox sync
         const lbImg = document.getElementById('lightboxImage');
-        if (lbImg) lbImg.src = galleryImages[idx];
+        const lbVideo = document.getElementById('lightboxVideo');
+        
+        if (lbVideo) {
+            lbVideo.pause();
+            lbVideo.src = '';
+            lbVideo.classList.add('hidden');
+        }
+
+        if (lbImg) {
+            lbImg.classList.add('hidden');
+        }
+
+        if (item.type === 'image') {
+            if (lbImg) {
+                lbImg.src = item.url;
+                lbImg.classList.remove('hidden');
+            }
+        } else if (item.type === 'video') {
+            if (lbVideo) {
+                lbVideo.src = item.url;
+                lbVideo.classList.remove('hidden');
+            }
+        }
+
         const lbIdx = document.getElementById('lightboxIdx');
         if (lbIdx) lbIdx.textContent = idx + 1;
     }
 
+    // Keep setImage alias for backwards compatibility
+    function setImage(idx) {
+        setMedia(idx);
+    }
+
     function nextImage() {
-        setImage((currentIdx + 1) % galleryImages.length);
+        setMedia((currentIdx + 1) % mediaItems.length);
     }
 
     function prevImage() {
-        setImage((currentIdx - 1 + galleryImages.length) % galleryImages.length);
+        setMedia((currentIdx - 1 + mediaItems.length) % mediaItems.length);
     }
 
     // ═══════════════════════════════════════════════
@@ -689,7 +782,31 @@
     function openLightbox() {
         const lb = document.getElementById('lightbox');
         const lbImg = document.getElementById('lightboxImage');
-        lbImg.src = galleryImages[currentIdx];
+        const lbVideo = document.getElementById('lightboxVideo');
+        const item = mediaItems[currentIdx];
+
+        if (lbVideo) {
+            lbVideo.pause();
+            lbVideo.src = '';
+            lbVideo.classList.add('hidden');
+        }
+        if (lbImg) {
+            lbImg.classList.add('hidden');
+        }
+
+        if (item.type === 'image') {
+            if (lbImg) {
+                lbImg.src = item.url;
+                lbImg.classList.remove('hidden');
+            }
+        } else if (item.type === 'video') {
+            if (lbVideo) {
+                lbVideo.src = item.url;
+                lbVideo.classList.remove('hidden');
+                lbVideo.play().catch(err => console.log("Lightbox play blocked", err));
+            }
+        }
+
         lb.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         lucide.createIcons();
@@ -697,6 +814,10 @@
 
     function closeLightbox() {
         const lb = document.getElementById('lightbox');
+        const lbVideo = document.getElementById('lightboxVideo');
+        if (lbVideo) {
+            lbVideo.pause();
+        }
         lb.classList.add('hidden');
         document.body.style.overflow = '';
     }

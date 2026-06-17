@@ -33,6 +33,7 @@ class Voiture extends Model
         'nombre_places',
         'disponibilite',
         'type_vehicule',
+        'categorie',
         'description',
         'options_equipements',
         'numero_chassis',

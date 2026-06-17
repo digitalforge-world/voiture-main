@@ -34,12 +34,42 @@ class VoitureController extends Controller
             $query->where('etat', $condition);
         }
 
+        if ($categorie = $request->input('categorie')) {
+            $query->where('categorie', $categorie);
+        }
+
         $voitures = $query->latest()->paginate(15)->withQueryString();
+
         return view('admin.cars.index', compact('voitures'));
     }
 
     public function store(Request $request)
     {
+        // Nettoyer les fichiers vides (ex: photos[] soumis sans sélection de fichier)
+        if ($request->has('photos')) {
+            $photos = array_filter((array) $request->file('photos'), function ($file) {
+                return $file && $file->isValid();
+            });
+            if (empty($photos)) {
+                $request->files->remove('photos');
+                $request->request->remove('photos');
+            } else {
+                $request->files->set('photos', $photos);
+            }
+        }
+
+        if ($request->has('videos')) {
+            $videos = array_filter((array) $request->file('videos'), function ($file) {
+                return $file && $file->isValid();
+            });
+            if (empty($videos)) {
+                $request->files->remove('videos');
+                $request->request->remove('videos');
+            } else {
+                $request->files->set('videos', $videos);
+            }
+        }
+
         $validated = $request->validate([
             'marque' => 'required|string|max:50',
             'modele' => 'required|string|max:50',
@@ -47,9 +77,9 @@ class VoitureController extends Controller
             'prix' => 'required|numeric|min:0',
             'kilometrage' => 'required|integer|min:0',
             'etat' => 'required|in:neuf,occasion,excellent,bon,reconditionne',
-            'pays_origine' => 'required|string|max:50',
+            'pays_origine' => 'nullable|string|max:50',
             'numero_chassis' => 'nullable|string|max:50|unique:voitures,numero_chassis',
-            'disponibilite' => 'required|in:disponible,importation,reserve',
+            'disponibilite' => 'nullable|in:disponible,importation,reserve',
             'description' => 'nullable|string',
 
             // Technical Specs
@@ -61,23 +91,32 @@ class VoitureController extends Controller
             'vitesse_max' => 'nullable|string|max:20',
             'acceleration_0_100' => 'nullable|string|max:20',
             'type_vehicule' => 'nullable|string|max:30',
+            'categorie' => 'nullable|in:voiture,scooter',
+            'cylindree' => 'nullable|string|max:20',
+            'couleur' => 'nullable|string|max:30',
 
             // Market & History
             'origine_marche' => 'nullable|string|max:50',
-            'nombre_proprietaires' => 'nullable|integer|min:1',
+            'nombre_proprietaires' => 'nullable|integer|min:0',
             'carnet_entretien_ajour' => 'nullable|boolean',
             'non_fumeur' => 'nullable|boolean',
 
             // JSON Equipment
             'equipements_details' => 'nullable|array',
 
-            'photo_principale' => 'nullable|image|max:2048',
-            'photos.*' => 'nullable|image|max:2048',
+            'photo_principale' => 'nullable|image|max:102400',
+            'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg,mp4,mov,ogg,qt|max:102400',
             'videos.*' => 'nullable|mimetypes:video/mp4,video/quicktime|max:20480',
         ]);
 
+        // Valeurs par défaut défensives
+        $validated['disponibilite'] = $validated['disponibilite'] ?? 'disponible';
+        $validated['categorie'] = $validated['categorie'] ?? 'voiture';
+        $validated['pays_origine'] = $validated['pays_origine'] ?? 'Non spécifié';
+
         $voiture = new Voiture($validated);
         $voiture->save();
+
 
         if ($request->hasFile('photo_principale')) {
             $path = $request->file('photo_principale')->store('voitures', 'public');
@@ -94,33 +133,34 @@ class VoitureController extends Controller
         }
 
         if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $index => $file) {
-                $path = $file->store('voitures', 'public');
-                $url = '/storage/' . $path;
+            $photoCount = 0;
+            $videoCount = 0;
+            foreach ($request->file('photos') as $file) {
+                $mime = $file->getMimeType();
+                if (str_starts_with($mime, 'video/')) {
+                    $path = $file->store('voitures/videos', 'public');
+                    $url = '/storage/' . $path;
 
-                PhotoVoiture::create([
-                    'voiture_id' => $voiture->id,
-                    'url' => $url,
-                    'ordre' => $index + 1,
-                    'principale' => !$voiture->photo_principale && $index === 0
-                ]);
+                    VideoVoiture::create([
+                        'voiture_id' => $voiture->id,
+                        'url' => $url,
+                        'ordre' => ++$videoCount
+                    ]);
+                } else {
+                    $path = $file->store('voitures', 'public');
+                    $url = '/storage/' . $path;
 
-                if (!$voiture->photo_principale && $index === 0) {
-                    $voiture->update(['photo_principale' => $url]);
+                    PhotoVoiture::create([
+                        'voiture_id' => $voiture->id,
+                        'url' => $url,
+                        'ordre' => ++$photoCount,
+                        'principale' => !$voiture->photo_principale && $photoCount === 1
+                    ]);
+
+                    if (!$voiture->photo_principale && $photoCount === 1) {
+                        $voiture->update(['photo_principale' => $url]);
+                    }
                 }
-            }
-        }
-
-        if ($request->hasFile('videos')) {
-            foreach ($request->file('videos') as $index => $file) {
-                $path = $file->store('voitures/videos', 'public');
-                $url = '/storage/' . $path;
-
-                VideoVoiture::create([
-                    'voiture_id' => $voiture->id,
-                    'url' => $url,
-                    'ordre' => $index + 1
-                ]);
             }
         }
 
@@ -148,18 +188,19 @@ class VoitureController extends Controller
             'vitesse_max' => 'nullable|string|max:20',
             'acceleration_0_100' => 'nullable|string|max:20',
             'type_vehicule' => 'nullable|string|max:30',
+            'categorie' => 'nullable|in:voiture,scooter',
 
             // Market & History
             'origine_marche' => 'nullable|string|max:50',
-            'nombre_proprietaires' => 'nullable|integer|min:1',
+            'nombre_proprietaires' => 'nullable|integer|min:0',
             'carnet_entretien_ajour' => 'nullable|boolean',
             'non_fumeur' => 'nullable|boolean',
 
             // JSON Equipment
             'equipements_details' => 'nullable|array',
 
-            'photo_principale' => 'nullable|image|max:2048',
-            'photos.*' => 'nullable|image|max:2048',
+            'photo_principale' => 'nullable|image|max:102400',
+            'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg,mp4,mov,ogg,qt|max:102400',
             'videos.*' => 'nullable|mimetypes:video/mp4,video/quicktime|max:20480',
         ]);
 

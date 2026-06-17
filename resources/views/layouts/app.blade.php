@@ -392,7 +392,7 @@
                 <!-- Copyright -->
                 <div class="pt-8 mt-8 text-center border-t border-slate-200 dark:border-slate-900/50">
                     <p class="text-xs text-slate-500">
-                        &copy; {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'AutoImport Hub' }}. Tous droits réservés. Développé avec excellence pour l'Afrique de l'Ouest.
+                        &copy; {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'AutoImport Hub' }}. Tous droits réservés. Développé avec excellence par <a href="https://digitalforges.org">Digitalforge</a>.
                     </p>
                 </div>
             </div>

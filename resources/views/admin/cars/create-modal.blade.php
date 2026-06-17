@@ -15,8 +15,46 @@
     </button>
    </div>
 
-   <form action="{{ route('admin.cars.store') }}" method="POST"enctype="multipart/form-data" class="space-y-12 relative max-h-[70vh] overflow-y-auto px-4 custom-scrollbar">
+   <form action="{{ route('admin.cars.store') }}" method="POST" enctype="multipart/form-data" class="space-y-12 relative max-h-[70vh] overflow-y-auto px-4 custom-scrollbar">
     @csrf
+
+    {{-- ─── Sélecteur de Catégorie ─── --}}
+    <div class="space-y-4">
+     <h3 class="text-[10px] font-semibold text-amber-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2 transition-colors">Catégorie de Véhicule</h3>
+     <div class="grid grid-cols-2 gap-4">
+      {{-- Option Voiture --}}
+      <label id="cat_voiture_label" for="cat_voiture" class="relative flex flex-col items-center gap-3 p-5 rounded-3xl border-2 border-amber-500 bg-amber-500/5 cursor-pointer transition-all duration-300 group">
+       <input type="radio" id="cat_voiture" name="categorie" value="voiture" checked class="sr-only" onchange="toggleCategorie('voiture')">
+       <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition">
+        <i data-lucide="car" class="w-7 h-7 text-amber-500"></i>
+       </div>
+       <div class="text-center">
+        <p class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">Voiture</p>
+        <p class="text-[9px] text-slate-400 mt-0.5">Berline, SUV, 4x4, Pick-up…</p>
+       </div>
+       <div id="cat_voiture_check" class="absolute top-3 right-3 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center">
+        <i data-lucide="check" class="w-3 h-3 text-white"></i>
+       </div>
+      </label>
+
+      {{-- Option Scooter --}}
+      <label id="cat_scooter_label" for="cat_scooter" class="relative flex flex-col items-center gap-3 p-5 rounded-3xl border-2 border-slate-200 dark:border-white/10 cursor-pointer transition-all duration-300 group hover:border-amber-500/50">
+       <input type="radio" id="cat_scooter" name="categorie" value="scooter" class="sr-only" onchange="toggleCategorie('scooter')">
+       <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-amber-500/10 transition">
+        <svg class="w-7 h-7 text-slate-400 group-hover:text-amber-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 0 1 .2 1.4.5L16 6h2.5a1.5 1.5 0 010 3H18l-1.5 3H6L4.5 9H3.5A1.5 1.5 0 013.5 6H6L8.6 3.5C9 3.2 9.5 3 10 3h2zm-7 9a3 3 0 100 6 3 3 0 000-6zm14 0a3 3 0 100 6 3 3 0 000-6z"/>
+        </svg>
+       </div>
+       <div class="text-center">
+        <p class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wide">Scooter</p>
+        <p class="text-[9px] text-slate-400 mt-0.5">Cyclomoteur, moto légère…</p>
+       </div>
+       <div id="cat_scooter_check" class="absolute top-3 right-3 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 hidden items-center justify-center">
+        <i data-lucide="check" class="w-3 h-3 text-white"></i>
+       </div>
+      </label>
+     </div>
+    </div>
     
     <!-- Section 1: Informations Générales -->
     <div class="space-y-6">
@@ -56,9 +94,26 @@
        </select>
       </div>
      </div>
-    </div>
+    
 
-    <!-- Section 2: Spécifications Techniques -->
+      {{-- ⚠️ CHAMPS REQUIS : pays_origine + disponibilite --}}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-red-400 ml-2">Pays d'Origine <span class="text-red-400">*</span></label>
+        <input type="text" name="pays_origine" required placeholder="Ex: Japon, Allemagne, France..." class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-red-100 dark:border-red-500/20 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner transition-colors">
+       </div>
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-red-400 ml-2">Disponibilité <span class="text-red-400">*</span></label>
+        <select name="disponibilite" required class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-red-100 dark:border-red-500/20 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner appearance-none transition-colors">
+         <option value="disponible" selected>En Stock (visible au catalogue)</option>
+         <option value="importation">En Importation</option>
+         <option value="reserve">Reserve</option>
+        </select>
+       </div>
+      </div>
+     </div>
+
+     <!-- Section 2: Spécifications Techniques -->
     <div class="space-y-6">
      <h3 class="text-[10px] font-semibold text-amber-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2 transition-colors">Technique & Performance</h3>
      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -102,19 +157,55 @@
        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">0-100 km/h</label>
        <input type="text"name="acceleration_0_100"placeholder="Ex: 8.2s" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
       </div>
-      <div class="space-y-2">
-       <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Type de Véhicule</label>
-       <select name="type_vehicule" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition appearance-none transition-colors">
-        <option value="berline">Berline</option>
-        <option value="suv">SUV / Crossover</option>
-        <option value="4x4">4x4 / Tout-terrain</option>
-        <option value="pickup">Pick-up</option>
-        <option value="coupe">Coupé</option>
-        <option value="utilitaire">Utilitaire</option>
-       </select>
+      <div class="space-y-2" id="type_vehicule_group">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Type de Véhicule</label>
+        <select name="type_vehicule" id="type_vehicule_select" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition appearance-none transition-colors">
+         <option value="berline">Berline</option>
+         <option value="suv">SUV / Crossover</option>
+         <option value="4x4">4x4 / Tout-terrain</option>
+         <option value="pickup">Pick-up</option>
+         <option value="coupe">Coupé</option>
+         <option value="utilitaire">Utilitaire</option>
+        </select>
+       </div>
       </div>
      </div>
-    </div>
+
+     {{-- ─── Section Scooter Spécifique ─── --}}
+     <div id="section_scooter" class="space-y-6 hidden">
+      <h3 class="text-[10px] font-semibold text-orange-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2 transition-colors">Spécifications Scooter</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Cylindrée (cc)</label>
+        <input type="text" name="cylindree" placeholder="Ex: 125 cc" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
+       </div>
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Puissance (CH/kW)</label>
+        <input type="text" name="puissance" placeholder="Ex: 11 CH" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
+       </div>
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Vitesse Max</label>
+        <input type="text" name="vitesse_max" placeholder="Ex: 95 km/h" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Carburant</label>
+        <select name="carburant" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition appearance-none transition-colors">
+         <option value="essence">Essence</option>
+         <option value="electrique">Électrique</option>
+        </select>
+       </div>
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Consommation</label>
+        <input type="text" name="consommation_mixte" placeholder="Ex: 3.2 L/100" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
+       </div>
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Couleur</label>
+        <input type="text" name="couleur" placeholder="Ex: Rouge mat" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-2xl text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 transition shadow-inner transition-colors">
+       </div>
+      </div>
+     </div>
 
     <!-- Section 3: Marché & Historique -->
     <div class="space-y-6">
@@ -236,9 +327,119 @@
 
     <div class="pt-10 flex gap-6 pb-4">
      <button type="button" onclick="closeModal('createCarModal')" class="flex-1 py-4 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:bg-slate-100 dark:hover:bg-slate-900 transition transition-colors">Annuler</button>
-     <button type="submit" class="flex-[2] py-4 text-[10px] font-semibold uppercase tracking-wide text-slate-950 bg-amber-500 rounded-[2.5rem] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition shadow-sm shadow-amber-500/20 font-semibold transition-colors">Confirmer l'inscription Catalogue</button>
+     <button type="submit" id="createSubmitBtn" class="flex-[2] py-4 text-[10px] font-semibold uppercase tracking-wide text-slate-950 bg-amber-500 rounded-[2.5rem] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 transition shadow-sm shadow-amber-500/20 font-semibold transition-colors">Confirmer l'inscription Catalogue</button>
     </div>
    </form>
   </div>
  </div>
 </div>
+
+<script>
+function toggleCategorie(cat) {
+ const isScooter = cat === 'scooter';
+
+ // Labels radio cards
+ const voitureLabel = document.getElementById('cat_voiture_label');
+ const scooterLabel = document.getElementById('cat_scooter_label');
+ const voitureCheck = document.getElementById('cat_voiture_check');
+ const scooterCheck = document.getElementById('cat_scooter_check');
+ const typeVehiculeGroup = document.getElementById('type_vehicule_group');
+
+ if (isScooter) {
+  // Activer scooter card
+  scooterLabel.classList.add('border-amber-500', 'bg-amber-500/5');
+  scooterLabel.classList.remove('border-slate-200', 'dark:border-white/10');
+  scooterCheck.classList.remove('hidden');
+  scooterCheck.classList.add('flex');
+  scooterCheck.style.backgroundColor = '#f59e0b';
+
+  // Désactiver voiture card
+  voitureLabel.classList.remove('border-amber-500', 'bg-amber-500/5');
+  voitureLabel.classList.add('border-slate-200', 'dark:border-white/10');
+  voitureCheck.classList.add('hidden');
+  voitureCheck.classList.remove('flex');
+
+  // Afficher section scooter spécifique
+  document.getElementById('section_scooter').classList.remove('hidden');
+
+  // ⚠️ NE PAS mettre type_vehicule = 'scooter' (viole le CHECK constraint)
+  // La distinction voiture/scooter est portée par le champ 'categorie'
+  // On masque le select type_vehicule qui n'est pas pertinent pour un scooter
+  const sel = document.getElementById('type_vehicule_select');
+  if (sel) {
+   sel.value = 'berline'; // valeur valide par défaut
+   if (typeVehiculeGroup) typeVehiculeGroup.style.display = 'none';
+  }
+
+  // Mettre à jour le bouton submit
+  const btn = document.getElementById('createSubmitBtn');
+  if (btn) btn.textContent = "Inscrire le Scooter au Catalogue";
+
+ } else {
+  // Activer voiture card
+  voitureLabel.classList.add('border-amber-500', 'bg-amber-500/5');
+  voitureLabel.classList.remove('border-slate-200', 'dark:border-white/10');
+  voitureCheck.classList.remove('hidden');
+  voitureCheck.classList.add('flex');
+
+  // Désactiver scooter card
+  scooterLabel.classList.remove('border-amber-500', 'bg-amber-500/5');
+  scooterLabel.classList.add('border-slate-200', 'dark:border-white/10');
+  scooterCheck.classList.add('hidden');
+  scooterCheck.classList.remove('flex');
+
+  // Masquer section scooter
+  document.getElementById('section_scooter').classList.add('hidden');
+
+  // Remettre le select type_vehicule visible
+  const sel = document.getElementById('type_vehicule_select');
+  if (sel) {
+   sel.value = 'berline';
+   if (typeVehiculeGroup) typeVehiculeGroup.style.display = '';
+  }
+
+  // Rétablir bouton submit
+  const btn = document.getElementById('createSubmitBtn');
+  if (btn) btn.textContent = "Confirmer l'inscription Catalogue";
+ }
+}
+
+function handleFilePreview(input, previewId) {
+ const previewContainer = document.getElementById(previewId);
+ if (!previewContainer) return;
+ previewContainer.innerHTML = '';
+ 
+ if (input.files) {
+  Array.from(input.files).forEach(file => {
+   const reader = new FileReader();
+   const card = document.createElement('div');
+   card.className = "relative w-20 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm flex items-center justify-center bg-slate-50 dark:bg-slate-900";
+   
+   reader.onload = function(e) {
+    if (file.type.startsWith('image/')) {
+     const img = document.createElement('img');
+     img.src = e.target.result;
+     img.className = "w-full h-full object-cover";
+     card.appendChild(img);
+    } else if (file.type.startsWith('video/')) {
+     const videoIcon = document.createElement('div');
+     videoIcon.className = "flex flex-col items-center justify-center p-2 text-amber-500 text-center";
+     videoIcon.innerHTML = `<i data-lucide="video" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
+     card.appendChild(videoIcon);
+    } else {
+     const fileIcon = document.createElement('div');
+     fileIcon.className = "flex flex-col items-center justify-center p-2 text-slate-400 text-center";
+     fileIcon.innerHTML = `<i data-lucide="file" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
+     card.appendChild(fileIcon);
+    }
+    if (window.lucide) {
+     window.lucide.createIcons();
+    }
+   }
+   reader.readAsDataURL(file);
+   previewContainer.appendChild(card);
+  });
+ }
+}
+</script>
+

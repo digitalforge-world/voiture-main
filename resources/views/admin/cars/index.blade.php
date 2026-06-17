@@ -18,7 +18,25 @@
   </div>
  </div>
 
- <!-- Filters & Search -->
+  <!-- Session Messages & Validation Errors -->
+  @if($errors->any())
+  <div class="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 rounded-xl text-rose-600 dark:text-rose-400 text-sm">
+    <div class="font-bold mb-2 uppercase tracking-wide text-xs">Erreurs lors de l'enregistrement :</div>
+    <ul class="list-disc pl-5 space-y-1">
+      @foreach($errors->all() as $error)
+        <li>{{ $error }}</li>
+      @endforeach
+    </ul>
+  </div>
+  @endif
+
+  @if(session('success'))
+  <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl text-emerald-600 dark:text-emerald-400 text-sm font-semibold transition-colors">
+    {{ session('success') }}
+  </div>
+  @endif
+
+  <!-- Filters & Search -->
  <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm p-4">
   <form action="{{ route('admin.cars.index') }}" method="GET" class="flex flex-col md:flex-row items-center gap-4">
    
@@ -52,7 +70,15 @@
     </select>
    </div>
 
-   @if(request()->anyFilled(['search', 'availability', 'condition']))
+   <div class="flex items-center gap-3 w-full md:w-auto">
+    <select name="categorie" onchange="this.form.submit()" class="py-2 pl-3 pr-8 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500/50 outline-none">
+     <option value="">Toutes catégories</option>
+     <option value="voiture" {{ request('categorie') == 'voiture' ? 'selected' : '' }}>🚗 Voiture</option>
+     <option value="scooter" {{ request('categorie') == 'scooter' ? 'selected' : '' }}>🛵 Scooter</option>
+    </select>
+   </div>
+
+   @if(request()->anyFilled(['search', 'availability', 'condition', 'categorie']))
    <a href="{{ route('admin.cars.index') }}" class="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg whitespace-nowrap">
     Effacer filtres
    </a>
@@ -81,6 +107,8 @@
         <div class="w-16 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 overflow-hidden flex-shrink-0 flex items-center justify-center">
          @if($car->photo_principale)
           <img src="{{ $car->photo_principale }}" class="w-full h-full object-cover">
+         @elseif(($car->categorie ?? 'voiture') === 'scooter')
+          <span class="text-2xl">🛵</span>
          @else
           <i data-lucide="car" class="w-5 h-5 text-slate-400"></i>
          @endif
