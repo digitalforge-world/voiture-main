@@ -213,17 +213,21 @@
                     @endphp
 
                     <div id="heroImageContainer" class="relative w-full aspect-[16/10] overflow-hidden bg-slate-900 flex items-center justify-center">
-                        <img id="heroImage"
+                           <img id="heroImage"
                              src="{{ $mainImage }}"
                              alt="{{ $voiture->marque }} {{ $voiture->modele }}"
                              class="object-cover w-full h-full group-hover:scale-[1.03] transition-all duration-[1.5s] cursor-zoom-in"
                              onclick="openLightbox()">
 
-                        <video id="heroVideo"
+                           <video id="heroVideo"
                                src=""
                                controls
+                               controlsList="nodownload"
+                               oncontextmenu="return false"
                                class="hidden w-full h-full object-cover"
-                               playsinline></video>
+                               playsinline muted></video>
+
+                        <button id="heroUnmuteBtn" type="button" class="absolute bottom-4 right-4 z-20 px-3 py-2 bg-white/90 text-slate-900 rounded-full text-xs hidden" onclick="toggleHeroMute()">Activer le son</button>
 
                         {{-- Cinematic gradient overlays (using pointer-events-none so users can click video controls) --}}
                         <div id="heroOverlay" class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none"></div>
@@ -306,7 +310,7 @@
                                     <img src="{{ $item['url'] }}" alt="Photo {{ $idx + 1 }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="relative w-full h-full bg-slate-950">
-                                        <video src="{{ $item['url'] }}#t=0.5" class="w-full h-full object-cover opacity-80" preload="metadata" muted playsinline></video>
+                                        <video src="{{ $item['url'] }}#t=0.5" class="w-full h-full object-cover opacity-80" preload="metadata" muted playsinline controlsList="nodownload" oncontextmenu="return false"></video>
                                         <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-colors">
                                             <div class="p-1 bg-amber-500 rounded-full text-slate-950 shadow-md">
                                                 <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
@@ -632,8 +636,8 @@
         </button>
 
         <img id="lightboxImage" src="" alt="Lightbox" class="relative z-[305] max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl">
-
-        <video id="lightboxVideo" src="" controls class="hidden relative z-[305] max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl" playsinline></video>
+        <video id="lightboxVideo" src="" controls controlsList="nodownload" oncontextmenu="return false" class="hidden relative z-[305] max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl" playsinline muted></video>
+        <button id="lightboxUnmuteBtn" type="button" class="absolute bottom-8 right-8 z-[320] px-3 py-2 bg-white/90 text-slate-900 rounded-full text-sm hidden" onclick="toggleLightboxMute()">Activer le son</button>
 
         <button onclick="nextImage()" class="absolute right-6 top-1/2 -translate-y-1/2 z-[310] p-3 bg-white/10 backdrop-blur-xl border border-white/15 rounded-full text-white hover:bg-white/20 transition-all">
             <i data-lucide="chevron-right" class="w-6 h-6"></i>
@@ -707,14 +711,20 @@
                     heroImg.style.opacity = '1';
                 }, 100);
             }
+            const btn = document.getElementById('heroUnmuteBtn');
+            if (btn) btn.classList.add('hidden');
         } else if (item.type === 'video') {
             if (heroImg) {
                 heroImg.classList.add('hidden');
             }
             if (heroVideo) {
                 heroVideo.src = item.url;
+                heroVideo.muted = true; // ensure autoplay allowed
                 heroVideo.classList.remove('hidden');
-                heroVideo.play().catch(err => console.log("Auto-play blocked", err));
+                heroVideo.play().then(() => {
+                    const btn = document.getElementById('heroUnmuteBtn');
+                    if (btn) btn.classList.remove('hidden');
+                }).catch(err => console.log("Auto-play blocked", err));
             }
         }
 
@@ -752,10 +762,15 @@
                 lbImg.src = item.url;
                 lbImg.classList.remove('hidden');
             }
+            const lbUnmute = document.getElementById('lightboxUnmuteBtn');
+            if (lbUnmute) lbUnmute.classList.add('hidden');
         } else if (item.type === 'video') {
             if (lbVideo) {
                 lbVideo.src = item.url;
+                lbVideo.muted = true;
                 lbVideo.classList.remove('hidden');
+                const lbUnmute = document.getElementById('lightboxUnmuteBtn');
+                if (lbUnmute) lbUnmute.classList.remove('hidden');
             }
         }
 
@@ -771,6 +786,80 @@
     function nextImage() {
         setMedia((currentIdx + 1) % mediaItems.length);
     }
+
+    // Auto-advance carousel (pause on hover or when a video is playing)
+    let autoAdvanceTimer = null;
+    const AUTO_ADVANCE_MS = 5000;
+
+    function startAutoAdvance() {
+        stopAutoAdvance();
+        if (!mediaItems || mediaItems.length <= 1) return;
+        autoAdvanceTimer = setInterval(() => {
+            const heroVideo = document.getElementById('heroVideo');
+            // don't advance if current item is a video and it's playing
+            if (mediaItems[currentIdx] && mediaItems[currentIdx].type === 'video' && heroVideo && !heroVideo.paused) return;
+            setMedia((currentIdx + 1) % mediaItems.length);
+        }, AUTO_ADVANCE_MS);
+    }
+
+    function stopAutoAdvance() {
+        if (autoAdvanceTimer) {
+            clearInterval(autoAdvanceTimer);
+            autoAdvanceTimer = null;
+        }
+    }
+
+    // Pause auto-advance when hovering gallery or when interacting with thumbnails
+    const heroContainer = document.getElementById('heroImageContainer');
+    if (heroContainer) {
+        heroContainer.addEventListener('mouseenter', stopAutoAdvance);
+        heroContainer.addEventListener('mouseleave', startAutoAdvance);
+    }
+
+    // Pause when lightbox is open
+    const lightboxEl = document.getElementById('lightbox');
+    const mutationObserver = new MutationObserver(() => {
+        if (!lightboxEl) return;
+        if (!lightboxEl.classList.contains('hidden')) stopAutoAdvance(); else startAutoAdvance();
+    });
+    if (lightboxEl) mutationObserver.observe(lightboxEl, { attributes: true, attributeFilter: ['class'] });
+
+    // Pause when hero video plays
+    const heroVideoEl = document.getElementById('heroVideo');
+    if (heroVideoEl) {
+        heroVideoEl.addEventListener('play', stopAutoAdvance);
+        heroVideoEl.addEventListener('pause', () => { setTimeout(startAutoAdvance, 800); });
+    }
+
+    // Unmute helpers for hero and lightbox
+    function toggleHeroMute() {
+        const v = document.getElementById('heroVideo');
+        const btn = document.getElementById('heroUnmuteBtn');
+        if (!v) return;
+        v.muted = !v.muted;
+        if (!v.muted) {
+            if (btn) btn.classList.add('hidden');
+        } else {
+            if (btn) btn.classList.remove('hidden');
+        }
+    }
+
+    function toggleLightboxMute() {
+        const v = document.getElementById('lightboxVideo');
+        const btn = document.getElementById('lightboxUnmuteBtn');
+        if (!v) return;
+        v.muted = !v.muted;
+        if (!v.muted) {
+            if (btn) btn.classList.add('hidden');
+        } else {
+            if (btn) btn.classList.remove('hidden');
+        }
+    }
+
+    // Start auto-advance on load
+    window.addEventListener('load', () => {
+        startAutoAdvance();
+    });
 
     function prevImage() {
         setMedia((currentIdx - 1 + mediaItems.length) % mediaItems.length);
@@ -802,8 +891,11 @@
         } else if (item.type === 'video') {
             if (lbVideo) {
                 lbVideo.src = item.url;
+                lbVideo.muted = true;
                 lbVideo.classList.remove('hidden');
                 lbVideo.play().catch(err => console.log("Lightbox play blocked", err));
+                const lbUnmute = document.getElementById('lightboxUnmuteBtn');
+                if (lbUnmute) lbUnmute.classList.remove('hidden');
             }
         }
 
@@ -817,6 +909,9 @@
         const lbVideo = document.getElementById('lightboxVideo');
         if (lbVideo) {
             lbVideo.pause();
+            lbVideo.src = '';
+            const lbUnmute = document.getElementById('lightboxUnmuteBtn');
+            if (lbUnmute) lbUnmute.classList.add('hidden');
         }
         lb.classList.add('hidden');
         document.body.style.overflow = '';
