@@ -6,13 +6,88 @@
 <div class="min-h-screen">
     {{-- Hero Section --}}
     <section class="relative pt-24 pb-28 overflow-hidden bg-slate-900">
-        {{-- Background Image --}}
-        <div class="absolute inset-0">
-            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920" 
-                 alt="Background Hero" 
-                 class="w-full h-full object-cover opacity-30">
+        {{-- Background Slideshow --}}
+        <div class="absolute inset-0 overflow-hidden">
+            <div id="hero-bg" class="absolute inset-0 bg-cover bg-center opacity-90 transition-all duration-1000"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/60 to-transparent"></div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const localImages = [
+                    "{{ asset('images/hero-img/SU7 au salon auto.png') }}",
+                    "{{ asset('images/hero-img/hero2.png') }}",
+                    "{{ asset('images/hero-img/hero3.png') }}",
+                    "{{ asset('images/hero-img/hero4.png') }}"
+                ];
+
+                const fallbackImages = [
+                    "{{ asset('images/hero.png') }}",
+                    "{{ asset('images/Garage Luxe 3.png') }}"
+                ];
+
+                const heroBg = document.getElementById('hero-bg');
+                const validImages = [];
+                let currentIndex = 0;
+                const intervalMs = 5000;
+                const backgroundPositions = [
+                    'left center',
+                    'right center',
+                    'left top',
+                    'right bottom'
+                ];
+
+                function preloadImage(src) {
+                    return new Promise((resolve, reject) => {
+                        const img = new Image();
+                        img.onload = () => resolve(src);
+                        img.onerror = () => reject(src);
+                        img.src = src;
+                    });
+                }
+
+                function setHeroBackground(index) {
+                    if (!heroBg || validImages.length === 0) return;
+                    const startPosition = backgroundPositions[index % backgroundPositions.length];
+                    const endPosition = startPosition.includes('left') ? 'right center' : 'left center';
+
+                    heroBg.style.transition = 'background-position 4s ease-in-out, opacity 1s ease';
+                    heroBg.style.backgroundImage = `url('${validImages[index]}')`;
+                    heroBg.style.backgroundPosition = startPosition;
+                    heroBg.style.backgroundSize = '125%';
+                    heroBg.style.backgroundRepeat = 'no-repeat';
+                    heroBg.style.willChange = 'background-position, background-image';
+
+                    requestAnimationFrame(() => {
+                        heroBg.style.backgroundPosition = endPosition;
+                    });
+                }
+
+                function nextImage() {
+                    if (validImages.length <= 1) return;
+                    currentIndex = (currentIndex + 1) % validImages.length;
+                    setHeroBackground(currentIndex);
+                }
+
+                Promise.allSettled([...localImages, ...fallbackImages].map(preloadImage))
+                    .then(results => {
+                        results.forEach(result => {
+                            if (result.status === 'fulfilled') {
+                                validImages.push(result.value);
+                            }
+                        });
+
+                        if (validImages.length === 0) {
+                            return;
+                        }
+
+                        setHeroBackground(0);
+                        if (validImages.length > 1) {
+                            setInterval(nextImage, intervalMs);
+                        }
+                    });
+            });
+        </script>
 
         <div class="container relative px-4 mx-auto max-w-7xl z-10">
             <div class="max-w-2xl">
