@@ -421,7 +421,7 @@
         </div>
     </div>
 </div>
-
+@endsection
 @section('scripts')
 <script>
     let currentCar = null;
@@ -479,7 +479,18 @@
     }
 
     function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
+        const modal = document.getElementById(id);
+        const content = document.getElementById(id + 'Content');
+
+        // Ensure animations classes are cleaned up
+        if (content) {
+            content.classList.remove('modal-animate-in', 'modal-animate-out');
+        }
+
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+
         document.body.style.overflow = 'auto';
     }
 
@@ -512,9 +523,13 @@
     }
 
     window.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape') {
-            closeModal('bookingModal');
-            closeModal('detailsModal');
+        if (e.key === 'Escape') {
+            // If a modal is open, animate it out then close
+            const bookingOpen = !document.getElementById('bookingModal')?.classList.contains('hidden');
+            const detailsOpen = !document.getElementById('detailsModal')?.classList.contains('hidden');
+
+            if (bookingOpen) requestClose('bookingModal');
+            if (detailsOpen) requestClose('detailsModal');
         }
     });
 

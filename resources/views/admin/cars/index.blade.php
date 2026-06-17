@@ -236,6 +236,50 @@
       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
       <textarea name="description" id="edit_description" rows="3" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none"></textarea>
      </div>
+
+     <!-- Visuels -->
+     <div class="space-y-6 border-t border-slate-200 dark:border-slate-800 pt-6">
+      <h3 class="text-[10px] font-semibold text-amber-500 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 pb-2 transition-colors">Images & Vidéos</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Photo principale</label>
+        <div class="relative group">
+         <input type="file" name="photo_principale" accept="image/*" onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
+          <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
+          <span class="text-sm text-slate-500 dark:text-slate-400">Remplacer la photo principale</span>
+         </div>
+        </div>
+       </div>
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Galerie photos</label>
+        <div class="relative group">
+         <input type="file" name="photos[]" accept="image/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
+          <i data-lucide="images" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
+          <span class="text-sm text-slate-500 dark:text-slate-400">Ajouter des images supplémentaires</span>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vidéos</label>
+        <div class="relative group">
+         <input type="file" name="videos[]" accept="video/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
+          <i data-lucide="video" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
+          <span class="text-sm text-slate-500 dark:text-slate-400">Ajouter des vidéos</span>
+         </div>
+        </div>
+       </div>
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Médias existants</label>
+        <div id="edit_existing_media" class="grid grid-cols-2 gap-3"></div>
+       </div>
+      </div>
+      <div id="edit_media_preview" class="flex flex-wrap gap-4"></div>
+     </div>
     </div>
 
     <!-- Submit buttons -->
@@ -317,7 +361,79 @@
   document.getElementById('edit_disponibilite').value = car.disponibilite;
   document.getElementById('edit_pays_origine').value = car.pays_origine || '';
   document.getElementById('edit_description').value = car.description || '';
+
+  const existingMedia = document.getElementById('edit_existing_media');
+  existingMedia.innerHTML = '';
+
+  if (car.photos && car.photos.length) {
+    car.photos.forEach(photo => {
+      const card = document.createElement('div');
+      card.className = 'relative border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden';
+      card.innerHTML = `
+        <img src="${photo.url}" alt="Photo voiture" class="w-full h-24 object-cover">
+        <button type="button" onclick="deleteExistingPhoto(${photo.id}, this)" class="absolute top-2 right-2 bg-slate-950/80 text-white rounded-full p-1 hover:bg-red-500 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      existingMedia.appendChild(card);
+    });
+  }
+
+  if (car.videos && car.videos.length) {
+    car.videos.forEach(video => {
+      const card = document.createElement('div');
+      card.className = 'relative border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden bg-slate-950/10';
+      card.innerHTML = `
+        <div class="p-4 text-center text-slate-500">
+          <i data-lucide="video" class="w-6 h-6 mx-auto mb-2"></i>
+          <p class="text-[10px] truncate">${video.url.split('/').pop()}</p>
+        </div>
+        <button type="button" onclick="deleteExistingVideo(${video.id}, this)" class="absolute top-2 right-2 bg-slate-950/80 text-white rounded-full p-1 hover:bg-red-500 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      existingMedia.appendChild(card);
+    });
+  }
+
+  handleFilePreview(document.querySelector('input[name="photo_principale"]'), 'edit_media_preview');
   openModal('editCarModal');
+ }
+
+ function deleteExistingPhoto(photoId, button) {
+  if (!confirm('Supprimer cette photo existante ?')) return;
+  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  fetch(`/admin/cars/photos/${photoId}`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRF-TOKEN': token,
+      'Accept': 'application/json'
+    }
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      button.closest('div').remove();
+    } else {
+      alert(data.message || 'Impossible de supprimer la photo');
+    }
+  });
+ }
+
+ function deleteExistingVideo(videoId, button) {
+  if (!confirm('Supprimer cette vidéo existante ?')) return;
+  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  fetch(`/admin/cars/videos/${videoId}`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRF-TOKEN': token,
+      'Accept': 'application/json'
+    }
+  }).then(res => res.json()).then(data => {
+    if (data.success) {
+      button.closest('div').remove();
+    } else {
+      alert(data.message || 'Impossible de supprimer la vidéo');
+    }
+  });
  }
 
  function openShowCarModal(car) {
