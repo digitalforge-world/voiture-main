@@ -172,23 +172,26 @@ class VoitureController extends Controller
         $voiture = Voiture::findOrFail($id);
 
         $validated = $request->validate([
+            'marque' => 'required|string|max:50',
+            'modele' => 'required|string|max:50',
+            'annee' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'categorie' => 'required|in:voiture,scooter',
             'prix' => 'required|numeric|min:0',
-            'disponibilite' => 'required|in:disponible,importation,reserve,vendu',
             'kilometrage' => 'required|integer|min:0',
             'etat' => 'required|in:neuf,occasion,excellent,bon,reconditionne',
+            'disponibilite' => 'required|in:disponible,importation,reserve,vendu',
             'pays_origine' => 'required|string|max:50',
             'description' => 'nullable|string',
 
             // Technical Specs
-            'puissance' => 'nullable|string|max:20',
             'moteur' => 'nullable|string|max:50',
+            'puissance' => 'nullable|string|max:20',
             'transmission' => 'nullable|in:manuelle,automatique,semi-automatique',
             'carburant' => 'nullable|in:essence,diesel,hybride,electrique,gpl',
             'consommation_mixte' => 'nullable|string|max:20',
             'vitesse_max' => 'nullable|string|max:20',
             'acceleration_0_100' => 'nullable|string|max:20',
             'type_vehicule' => 'nullable|string|max:30',
-            'categorie' => 'nullable|in:voiture,scooter',
 
             // Market & History
             'origine_marche' => 'nullable|string|max:50',
@@ -200,12 +203,42 @@ class VoitureController extends Controller
             'equipements_details' => 'nullable|array',
 
             'photo_principale' => 'nullable|image|max:102400',
-            'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg,mp4,mov,ogg,qt|max:102400',
+            'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg|max:102400',
             'videos.*' => 'nullable|mimetypes:video/mp4,video/quicktime|max:20480',
         ]);
 
         $voiture->update($validated);
 
+        // Handle deletion of existing photos requested from edit form
+        if ($request->has('delete_photos')) {
+            foreach ((array) $request->input('delete_photos') as $photoId) {
+                $photo = PhotoVoiture::find($photoId);
+                if ($photo && $photo->voiture_id == $voiture->id) {
+                    $path = str_replace('/storage/', '', $photo->url);
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    if ($photo->principale) {
+                        $voiture->update(['photo_principale' => null]);
+                    }
+                    $photo->delete();
+                }
+            }
+        }
+
+        // Handle deletion of existing videos requested from edit form
+        if ($request->has('delete_videos')) {
+            foreach ((array) $request->input('delete_videos') as $videoId) {
+                $video = VideoVoiture::find($videoId);
+                if ($video && $video->voiture_id == $voiture->id) {
+                    $path = str_replace('/storage/', '', $video->url);
+                    if (Storage::disk('public')->exists($path)) {
+                        Storage::disk('public')->delete($path);
+                    }
+                    $video->delete();
+                }
+            }
+        }
         if ($request->hasFile('photo_principale')) {
             $path = $request->file('photo_principale')->store('voitures', 'public');
             $url = '/storage/' . $path;

@@ -142,10 +142,10 @@
       </td>
       <td class="px-6 py-4 text-right">
        <div class="flex items-center justify-end gap-2">
-        <button onclick="openShowCarModal({{ json_encode($car) }})" class="p-2 text-slate-400 hover:text-blue-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" data-car='@json($car)' onclick='openShowCarModal(JSON.parse(this.dataset.car))' class="p-2 text-slate-400 hover:text-blue-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
          <i data-lucide="eye" class="w-4 h-4"></i>
         </button>
-        <button onclick="openEditCarModal({{ json_encode($car) }})" class="p-2 text-slate-400 hover:text-amber-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button type="button" data-car='@json($car)' onclick='openEditCarModal(JSON.parse(this.dataset.car))' class="p-2 text-slate-400 hover:text-amber-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
          <i data-lucide="edit-2" class="w-4 h-4"></i>
         </button>
         <form action="{{ route('admin.cars.destroy', $car->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression ?')" class="inline">
@@ -190,11 +190,27 @@
     </button>
    </div>
 
-   <form id="editCarForm" method="POST" enctype="multipart/form-data" class="p-6 max-h-[75vh] overflow-y-auto">
+   <form id="editCarForm" method="POST" enctype="multipart/form-data" class="p-6 max-h-[85vh] overflow-y-auto">
     @csrf
     @method('PUT')
     
     <div class="space-y-6">
+     <!-- Identity -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Marque</label>
+       <input type="text" name="marque" id="edit_marque" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Modèle</label>
+       <input type="text" name="modele" id="edit_modele" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Année</label>
+       <input type="number" name="annee" id="edit_annee" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+     </div>
+
      <!-- Pricing and Mileage -->
      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -208,12 +224,21 @@
      </div>
 
      <!-- Status and Origin -->
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catégorie</label>
+       <select name="categorie" id="edit_categorie" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        <option value="voiture">Voiture</option>
+        <option value="scooter">Scooter</option>
+       </select>
+      </div>
       <div>
        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">État</label>
        <select name="etat" id="edit_etat" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
         <option value="neuf">Neuf</option>
         <option value="occasion">Occasion</option>
+        <option value="excellent">Excellent</option>
+        <option value="bon">Bon état</option>
         <option value="reconditionne">Reconditionné</option>
        </select>
       </div>
@@ -232,6 +257,109 @@
       </div>
      </div>
 
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Numéro de châssis</label>
+       <input type="text" name="numero_chassis" id="edit_numero_chassis" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Couleur</label>
+       <input type="text" name="couleur" id="edit_couleur" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre de portes</label>
+       <input type="number" name="nombre_portes" id="edit_nombre_portes" min="0" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre de places</label>
+       <input type="number" name="nombre_places" id="edit_nombre_places" min="0" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+     </div>
+
+     <!-- Technical Specs -->
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Moteur / Cylindrée</label>
+       <input type="text" name="moteur" id="edit_moteur" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Puissance</label>
+       <input type="text" name="puissance" id="edit_puissance" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Transmission</label>
+       <select name="transmission" id="edit_transmission" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        <option value="automatique">Automatique</option>
+        <option value="manuelle">Manuelle</option>
+        <option value="semi-automatique">Semi-Auto</option>
+       </select>
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Carburant</label>
+       <select name="carburant" id="edit_carburant" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        <option value="essence">Essence</option>
+        <option value="diesel">Diesel</option>
+        <option value="hybride">Hybride</option>
+        <option value="electrique">Électrique</option>
+        <option value="gpl">GPL</option>
+       </select>
+      </div>
+     </div>
+
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Consommation mixte</label>
+       <input type="text" name="consommation_mixte" id="edit_consommation_mixte" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vitesse max</label>
+       <input type="text" name="vitesse_max" id="edit_vitesse_max" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">0-100 km/h</label>
+       <input type="text" name="acceleration_0_100" id="edit_acceleration_0_100" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Type de véhicule</label>
+       <select name="type_vehicule" id="edit_type_vehicule" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        <option value="berline">Berline</option>
+        <option value="suv">SUV / Crossover</option>
+        <option value="4x4">4x4 / Tout-terrain</option>
+        <option value="pickup">Pick-up</option>
+        <option value="coupe">Coupé</option>
+        <option value="utilitaire">Utilitaire</option>
+       </select>
+      </div>
+     </div>
+
+     <!-- Market and History -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Marché d'origine</label>
+       <select name="origine_marche" id="edit_origine_marche" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        <option value="europe">Europe</option>
+        <option value="usa">USA / Canada</option>
+        <option value="gcc">GCC</option>
+        <option value="asie">Asie</option>
+        <option value="local">Local Africa</option>
+       </select>
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre de propriétaires</label>
+       <input type="number" name="nombre_proprietaires" id="edit_nombre_proprietaires" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+      </div>
+      <div class="space-y-2 pt-4">
+       <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" name="carnet_entretien_ajour" id="edit_carnet_entretien_ajour" value="1" class="w-5 h-5 rounded border-slate-300 dark:border-white/10 text-amber-500 focus:ring-amber-500/20">
+        <span class="text-sm text-slate-500 dark:text-slate-400">Carnet d'entretien à jour</span>
+       </label>
+       <label class="flex items-center gap-3 cursor-pointer">
+        <input type="checkbox" name="non_fumeur" id="edit_non_fumeur" value="1" class="w-5 h-5 rounded border-slate-300 dark:border-white/10 text-amber-500 focus:ring-amber-500/20">
+        <span class="text-sm text-slate-500 dark:text-slate-400">Non-fumeur</span>
+       </label>
+      </div>
+     </div>
+
      <div>
       <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
       <textarea name="description" id="edit_description" rows="3" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none"></textarea>
@@ -244,20 +372,22 @@
        <div class="space-y-2">
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Photo principale</label>
         <div class="relative group">
-         <input type="file" name="photo_principale" accept="image/*" onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <input id="edit_photo_principale" type="file" name="photo_principale" accept="image/*" onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
          <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
           <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
           <span class="text-sm text-slate-500 dark:text-slate-400">Remplacer la photo principale</span>
+          <button type="button" onclick="document.getElementById('edit_photo_principale').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir une image</button>
          </div>
         </div>
        </div>
        <div class="space-y-2">
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Galerie photos</label>
         <div class="relative group">
-         <input type="file" name="photos[]" accept="image/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <input id="edit_photos" type="file" name="photos[]" accept="image/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
          <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
           <i data-lucide="images" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
           <span class="text-sm text-slate-500 dark:text-slate-400">Ajouter des images supplémentaires</span>
+          <button type="button" onclick="document.getElementById('edit_photos').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir les images</button>
          </div>
         </div>
        </div>
@@ -266,10 +396,11 @@
        <div class="space-y-2">
         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Vidéos</label>
         <div class="relative group">
-         <input type="file" name="videos[]" accept="video/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <input id="edit_videos" type="file" name="videos[]" accept="video/*" multiple onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
          <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
           <i data-lucide="video" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
           <span class="text-sm text-slate-500 dark:text-slate-400">Ajouter des vidéos</span>
+          <button type="button" onclick="document.getElementById('edit_videos').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir les vidéos</button>
          </div>
         </div>
        </div>
@@ -354,13 +485,36 @@
  function openEditCarModal(car) {
   const form = document.getElementById('editCarForm');
   form.action = `/admin/cars/${car.id}`;
-  
-  document.getElementById('edit_prix').value = car.prix;
-  document.getElementById('edit_kilometrage').value = car.kilometrage;
-  document.getElementById('edit_etat').value = car.etat;
-  document.getElementById('edit_disponibilite').value = car.disponibilite;
+
+  document.getElementById('edit_marque').value = car.marque || '';
+  document.getElementById('edit_modele').value = car.modele || '';
+  document.getElementById('edit_annee').value = car.annee || '';
+  document.getElementById('edit_categorie').value = car.categorie || 'voiture';
+  document.getElementById('edit_prix').value = car.prix || '';
+  document.getElementById('edit_kilometrage').value = car.kilometrage || '';
+  document.getElementById('edit_numero_chassis').value = car.numero_chassis || '';
+  document.getElementById('edit_couleur').value = car.couleur || '';
+  document.getElementById('edit_nombre_portes').value = car.nombre_portes || '';
+  document.getElementById('edit_nombre_places').value = car.nombre_places || '';
+  document.getElementById('edit_etat').value = car.etat || 'occasion';
+  document.getElementById('edit_disponibilite').value = car.disponibilite || 'disponible';
   document.getElementById('edit_pays_origine').value = car.pays_origine || '';
+  document.getElementById('edit_moteur').value = car.moteur || '';
+  document.getElementById('edit_puissance').value = car.puissance || '';
+  document.getElementById('edit_transmission').value = car.transmission || 'automatique';
+  document.getElementById('edit_carburant').value = car.carburant || 'essence';
+  document.getElementById('edit_consommation_mixte').value = car.consommation_mixte || '';
+  document.getElementById('edit_vitesse_max').value = car.vitesse_max || '';
+  document.getElementById('edit_acceleration_0_100').value = car.acceleration_0_100 || '';
+  document.getElementById('edit_type_vehicule').value = car.type_vehicule || 'berline';
+  document.getElementById('edit_origine_marche').value = car.origine_marche || 'europe';
+  document.getElementById('edit_nombre_proprietaires').value = car.nombre_proprietaires || 0;
+  document.getElementById('edit_nombre_portes').value = car.nombre_portes || '';
+  document.getElementById('edit_nombre_places').value = car.nombre_places || '';
   document.getElementById('edit_description').value = car.description || '';
+
+  document.getElementById('edit_carnet_entretien_ajour').checked = !!car.carnet_entretien_ajour;
+  document.getElementById('edit_non_fumeur').checked = !!car.non_fumeur;
 
   const existingMedia = document.getElementById('edit_existing_media');
   existingMedia.innerHTML = '';
@@ -396,44 +550,51 @@
     });
   }
 
-  handleFilePreview(document.querySelector('input[name="photo_principale"]'), 'edit_media_preview');
+  if (window.lucide) window.lucide.createIcons();
+
+  document.getElementById('edit_media_preview').innerHTML = '';
+
+  // Reset file inputs when opening edit modal so stale files are not submitted.
+  ['photo_principale', 'photos[]', 'videos[]'].forEach(name => {
+    const input = document.querySelector(`#editCarForm input[name="${name}"]`);
+    if (input) {
+      input.value = '';
+      if (typeof filePreviewState !== 'undefined') {
+        filePreviewState.delete(input);
+      }
+    }
+  });
+
+  renderPreviewContainer('edit_media_preview');
   openModal('editCarModal');
  }
 
  function deleteExistingPhoto(photoId, button) {
   if (!confirm('Supprimer cette photo existante ?')) return;
-  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  fetch(`/admin/cars/photos/${photoId}`, {
-    method: 'DELETE',
-    headers: {
-      'X-CSRF-TOKEN': token,
-      'Accept': 'application/json'
-    }
-  }).then(res => res.json()).then(data => {
-    if (data.success) {
-      button.closest('div').remove();
-    } else {
-      alert(data.message || 'Impossible de supprimer la photo');
-    }
-  });
+  // Mark for deletion on form submit by adding a hidden input
+  const form = document.getElementById('editCarForm');
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden';
+  hidden.name = 'delete_photos[]';
+  hidden.value = photoId;
+  form.appendChild(hidden);
+
+  // Remove UI card immediately
+  button.closest('div').remove();
  }
 
  function deleteExistingVideo(videoId, button) {
   if (!confirm('Supprimer cette vidéo existante ?')) return;
-  const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  fetch(`/admin/cars/videos/${videoId}`, {
-    method: 'DELETE',
-    headers: {
-      'X-CSRF-TOKEN': token,
-      'Accept': 'application/json'
-    }
-  }).then(res => res.json()).then(data => {
-    if (data.success) {
-      button.closest('div').remove();
-    } else {
-      alert(data.message || 'Impossible de supprimer la vidéo');
-    }
-  });
+  // Mark for deletion on form submit by adding a hidden input
+  const form = document.getElementById('editCarForm');
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden';
+  hidden.name = 'delete_videos[]';
+  hidden.value = videoId;
+  form.appendChild(hidden);
+
+  // Remove UI card immediately
+  button.closest('div').remove();
  }
 
  function openShowCarModal(car) {

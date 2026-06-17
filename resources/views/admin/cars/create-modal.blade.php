@@ -303,23 +303,38 @@
      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="space-y-2">
        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Photo Principale</label>
-       <div class="relative group">
-        <input type="file"name="photo_principale" onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-        <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] dark: flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
-         <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
-         <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Image de couverture</span>
-        </div>
+      <div class="relative group">
+       <input id="create_photo_principale" type="file" name="photo_principale" onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+       <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] dark: flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
+        <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
+        <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Image de couverture</span>
+        <button type="button" onclick="document.getElementById('create_photo_principale').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir une image</button>
        </div>
+      </div>
       </div>
       <div class="space-y-2">
        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Galerie Photos (Multiple)</label>
-       <div class="relative group">
-        <input type="file"name="photos[]"multiple onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-        <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] dark: flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
-         <i data-lucide="images" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
-         <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Vues secondaires</span>
-        </div>
+      <div class="relative group">
+       <input id="create_photos" type="file" name="photos[]" multiple onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+       <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] dark: flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
+        <i data-lucide="images" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
+        <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Vues secondaires</span>
+        <button type="button" onclick="document.getElementById('create_photos').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir les images</button>
        </div>
+      </div>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-2">
+       <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Vidéos (Multiple)</label>
+      <div class="relative group">
+       <input id="create_videos" type="file" name="videos[]" accept="video/*" multiple onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+       <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] dark: flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
+        <i data-lucide="video" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
+        <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Ajouter des vidéos</span>
+        <button type="button" onclick="document.getElementById('create_videos').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir les vidéos</button>
+       </div>
+      </div>
       </div>
      </div>
      <div id="create_media_preview" class="flex flex-wrap gap-4 empty:hidden"></div>
@@ -404,42 +419,109 @@ function toggleCategorie(cat) {
  }
 }
 
+const filePreviewState = new Map();
+
 function handleFilePreview(input, previewId) {
  const previewContainer = document.getElementById(previewId);
  if (!previewContainer) return;
+
+ const newFiles = input.files ? Array.from(input.files) : [];
+
+ // If the input accepts multiple files, append new selections to existing ones
+ if (input.multiple) {
+  const existingState = filePreviewState.get(input);
+  const existingFiles = existingState ? existingState.files : [];
+
+  // Combine and dedupe by name+size+lastModified
+  const combined = existingFiles.concat(newFiles);
+  const seen = new Set();
+  const unique = [];
+  combined.forEach(f => {
+   const key = `${f.name}::${f.size}::${f.lastModified}`;
+   if (!seen.has(key)) {
+    seen.add(key);
+    unique.push(f);
+   }
+  });
+
+  // Update the input.files using DataTransfer so the form will submit the aggregated files
+  const dt = new DataTransfer();
+  unique.forEach(f => dt.items.add(f));
+  try {
+   input.files = dt.files;
+  } catch (e) {
+   // Some browsers may throw on setting readonly property; still keep preview state
+  }
+
+  filePreviewState.set(input, { files: Array.from(dt.files), previewId });
+ } else {
+  // Single-file input: replace
+  filePreviewState.set(input, { files: newFiles, previewId });
+ }
+
+ renderPreviewContainer(previewId);
+}
+
+function renderPreviewContainer(previewId) {
+ const previewContainer = document.getElementById(previewId);
+ if (!previewContainer) return;
  previewContainer.innerHTML = '';
- 
- if (input.files) {
-  Array.from(input.files).forEach(file => {
-   const reader = new FileReader();
+ const inputs = [];
+ filePreviewState.forEach((state, input) => {
+  if (state.previewId === previewId && state.files.length) {
+   inputs.push({ input, files: state.files });
+  }
+ });
+ if (!inputs.length) return;
+ inputs.forEach(({ input, files }) => {
+  files.forEach((file, index) => {
    const card = document.createElement('div');
    card.className = "relative w-20 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm flex items-center justify-center bg-slate-50 dark:bg-slate-900";
-   
-   reader.onload = function(e) {
-    if (file.type.startsWith('image/')) {
-     const img = document.createElement('img');
-     img.src = e.target.result;
-     img.className = "w-full h-full object-cover";
-     card.appendChild(img);
-    } else if (file.type.startsWith('video/')) {
-     const videoIcon = document.createElement('div');
-     videoIcon.className = "flex flex-col items-center justify-center p-2 text-amber-500 text-center";
-     videoIcon.innerHTML = `<i data-lucide="video" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
-     card.appendChild(videoIcon);
-    } else {
-     const fileIcon = document.createElement('div');
-     fileIcon.className = "flex flex-col items-center justify-center p-2 text-slate-400 text-center";
-     fileIcon.innerHTML = `<i data-lucide="file" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
-     card.appendChild(fileIcon);
-    }
-    if (window.lucide) {
-     window.lucide.createIcons();
-    }
+
+   if (file.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.className = "w-full h-full object-cover";
+    img.onload = () => URL.revokeObjectURL(img.src);
+    card.appendChild(img);
+   } else if (file.type.startsWith('video/')) {
+    const videoIcon = document.createElement('div');
+    videoIcon.className = "flex flex-col items-center justify-center p-2 text-amber-500 text-center";
+    videoIcon.innerHTML = `<i data-lucide="video" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
+    card.appendChild(videoIcon);
+   } else {
+    const fileIcon = document.createElement('div');
+    fileIcon.className = "flex flex-col items-center justify-center p-2 text-slate-400 text-center";
+    fileIcon.innerHTML = `<i data-lucide="file" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
+    card.appendChild(fileIcon);
    }
-   reader.readAsDataURL(file);
+
+   const removeBtn = document.createElement('button');
+   removeBtn.type = 'button';
+   removeBtn.className = 'absolute top-1 right-1 w-6 h-6 rounded-full bg-slate-950/80 text-white flex items-center justify-center hover:bg-red-500 transition';
+   removeBtn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
+   removeBtn.addEventListener('click', () => removePreviewFile(input, index, previewId));
+
+   card.appendChild(removeBtn);
    previewContainer.appendChild(card);
   });
+ });
+ if (window.lucide) {
+  window.lucide.createIcons();
  }
+}
+
+function removePreviewFile(input, index, previewId) {
+ const state = filePreviewState.get(input);
+ if (!state) return;
+ const files = state.files;
+ if (index < 0 || index >= files.length) return;
+ files.splice(index, 1);
+ const dataTransfer = new DataTransfer();
+ files.forEach(file => dataTransfer.items.add(file));
+ input.files = dataTransfer.files;
+ filePreviewState.set(input, { files, previewId: state.previewId });
+ renderPreviewContainer(previewId);
 }
 </script>
 
