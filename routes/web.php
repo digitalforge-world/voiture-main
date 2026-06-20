@@ -9,6 +9,8 @@ use App\Http\Controllers\PieceController as PublicPieceController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\TransportController;
+use App\Http\Controllers\DriverController;
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/api/global-search', [App\Http\Controllers\GlobalSearchController::class, 'search'])->name('api.global-search');
@@ -31,6 +33,20 @@ Route::post('/revisions', [RevisionController::class, 'store'])->name('revisions
 Route::post('/revisions/chat/start', [RevisionController::class, 'startChat'])->name('revisions.chat.start');
 Route::post('/revisions/chat/send', [RevisionController::class, 'sendMessage'])->name('revisions.chat.send');
 Route::post('/revisions/chat/close', [RevisionController::class, 'closeChat'])->name('revisions.chat.close');
+
+// ─── Transport avec Chauffeur ─────────────────────────────────────────────────
+Route::get('/transport', [TransportController::class, 'index'])->name('transport.index');
+Route::post('/transport/reserver', [TransportController::class, 'store'])->name('transport.store');
+Route::get('/transport/suivi/{tracking}', [TransportController::class, 'suivi'])->name('transport.suivi');
+Route::post('/transport/message', [TransportController::class, 'sendMessage'])->name('transport.message');
+Route::post('/transport/accepter-prix', [TransportController::class, 'acceptPrice'])->name('transport.accept-price');
+Route::get('/transport/messages/{tracking}', [TransportController::class, 'getMessages'])->name('transport.get-messages');
+Route::get('/transport/driver-location/{tracking}', [TransportController::class, 'getDriverLocation'])->name('transport.driver-location');
+
+// ─── Interface Chauffeur GPS (sans auth, via token secret) ────────────────────
+Route::get('/chauffeur/{token}', [DriverController::class, 'show'])->name('driver.show');
+Route::post('/chauffeur/{token}/location', [DriverController::class, 'updateLocation'])->name('driver.update-location');
+Route::post('/chauffeur/{token}/arrive', [DriverController::class, 'markArrived'])->name('driver.arrived');
 
 // Nouvelle fonctionnalité : Suivi de Commande (Tracking)
 Route::get('/suivi', [TrackingController::class, 'index'])->name('tracking.index');
@@ -134,6 +150,15 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Facturation
     Route::resource('invoices', App\Http\Controllers\Admin\AccountingInvoiceController::class);
     Route::get('invoices/{invoice}/download', [App\Http\Controllers\Admin\AccountingInvoiceController::class, 'download'])->name('invoices.download');
+
+    // === Transport avec Chauffeur ===
+    Route::resource('transport', App\Http\Controllers\Admin\TransportController::class);
+    Route::post('transport/{id}/message', [App\Http\Controllers\Admin\TransportController::class, 'sendMessage'])->name('transport.message');
+    Route::post('transport/{id}/proposer-prix', [App\Http\Controllers\Admin\TransportController::class, 'proposePrice'])->name('transport.price');
+    Route::post('transport/{id}/statut', [App\Http\Controllers\Admin\TransportController::class, 'updateStatus'])->name('transport.status');
+    Route::get('transport/{id}/messages', [App\Http\Controllers\Admin\TransportController::class, 'getMessages'])->name('transport.get-messages');
+    Route::post('transport/{id}/chauffeur-arrive', [App\Http\Controllers\Admin\TransportController::class, 'notifyArrival'])->name('transport.arrival');
+    Route::get('transport/{id}/driver-link', [App\Http\Controllers\Admin\TransportController::class, 'generateDriverLink'])->name('transport.driver-link');
 });
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

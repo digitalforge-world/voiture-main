@@ -91,6 +91,13 @@
       <a href="{{ route('admin.rentals.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/rentals*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
        <i data-lucide="calendar-check" class="w-5 h-5"></i> Locations
       </a>
+      @php $pendingTransport = \App\Models\ReservationTransport::where('statut','en_attente')->count(); @endphp
+      <a href="{{ route('admin.transport.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/transport*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
+       <i data-lucide="car" class="w-5 h-5"></i> Transport & Chauffeur
+       @if($pendingTransport > 0)
+       <span class="ml-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-lg font-bold animate-pulse">{{ $pendingTransport }}</span>
+       @endif
+      </a>
       <a href="{{ route('admin.orders-parts.index') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition {{ Request::is('admin/orders-parts*') ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-900/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white' }}">
        <i data-lucide="package-search" class="w-5 h-5"></i> Commandes Pièces
       </a>

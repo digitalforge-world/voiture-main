@@ -150,6 +150,13 @@
                         <li><a href="{{ route('parts.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('pieces*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Pièces</a></li>
                         <li><a href="{{ route('rental.index') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('location*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Location</a></li>
                         <li><a href="{{ route('revisions.create') }}" class="text-sm font-medium transition hover:text-amber-500 {{ Request::is('revisions*') ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400' }}">Révision</a></li>
+                        <li>
+                            <a href="{{ route('transport.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-xl transition
+                                {{ Request::is('transport*') ? 'bg-amber-500 text-slate-950' : 'bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-slate-950 border border-amber-500/30' }}">
+                                <i data-lucide="car" class="w-3.5 h-3.5"></i>
+                                Transport
+                            </a>
+                        </li>
                     </ul>
 
                     <div class="flex items-center gap-2 lg:gap-3">
@@ -179,6 +186,11 @@
                         <button id="theme-toggle" class="flex items-center justify-center p-2 lg:p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-amber-500 hover:text-amber-500 transition-all border border-slate-200 dark:border-white/5">
                             <i data-lucide="sun" class="w-4 h-4 lg:w-4.5 lg:h-4.5 hidden dark:block"></i>
                             <i data-lucide="moon" class="w-4 h-4 lg:w-4.5 lg:h-4.5 block dark:hidden"></i>
+                        </button>
+
+                        <!-- Menu Hamburger Mobile -->
+                        <button id="mobile-menu-btn" class="flex md:hidden items-center justify-center p-2 lg:p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:border-amber-500 hover:text-amber-500 transition-all border border-slate-200 dark:border-white/5">
+                            <i data-lucide="menu" class="w-4 h-4 lg:w-4.5 lg:h-4.5"></i>
                         </button>
                     </div>
                 </nav>
@@ -211,6 +223,7 @@
                                 ['name' => 'Pièces détachées', 'url' => route('parts.index'), 'active' => Request::is('pieces*'), 'icon' => 'settings'],
                                 ['name' => 'Location de voitures', 'url' => route('rental.index'), 'active' => Request::is('location*'), 'icon' => 'key'],
                                 ['name' => 'Entretien & Révision', 'url' => route('revisions.create'), 'active' => Request::is('revisions*'), 'icon' => 'tool'],
+                                ['name' => 'Transport & Chauffeur', 'url' => route('transport.index'), 'active' => Request::is('transport*'), 'icon' => 'car'],
                             ];
                         @endphp
                         
