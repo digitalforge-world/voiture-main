@@ -172,4 +172,55 @@ class TransportController extends Controller
             'statut'           => $reservation->statut,
         ]);
     }
+
+    /**
+     * Permettre au client de modifier son trajet si le statut est "en_attente".
+     */
+    public function updateTrajet(Request $request)
+    {
+        $request->validate([
+            'tracking'     => 'required|string',
+            'lieu_depart'  => 'required|string|max:500',
+            'lieu_arrivee' => 'required|string|max:500',
+            'lat_depart'   => 'nullable|numeric',
+            'lng_depart'   => 'nullable|numeric',
+            'lat_arrivee'  => 'nullable|numeric',
+            'lng_arrivee'  => 'nullable|numeric',
+        ]);
+
+        $reservation = ReservationTransport::where('tracking_number', $request->tracking)->firstOrFail();
+
+        if ($reservation->statut !== 'en_attente') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Impossible de modifier le trajet car cette réservation a déjà été acceptée.'
+            ], 403);
+        }
+
+        $oldDepart = $reservation->lieu_depart;
+        $oldArrivee = $reservation->lieu_arrivee;
+
+        $reservation->update([
+            'lieu_depart'  => $request->lieu_depart,
+            'lieu_arrivee' => $request->lieu_arrivee,
+            'lat_depart'   => $request->lat_depart ? (float)$request->lat_depart : null,
+            'lng_depart'   => $request->lng_depart ? (float)$request->lng_depart : null,
+            'lat_arrivee'  => $request->lat_arrivee ? (float)$request->lat_arrivee : null,
+            'lng_arrivee'  => $request->lng_arrivee ? (float)$request->lng_arrivee : null,
+        ]);
+
+        // Message système dans le chat pour notification
+        TransportConversation::create([
+            'reservation_transport_id' => $reservation->id,
+            'auteur'  => 'systeme',
+            'message' => "🔄 Le client a mis à jour son trajet.\n• Départ : {$oldDepart} ➔ {$request->lieu_depart}\n• Arrivée : {$oldArrivee} ➔ {$request->lieu_arrivee}",
+            'type'    => 'notification_systeme',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'lieu_depart' => $reservation->lieu_depart,
+            'lieu_arrivee' => $reservation->lieu_arrivee,
+        ]);
+    }
 }

@@ -39,6 +39,7 @@ class Voiture extends Model
         'numero_chassis',
         'port_recommande_id',
         'photo_principale',
+        'model_3d',
         'consommation_mixte',
         'emission_co2',
         'vitesse_max',

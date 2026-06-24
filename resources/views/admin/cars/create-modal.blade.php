@@ -336,6 +336,23 @@
        </div>
       </div>
       </div>
+      <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Modèle 3D (.glb)</label>
+        <div class="relative group">
+         <input id="create_model_3d" type="file" name="model_3d" accept=".glb" onchange="handleFilePreview(this, 'create_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <div class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 group-hover:bg-slate-100 dark:group-hover:bg-slate-900 group-hover:border-amber-500/50 transition transition-colors">
+          <i data-lucide="box" class="w-8 h-8 text-slate-400 dark:text-slate-600 group-hover:text-amber-500 transition transition-colors"></i>
+          <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide group-hover:text-slate-900 dark:group-hover:text-slate-300 transition-colors">Fichier 3D Showroom (.glb)</span>
+          <button type="button" onclick="document.getElementById('create_model_3d').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir un fichier</button>
+         </div>
+        </div>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="space-y-2">
+        <label class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 ml-2 transition-colors">Ou URL du modèle 3D externe</label>
+        <input type="url" name="model_3d_url" placeholder="https://exemple.com/modele.glb" class="w-full py-4 px-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 rounded-[2.5rem] text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition shadow-inner transition-colors">
+       </div>
      </div>
      <div id="create_media_preview" class="flex flex-wrap gap-4 empty:hidden"></div>
     </div>
@@ -489,6 +506,11 @@ function renderPreviewContainer(previewId) {
     videoIcon.className = "flex flex-col items-center justify-center p-2 text-amber-500 text-center";
     videoIcon.innerHTML = `<i data-lucide="video" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
     card.appendChild(videoIcon);
+   } else if (file.name.endsWith('.glb')) {
+    const boxIcon = document.createElement('div');
+    boxIcon.className = "flex flex-col items-center justify-center p-2 text-blue-500 text-center";
+    boxIcon.innerHTML = `<i data-lucide="box" class="w-6 h-6 mb-1"></i><span class="text-[8px] font-bold truncate max-w-[60px]">${file.name}</span>`;
+    card.appendChild(boxIcon);
    } else {
     const fileIcon = document.createElement('div');
     fileIcon.className = "flex flex-col items-center justify-center p-2 text-slate-400 text-center";

@@ -150,6 +150,26 @@
     .count-up {
         display: inline-block;
     }
+
+    /* 3D Showroom styles */
+    #heroModel3D {
+        background: radial-gradient(circle, #ffffff 40%, #cbd5e1 100%) !important;
+        outline: none;
+    }
+    .color-dot {
+        position: relative;
+    }
+    .color-dot::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+    .color-dot.active::after {
+        border-color: #f59e0b;
+    }
 </style>
 @endsection
 
@@ -229,10 +249,82 @@
 
                         <button id="heroUnmuteBtn" type="button" class="absolute bottom-4 right-4 z-20 px-3 py-2 bg-white/90 text-slate-900 rounded-full text-xs hidden" onclick="toggleHeroMute()">Activer le son</button>
 
+                        @if($voiture->model_3d)
+                        <model-viewer id="heroModel3D" 
+                                      src="{{ $voiture->model_3d }}" 
+                                      alt="Modèle 3D de {{ $voiture->marque }} {{ $voiture->modele }}" 
+                                      auto-rotate 
+                                      camera-controls 
+                                      ar 
+                                      ar-modes="webxr scene-viewer quick-look" 
+                                      shadow-intensity="1.5" 
+                                      shadow-softness="1"
+                                      exposure="1.0"
+                                      environment-image="neutral"
+                                      interaction-prompt="auto"
+                                      auto-rotate-delay="2000"
+                                      rotation-per-second="20deg"
+                                      class="hidden w-full h-full bg-slate-50 dark:bg-slate-50"
+                                      style="--poster-color: transparent;">
+                            
+                            {{-- Custom Loading Indicator --}}
+                            <div id="model-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md z-30 transition-opacity duration-500">
+                                <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest animate-pulse">Chargement du modèle 3D...</span>
+                                <div class="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden mt-3 border border-white/5">
+                                    <div id="model-progress-bar" class="w-0 h-full bg-amber-500 rounded-full transition-all duration-300"></div>
+                                </div>
+                            </div>
+                            
+                            {{-- Fullscreen button inside model-viewer --}}
+                            <button slot="hotspot-fullscreen" type="button" onclick="toggleModelFullscreen()" class="absolute bottom-4 right-4 z-20 p-2.5 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-xl text-white hover:bg-amber-500 hover:text-slate-950 transition-all flex items-center justify-center gap-1.5 shadow-lg">
+                                <i data-lucide="maximize" class="w-4 h-4"></i>
+                                <span class="text-[9px] font-black uppercase tracking-wider hidden sm:inline">Plein Écran</span>
+                            </button>
+                        </model-viewer>
+                        
+                        {{-- XPeng-style Color Configurator (Right Side) --}}
+                        <div id="showroom-colors" class="hidden absolute right-6 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-4 bg-slate-950/80 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl">
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Teinte</span>
+                            <button type="button" onclick="changeCarColor('#c21807', this)" class="color-dot w-7 h-7 rounded-full bg-[#c21807] border-2 border-white/20 hover:scale-110 active:scale-95 transition-all shadow-md active" title="Rouge Sport"></button>
+                            <button type="button" onclick="changeCarColor('#0047ab', this)" class="color-dot w-7 h-7 rounded-full bg-[#0047ab] border-2 border-white/20 hover:scale-110 active:scale-95 transition-all shadow-md" title="Bleu Cobalt"></button>
+                            <button type="button" onclick="changeCarColor('#7c8d9c', this)" class="color-dot w-7 h-7 rounded-full bg-[#7c8d9c] border-2 border-white/20 hover:scale-110 active:scale-95 transition-all shadow-md" title="Gris Nardo"></button>
+                            <button type="button" onclick="changeCarColor('#111111', this)" class="color-dot w-7 h-7 rounded-full bg-[#111111] border-2 border-white/20 hover:scale-110 active:scale-95 transition-all shadow-md" title="Noir Profond"></button>
+                            <button type="button" onclick="changeCarColor('#fcfcfc', this)" class="color-dot w-7 h-7 rounded-full bg-[#fcfcfc] border-2 border-white/20 hover:scale-110 active:scale-95 transition-all shadow-md" title="Blanc Showroom"></button>
+                        </div>
+
+                        {{-- XPeng-style Camera Angles (Bottom Center) --}}
+                        <div id="showroom-camera" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2 bg-slate-950/80 backdrop-blur-xl p-1.5 rounded-full border border-white/10 shadow-2xl">
+                            <button type="button" onclick="setCameraOrbit('0deg', '75deg', '105%', this)" class="camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-slate-950 bg-amber-500 shadow-md">
+                                Avant
+                            </button>
+                            <button type="button" onclick="setCameraOrbit('90deg', '75deg', '105%', this)" class="camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500">
+                                Profil
+                            </button>
+                            <button type="button" onclick="setCameraOrbit('180deg', '75deg', '105%', this)" class="camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500">
+                                Arrière
+                            </button>
+                            <button type="button" onclick="setCameraOrbit('0deg', '15deg', '140%', this)" class="camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500">
+                                Dessus
+                            </button>
+                        </div>
+                        @endif
+
                         {{-- Cinematic gradient overlays (using pointer-events-none so users can click video controls) --}}
                         <div id="heroOverlay" class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none"></div>
                         <div id="heroOverlayLeft" class="absolute inset-0 bg-gradient-to-r from-slate-950/20 via-transparent to-transparent pointer-events-none"></div>
                     </div>
+
+                    @if($voiture->model_3d)
+                    <div class="absolute top-5 left-1/2 -translate-x-1/2 z-20 bg-slate-950/80 backdrop-blur-xl p-1 rounded-full border border-white/15 shadow-xl flex items-center gap-1">
+                        <button id="btn-gallery-photos" type="button" onclick="switchMediaMode('photos')" class="px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-slate-950 bg-amber-500 shadow-md">
+                            Photos / Vidéos
+                        </button>
+                        <button id="btn-gallery-3d" type="button" onclick="switchMediaMode('3d')" class="px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500">
+                            Visualisation 3D
+                        </button>
+                    </div>
+                    @endif
 
                     {{-- Top-left badges --}}
                     <div class="absolute top-5 left-5 flex flex-wrap items-center gap-2 z-10">
@@ -964,5 +1056,152 @@
 
     // Re-initialize Lucide icons
     lucide.createIcons();
+
+    // ═══════════════════════════════════════════════
+    //  3D SHOWROOM AUTOMOBILE
+    // ═══════════════════════════════════════════════
+    window.switchMediaMode = function(mode) {
+        const photoBtn = document.getElementById('btn-gallery-photos');
+        const d3Btn = document.getElementById('btn-gallery-3d');
+        const imgEl = document.getElementById('heroImage');
+        const videoEl = document.getElementById('heroVideo');
+        const modelViewer = document.getElementById('heroModel3D');
+        const overlay = document.getElementById('heroOverlay');
+        const overlayLeft = document.getElementById('heroOverlayLeft');
+        const unmuteBtn = document.getElementById('heroUnmuteBtn');
+        const zoomBtn = document.querySelector('[onclick="openLightbox()"]');
+        const thumbStrip = document.querySelector('.thumb-scroll');
+        const colorsPanel = document.getElementById('showroom-colors');
+        const cameraPanel = document.getElementById('showroom-camera');
+
+        if (mode === '3d') {
+            if (photoBtn) {
+                photoBtn.className = "px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500";
+            }
+            if (d3Btn) {
+                d3Btn.className = "px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-slate-950 bg-amber-500 shadow-md";
+            }
+            
+            if (imgEl) imgEl.classList.add('hidden');
+            if (videoEl) {
+                videoEl.classList.add('hidden');
+                videoEl.pause();
+            }
+            if (unmuteBtn) unmuteBtn.classList.add('hidden');
+            if (zoomBtn) zoomBtn.classList.add('hidden');
+            if (overlay) overlay.classList.add('hidden');
+            if (overlayLeft) overlayLeft.classList.add('hidden');
+            if (thumbStrip) thumbStrip.style.opacity = '0.3';
+            
+            if (modelViewer) modelViewer.classList.remove('hidden');
+            if (colorsPanel) colorsPanel.classList.remove('hidden');
+            if (cameraPanel) cameraPanel.classList.remove('hidden');
+            stopAutoAdvance();
+        } else {
+            if (d3Btn) {
+                d3Btn.className = "px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500";
+            }
+            if (photoBtn) {
+                photoBtn.className = "px-4 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-slate-950 bg-amber-500 shadow-md";
+            }
+            
+            if (modelViewer) modelViewer.classList.add('hidden');
+            if (colorsPanel) colorsPanel.classList.add('hidden');
+            if (cameraPanel) cameraPanel.classList.add('hidden');
+            if (overlay) overlay.classList.remove('hidden');
+            if (overlayLeft) overlayLeft.classList.remove('hidden');
+            if (zoomBtn) zoomBtn.classList.remove('hidden');
+            if (thumbStrip) thumbStrip.style.opacity = '1';
+            
+            setMedia(currentIdx);
+            startAutoAdvance();
+        }
+    };
+
+    window.changeCarColor = function(hexColor, button) {
+        const modelViewer = document.getElementById('heroModel3D');
+        if (!modelViewer || !modelViewer.model) return;
+        
+        // Convert hex to RGBA
+        const r = parseInt(hexColor.slice(1, 3), 16) / 255;
+        const g = parseInt(hexColor.slice(3, 5), 16) / 255;
+        const b = parseInt(hexColor.slice(5, 7), 16) / 255;
+        const colorArr = [r, g, b, 1.0];
+        
+        const targetNames = ['paint', 'body', 'carpaint', 'car_paint', 'coque', 'carrosserie', 'exterior', 'metal'];
+        let updated = false;
+        
+        modelViewer.model.materials.forEach(material => {
+            const name = material.name.toLowerCase();
+            if (targetNames.some(t => name.includes(t))) {
+                material.pbrMetallicRoughness.setBaseColorFactor(colorArr);
+                updated = true;
+            }
+        });
+        
+        if (!updated && modelViewer.model.materials.length > 0) {
+            // Fallback: apply to first material
+            modelViewer.model.materials[0].pbrMetallicRoughness.setBaseColorFactor(colorArr);
+        }
+        
+        // Toggle active border class
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.classList.remove('active');
+        });
+        if (button) button.classList.add('active');
+    };
+
+    window.setCameraOrbit = function(yaw, pitch, radius, btn) {
+        const modelViewer = document.getElementById('heroModel3D');
+        if (!modelViewer) return;
+        
+        modelViewer.cameraOrbit = `${yaw} ${pitch} ${radius}`;
+        
+        document.querySelectorAll('.camera-btn').forEach(b => {
+            b.className = "camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-white hover:text-amber-500";
+        });
+        if (btn) btn.className = "camera-btn px-3 py-1.5 text-[8px] font-black uppercase tracking-wider rounded-full transition-all duration-300 text-slate-950 bg-amber-500 shadow-md";
+    };
+
+    window.toggleModelFullscreen = function() {
+        const modelViewer = document.getElementById('heroModel3D');
+        if (!modelViewer) return;
+        
+        if (!document.fullscreenElement) {
+            modelViewer.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    // Set up model progress loader
+    const modelViewerElement = document.getElementById('heroModel3D');
+    if (modelViewerElement) {
+        modelViewerElement.addEventListener('progress', (event) => {
+            const progressBar = document.getElementById('model-progress-bar');
+            const progress = event.detail.totalProgress * 100;
+            if (progressBar) progressBar.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                const loader = document.getElementById('model-loader');
+                if (loader) {
+                    loader.classList.add('opacity-0');
+                    setTimeout(() => loader.classList.add('hidden'), 500);
+                }
+            }
+        });
+        
+        modelViewerElement.addEventListener('load', () => {
+            const loader = document.getElementById('model-loader');
+            if (loader) {
+                loader.classList.add('opacity-0');
+                setTimeout(() => loader.classList.add('hidden'), 500);
+            }
+            if (window.lucide) window.lucide.createIcons();
+        });
+    }
 </script>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 @endsection

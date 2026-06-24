@@ -107,12 +107,21 @@ class VoitureController extends Controller
             'photo_principale' => 'nullable|image|max:102400',
             'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg,mp4,mov,ogg,qt|max:102400',
             'videos.*' => 'nullable|mimetypes:video/mp4,video/quicktime|max:20480',
+            'model_3d' => 'nullable|file|max:153600',
+            'model_3d_url' => 'nullable|string|max:500',
         ]);
 
         // Valeurs par défaut défensives
         $validated['disponibilite'] = $validated['disponibilite'] ?? 'disponible';
         $validated['categorie'] = $validated['categorie'] ?? 'voiture';
         $validated['pays_origine'] = $validated['pays_origine'] ?? 'Non spécifié';
+
+        if ($request->hasFile('model_3d')) {
+            $path = $request->file('model_3d')->store('voitures/models_3d', 'public');
+            $validated['model_3d'] = '/storage/' . $path;
+        } elseif ($request->filled('model_3d_url')) {
+            $validated['model_3d'] = $request->input('model_3d_url');
+        }
 
         $voiture = new Voiture($validated);
         $voiture->save();
@@ -205,7 +214,31 @@ class VoitureController extends Controller
             'photo_principale' => 'nullable|image|max:102400',
             'photos.*' => 'nullable|file|mimes:jpg,jpeg,png,webp,gif,svg|max:102400',
             'videos.*' => 'nullable|mimetypes:video/mp4,video/quicktime|max:20480',
+            'model_3d' => 'nullable|file|max:153600',
+            'model_3d_url' => 'nullable|string|max:500',
         ]);
+
+        if ($request->hasFile('model_3d')) {
+            // Delete old file if local
+            if ($voiture->model_3d && str_starts_with($voiture->model_3d, '/storage/')) {
+                $oldPath = str_replace('/storage/', '', $voiture->model_3d);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            $path = $request->file('model_3d')->store('voitures/models_3d', 'public');
+            $validated['model_3d'] = '/storage/' . $path;
+        } elseif ($request->filled('model_3d_url')) {
+            $validated['model_3d'] = $request->input('model_3d_url');
+        } elseif ($request->has('delete_model_3d')) {
+            if ($voiture->model_3d && str_starts_with($voiture->model_3d, '/storage/')) {
+                $oldPath = str_replace('/storage/', '', $voiture->model_3d);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            $validated['model_3d'] = null;
+        }
 
         $voiture->update($validated);
 
@@ -301,6 +334,12 @@ class VoitureController extends Controller
 
         foreach ($voiture->videos as $video) {
             $path = str_replace('/storage/', '', $video->url);
+            Storage::disk('public')->delete($path);
+        }
+
+        // Delete 3D model if local
+        if ($voiture->model_3d && str_starts_with($voiture->model_3d, '/storage/')) {
+            $path = str_replace('/storage/', '', $voiture->model_3d);
             Storage::disk('public')->delete($path);
         }
 

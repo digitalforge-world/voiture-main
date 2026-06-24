@@ -42,6 +42,7 @@ Route::post('/transport/message', [TransportController::class, 'sendMessage'])->
 Route::post('/transport/accepter-prix', [TransportController::class, 'acceptPrice'])->name('transport.accept-price');
 Route::get('/transport/messages/{tracking}', [TransportController::class, 'getMessages'])->name('transport.get-messages');
 Route::get('/transport/driver-location/{tracking}', [TransportController::class, 'getDriverLocation'])->name('transport.driver-location');
+Route::post('/transport/update-trajet', [TransportController::class, 'updateTrajet'])->name('transport.update-trajet');
 
 // ─── Interface Chauffeur GPS (sans auth, via token secret) ────────────────────
 Route::get('/chauffeur/{token}', [DriverController::class, 'show'])->name('driver.show');
@@ -159,6 +160,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('transport/{id}/messages', [App\Http\Controllers\Admin\TransportController::class, 'getMessages'])->name('transport.get-messages');
     Route::post('transport/{id}/chauffeur-arrive', [App\Http\Controllers\Admin\TransportController::class, 'notifyArrival'])->name('transport.arrival');
     Route::get('transport/{id}/driver-link', [App\Http\Controllers\Admin\TransportController::class, 'generateDriverLink'])->name('transport.driver-link');
+    Route::post('transport/{id}/assign-driver', [App\Http\Controllers\Admin\TransportController::class, 'assignDriver'])->name('transport.assign-driver');
+    Route::resource('drivers', App\Http\Controllers\Admin\DriverController::class);
 });
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

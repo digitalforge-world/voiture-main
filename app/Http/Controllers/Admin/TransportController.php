@@ -38,8 +38,9 @@ class TransportController extends Controller
      */
     public function show(string $id)
     {
-        $reservation = ReservationTransport::with('conversations')->findOrFail($id);
-        return view('admin.transport.show', compact('reservation'));
+        $reservation = ReservationTransport::with(['conversations', 'driver'])->findOrFail($id);
+        $drivers = \App\Models\Driver::where('statut', 'actif')->get();
+        return view('admin.transport.show', compact('reservation', 'drivers'));
     }
 
     /**
@@ -219,6 +220,35 @@ class TransportController extends Controller
     public function store(Request $request) { return redirect()->route('admin.transport.index'); }
     public function edit(string $id) { return redirect()->route('admin.transport.show', $id); }
     public function update(Request $request, string $id) { return redirect()->route('admin.transport.index'); }
+
+    /**
+     * Assigner un chauffeur à la course.
+     */
+    public function assignDriver(Request $request, string $id)
+    {
+        $request->validate([
+            'driver_id' => 'nullable|exists:drivers,id',
+        ]);
+
+        $reservation = ReservationTransport::findOrFail($id);
+        $reservation->update(['driver_id' => $request->driver_id]);
+
+        if ($request->driver_id) {
+            $driver = \App\Models\Driver::find($request->driver_id);
+            $message = "🚗 Chauffeur assigné : {$driver->fullname} ({$driver->vehicule_marque} {$driver->vehicule_modele} - {$driver->vehicule_immatriculation})";
+        } else {
+            $message = "🚫 Le chauffeur a été retiré de cette course.";
+        }
+
+        TransportConversation::create([
+            'reservation_transport_id' => $reservation->id,
+            'auteur'  => 'systeme',
+            'message' => $message,
+            'type'    => 'notification_systeme',
+        ]);
+
+        return back()->with('success', 'Chauffeur mis à jour avec succès.');
+    }
 
     public function destroy(string $id)
     {

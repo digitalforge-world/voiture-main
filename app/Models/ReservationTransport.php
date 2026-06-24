@@ -39,6 +39,7 @@ class ReservationTransport extends Model
         'statut',
         'prix_propose',
         'prix_accepte',
+        'driver_id',
     ];
 
     protected $casts = [
@@ -56,6 +57,14 @@ class ReservationTransport extends Model
         'date_modification'   => 'datetime',
         'chauffeur_arrived_at'=> 'datetime',
     ];
+
+    /**
+     * Relation avec le chauffeur assigné.
+     */
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class, 'driver_id');
+    }
 
     /**
      * Relation avec les messages du chat.

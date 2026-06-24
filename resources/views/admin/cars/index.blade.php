@@ -114,7 +114,12 @@
          @endif
         </div>
         <div>
-         <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $car->marque }} {{ $car->modele }}</div>
+         <div class="flex items-center gap-2">
+          <span class="text-sm font-medium text-slate-900 dark:text-white">{{ $car->marque }} {{ $car->modele }}</span>
+          @if($car->model_3d)
+           <span class="px-1.5 py-0.5 bg-blue-500/10 text-blue-500 text-[8px] font-black rounded uppercase tracking-wider">3D</span>
+          @endif
+         </div>
          <div class="text-xs text-slate-500">{{ $car->annee }} • {{ $car->numero_chassis ?? 'Sans Châssis' }}</div>
         </div>
        </div>
@@ -409,6 +414,37 @@
         <div id="edit_existing_media" class="grid grid-cols-2 gap-3"></div>
        </div>
       </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Modèle 3D (.glb)</label>
+        <div class="relative group">
+         <input id="edit_model_3d" type="file" name="model_3d" accept=".glb" onchange="handleFilePreview(this, 'edit_media_preview')" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+         <div class="w-full py-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center gap-3 group-hover:border-amber-500 transition-colors">
+          <i data-lucide="box" class="w-8 h-8 text-slate-400 dark:text-slate-500"></i>
+          <span class="text-sm text-slate-500 dark:text-slate-400">Remplacer le modèle 3D (.glb)</span>
+          <button type="button" onclick="document.getElementById('edit_model_3d').click()" class="mt-2 px-3 py-1 text-xs rounded-full bg-amber-500 text-white">Choisir un fichier</button>
+         </div>
+        </div>
+       </div>
+       <div class="space-y-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">URL du modèle 3D externe</label>
+        <input type="url" name="model_3d_url" id="edit_model_3d_url" placeholder="https://exemple.com/modele.glb" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+        
+        <div id="edit_model_3d_existing" class="mt-2 hidden">
+         <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-white/5">
+          <div class="flex items-center gap-2">
+           <i data-lucide="box" class="w-4 h-4 text-blue-500"></i>
+           <span class="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]">Modèle 3D configuré</span>
+          </div>
+          <button type="button" onclick="deleteExistingModel3D(this)" class="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1">
+           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Supprimer
+          </button>
+         </div>
+        </div>
+       </div>
+      </div>
+
       <div id="edit_media_preview" class="flex flex-wrap gap-4"></div>
      </div>
     </div>
@@ -451,6 +487,7 @@
       <li class="flex justify-between"><span class="text-slate-500">Prix:</span> <strong id="show_prix_val" class="text-amber-600 dark:text-amber-500 text-base"></strong></li>
       <li class="flex justify-between"><span class="text-slate-500">État:</span> <span id="show_etat_val" class="capitalize"></span></li>
       <li class="flex justify-between"><span class="text-slate-500">Pays d'origine:</span> <span id="show_pays_val" class="uppercase"></span></li>
+      <li class="flex justify-between"><span class="text-slate-500">Modèle 3D:</span> <span id="show_model_3d_val" class="font-semibold text-xs"></span></li>
      </ul>
     </div>
     <div>
@@ -555,7 +592,7 @@
   document.getElementById('edit_media_preview').innerHTML = '';
 
   // Reset file inputs when opening edit modal so stale files are not submitted.
-  ['photo_principale', 'photos[]', 'videos[]'].forEach(name => {
+  ['photo_principale', 'photos[]', 'videos[]', 'model_3d'].forEach(name => {
     const input = document.querySelector(`#editCarForm input[name="${name}"]`);
     if (input) {
       input.value = '';
@@ -565,8 +602,27 @@
     }
   });
 
+  document.getElementById('edit_model_3d_url').value = (car.model_3d && !car.model_3d.startsWith('/storage/')) ? car.model_3d : '';
+  const existingModel3D = document.getElementById('edit_model_3d_existing');
+  if (car.model_3d) {
+    existingModel3D.classList.remove('hidden');
+  } else {
+    existingModel3D.classList.add('hidden');
+  }
+
   renderPreviewContainer('edit_media_preview');
   openModal('editCarModal');
+ }
+
+ function deleteExistingModel3D(button) {
+  if (!confirm('Supprimer ce modèle 3D ?')) return;
+  const form = document.getElementById('editCarForm');
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden';
+  hidden.name = 'delete_model_3d';
+  hidden.value = '1';
+  form.appendChild(hidden);
+  document.getElementById('edit_model_3d_existing').classList.add('hidden');
  }
 
  function deleteExistingPhoto(photoId, button) {
@@ -610,6 +666,13 @@
   document.getElementById('show_moteur_val').innerText = car.moteur || 'N/A';
   document.getElementById('show_transmission_val').innerText = car.transmission || 'N/A';
   document.getElementById('show_carburant_val').innerText = car.carburant || 'N/A';
+
+  const model3dVal = document.getElementById('show_model_3d_val');
+  if (car.model_3d) {
+    model3dVal.innerHTML = '<span class="text-emerald-500 flex items-center gap-1 font-bold"><i data-lucide="check" class="w-3.5 h-3.5"></i> Configuré</span>';
+  } else {
+    model3dVal.innerHTML = '<span class="text-slate-400">Non configuré</span>';
+  }
 
   const badge = document.getElementById('show_badge_val');
   badge.innerText = car.disponibilite.replace('_', ' ');

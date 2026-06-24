@@ -123,6 +123,60 @@
         </div>
       </div>
 
+      {{-- Affectation Chauffeur --}}
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+        <h2 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i data-lucide="user-check" class="w-4 h-4 text-amber-500"></i> Affectation du Chauffeur
+        </h2>
+        
+        @if($reservation->driver)
+          <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 overflow-hidden flex-shrink-0">
+              @if($reservation->driver->photo)
+                <img src="{{ $reservation->driver->photo }}" class="w-full h-full object-cover">
+              @else
+                <div class="w-full h-full flex items-center justify-center font-bold text-sm uppercase bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400">
+                  {{ substr($reservation->driver->prenom, 0, 1) }}{{ substr($reservation->driver->nom, 0, 1) }}
+                </div>
+              @endif
+            </div>
+            <div class="flex-grow">
+              <div class="text-sm font-bold text-slate-950 dark:text-white">{{ $reservation->driver->fullname }}</div>
+              <div class="text-xs text-slate-500 mt-0.5">{{ $reservation->driver->telephone }}</div>
+              <div class="text-xs text-amber-500 font-semibold mt-1">
+                {{ $reservation->driver->vehicule_marque }} {{ $reservation->driver->vehicule_modele }} • {{ $reservation->driver->vehicule_immatriculation }}
+                @if($reservation->driver->vehicule_couleur)
+                  ({{ $reservation->driver->vehicule_couleur }})
+                @endif
+              </div>
+            </div>
+          </div>
+        @else
+          <div class="flex items-center gap-3 bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 mb-4 text-amber-600 dark:text-amber-400 text-xs">
+            <i data-lucide="info" class="w-4 h-4 flex-shrink-0"></i>
+            <span>Aucun chauffeur n'est encore assigné à cette course. Le client ne voit aucune information de véhicule.</span>
+          </div>
+        @endif
+
+        <form action="{{ route('admin.transport.assign-driver', $reservation->id) }}" method="POST" class="space-y-3">
+          @csrf
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Choisir un chauffeur</label>
+            <select name="driver_id" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm text-slate-950 dark:text-white focus:border-amber-500 outline-none transition">
+              <option value="">-- Aucun Chauffeur --</option>
+              @foreach($drivers as $d)
+                <option value="{{ $d->id }}" {{ $reservation->driver_id == $d->id ? 'selected' : '' }}>
+                  {{ $d->fullname }} ({{ $d->vehicule_marque }} {{ $d->vehicule_modele }} - {{ $d->vehicule_immatriculation }})
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl transition shadow-sm">
+            Mettre à jour l'affectation
+          </button>
+        </form>
+      </div>
+
       {{-- Actions Transport --}}
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
         <h2 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">

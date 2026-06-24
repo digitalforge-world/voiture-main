@@ -142,9 +142,17 @@
 
         {{-- Infos course --}}
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-          <h2 class="text-slate-900 dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
-            <i data-lucide="list-todo" class="w-4 h-4 text-amber-500"></i> Détails de la course
-          </h2>
+          <div class="flex items-center justify-between mb-4 gap-2">
+            <h2 class="text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2">
+              <i data-lucide="list-todo" class="w-4 h-4 text-amber-500"></i> Détails de la course
+            </h2>
+            @if($reservation->statut === 'en_attente')
+              <button onclick="openEditTrajetModal()" class="flex items-center gap-1.5 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition shadow shadow-amber-500/10 hover:-translate-y-0.5">
+                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                <span>Modifier mon trajet</span>
+              </button>
+            @endif
+          </div>
           <div class="space-y-3 text-sm">
             <div class="flex items-start gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/50">
               <span class="w-8 h-8 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 flex-shrink-0">
@@ -152,7 +160,7 @@
               </span>
               <div>
                 <div class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-0.5">Départ</div>
-                <div class="text-slate-800 dark:text-slate-100 text-xs leading-relaxed font-semibold">{{ $reservation->lieu_depart }}</div>
+                <div id="display_lieu_depart" class="text-slate-800 dark:text-slate-100 text-xs leading-relaxed font-semibold">{{ $reservation->lieu_depart }}</div>
               </div>
             </div>
             <div class="flex items-start gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/50">
@@ -161,7 +169,7 @@
               </span>
               <div>
                 <div class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-0.5">Arrivée</div>
-                <div class="text-slate-800 dark:text-slate-100 text-xs leading-relaxed font-semibold">{{ $reservation->lieu_arrivee }}</div>
+                <div id="display_lieu_arrivee" class="text-slate-800 dark:text-slate-100 text-xs leading-relaxed font-semibold">{{ $reservation->lieu_arrivee }}</div>
               </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
@@ -184,6 +192,47 @@
             </div>
           </div>
         </div>
+
+        @if($reservation->driver)
+        {{-- Votre Chauffeur --}}
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-[4rem]"></div>
+          <h2 class="text-slate-900 dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
+            <i data-lucide="user-check" class="w-4 h-4 text-amber-500"></i> Votre chauffeur & Véhicule
+          </h2>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden flex-shrink-0 shadow-md">
+                @if($reservation->driver->photo)
+                  <img src="{{ $reservation->driver->photo }}" class="w-full h-full object-cover">
+                @else
+                  <div class="w-full h-full flex items-center justify-center font-bold text-xl uppercase bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                    {{ substr($reservation->driver->prenom, 0, 1) }}{{ substr($reservation->driver->nom, 0, 1) }}
+                  </div>
+                @endif
+              </div>
+              <div>
+                <div class="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">Votre chauffeur</div>
+                <div class="text-base font-extrabold text-slate-900 dark:text-white">{{ $reservation->driver->fullname }}</div>
+                <div class="text-xs text-amber-500 font-semibold mt-1 flex items-center gap-1">
+                  <i data-lucide="car" class="w-3.5 h-3.5"></i>
+                  <span>{{ $reservation->driver->vehicule_couleur }} {{ $reservation->driver->vehicule_marque }} {{ $reservation->driver->vehicule_modele }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+              <div class="px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm text-slate-800 dark:text-white uppercase tracking-wider font-bold w-fit">
+                {{ $reservation->driver->vehicule_immatriculation }}
+              </div>
+              <a href="tel:{{ $reservation->driver->telephone }}" class="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-500/10 w-full sm:w-auto">
+                <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                <span>Appeler le chauffeur</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        @endif
 
         {{-- Prix proposé --}}
         @if($reservation->prix_propose)
@@ -329,6 +378,68 @@
     </button>
   </div>
 </div>
+
+@if($reservation->statut === 'en_attente')
+{{-- Modal Modification Trajet --}}
+<div id="editTrajetModal" class="fixed inset-0 z-[9999] hidden overflow-y-auto">
+  <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeEditTrajetModal()"></div>
+  <div class="relative min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+      <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Modifier mon trajet</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Mettez à jour vos adresses de départ et de destination</p>
+        </div>
+        <button onclick="closeEditTrajetModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="editTrajetForm" class="p-6 space-y-4">
+        @csrf
+        <input type="hidden" name="tracking" value="{{ $reservation->tracking_number }}">
+        <input type="hidden" name="lat_depart" id="edit_lat_depart" value="{{ $reservation->lat_depart }}">
+        <input type="hidden" name="lng_depart" id="edit_lng_depart" value="{{ $reservation->lng_depart }}">
+        <input type="hidden" name="lat_arrivee" id="edit_lat_arrivee" value="{{ $reservation->lat_arrivee }}">
+        <input type="hidden" name="lng_arrivee" id="edit_lng_arrivee" value="{{ $reservation->lng_arrivee }}">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Point de départ
+          </label>
+          <div class="relative">
+            <input type="text" id="edit_search_depart" placeholder="Rechercher ou saisir l'adresse de départ..." required
+              class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500/50 transition pr-8"
+              autocomplete="off" value="{{ $reservation->lieu_depart }}">
+            <div id="edit_results_depart" class="absolute left-0 right-0 mt-1 bg-slate-900 border border-white/10 rounded-xl max-h-48 overflow-y-auto hidden z-[999] shadow-2xl"></div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span> Destination / Arrivée
+          </label>
+          <div class="relative">
+            <input type="text" id="edit_search_arrivee" placeholder="Rechercher ou saisir l'adresse d'arrivée..." required
+              class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500/50 transition pr-8"
+              autocomplete="off" value="{{ $reservation->lieu_arrivee }}">
+            <div id="edit_results_arrivee" class="absolute left-0 right-0 mt-1 bg-slate-900 border border-white/10 rounded-xl max-h-48 overflow-y-auto hidden z-[999] shadow-2xl"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <button type="button" onclick="closeEditTrajetModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-medium transition">
+            Annuler
+          </button>
+          <button type="submit" id="saveTrajetBtn" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold shadow-md transition flex items-center gap-2">
+            <span>Enregistrer les modifications</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endif
 @endsection
 
 @section('scripts')
@@ -630,6 +741,131 @@ if (acceptForm) {
     });
   });
 }
+
+// ─── Modal modification trajet client ─────────────────────────────────────────
+function openEditTrajetModal() {
+  document.getElementById('editTrajetModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditTrajetModal() {
+  document.getElementById('editTrajetModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+@if($reservation->statut === 'en_attente')
+// Autocomplete pour les inputs du modal
+function initEditSearch(inputId, resultsId, type) {
+  const input = document.getElementById(inputId);
+  const results = document.getElementById(resultsId);
+  let timeout = null;
+
+  input.addEventListener('input', function() {
+    const query = input.value.trim();
+
+    clearTimeout(timeout);
+    if (query.length < 3) {
+      results.innerHTML = '';
+      results.classList.add('hidden');
+      return;
+    }
+
+    timeout = setTimeout(() => {
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=fr&countrycodes=ci,tg,bj,gh,sn,bf`)
+        .then(r => r.json())
+        .then(data => {
+          results.innerHTML = '';
+          if (data.length === 0) {
+            results.innerHTML = `<div class="p-3 text-xs text-slate-500 italic">Aucun résultat trouvé</div>`;
+            results.classList.remove('hidden');
+            return;
+          }
+
+          data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'p-3 text-xs text-slate-300 hover:bg-white/5 cursor-pointer border-b border-white/5 last:border-b-0 leading-normal transition';
+            const short = item.display_name.substring(0, 80);
+            div.innerHTML = `<strong>${item.name}</strong><br><span class="text-[10px] text-slate-500">${short}</span>`;
+            
+            div.addEventListener('click', () => {
+              input.value = short;
+              results.innerHTML = '';
+              results.classList.add('hidden');
+
+              const lat = parseFloat(item.lat);
+              const lng = parseFloat(item.lon);
+
+              if (type === 'depart') {
+                document.getElementById('edit_lat_depart').value = lat;
+                document.getElementById('edit_lng_depart').value = lng;
+              } else {
+                document.getElementById('edit_lat_arrivee').value = lat;
+                document.getElementById('edit_lng_arrivee').value = lng;
+              }
+            });
+            results.appendChild(div);
+          });
+          results.classList.remove('hidden');
+        })
+        .catch(() => {});
+    }, 400);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !results.contains(e.target)) {
+      results.classList.add('hidden');
+    }
+  });
+}
+
+initEditSearch('edit_search_depart', 'edit_results_depart', 'depart');
+initEditSearch('edit_search_arrivee', 'edit_results_arrivee', 'arrivee');
+
+// Soumission du formulaire
+document.getElementById('editTrajetForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('saveTrajetBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 animate-spin"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="6.34" y1="17.66" x2="8.46" y2="15.54"/><line x1="15.54" y1="8.46" x2="17.66" y2="6.34"/></svg> Enregistrement...';
+
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+  const tracking = '{{ $reservation->tracking_number }}';
+  const lieu_depart = document.getElementById('edit_search_depart').value;
+  const lieu_arrivee = document.getElementById('edit_search_arrivee').value;
+  const lat_depart = document.getElementById('edit_lat_depart').value;
+  const lng_depart = document.getElementById('edit_lng_depart').value;
+  const lat_arrivee = document.getElementById('edit_lat_arrivee').value;
+  const lng_arrivee = document.getElementById('edit_lng_arrivee').value;
+
+  fetch('{{ route("transport.update-trajet") }}', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+    body: JSON.stringify({
+      tracking, lieu_depart, lieu_arrivee,
+      lat_depart, lng_depart, lat_arrivee, lng_arrivee
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById('display_lieu_depart').innerText = data.lieu_depart;
+      document.getElementById('display_lieu_arrivee').innerText = data.lieu_arrivee;
+      closeEditTrajetModal();
+      location.reload();
+    } else {
+      alert(data.message || 'Une erreur est survenue lors de la modification.');
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
+  })
+  .catch(() => {
+    alert('Erreur réseau. Veuillez réessayer.');
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  });
+});
+@endif
 </script>
 <style>
 .custom-chat-scroll::-webkit-scrollbar { width: 4px; }
