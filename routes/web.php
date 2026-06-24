@@ -44,10 +44,19 @@ Route::get('/transport/messages/{tracking}', [TransportController::class, 'getMe
 Route::get('/transport/driver-location/{tracking}', [TransportController::class, 'getDriverLocation'])->name('transport.driver-location');
 Route::post('/transport/update-trajet', [TransportController::class, 'updateTrajet'])->name('transport.update-trajet');
 
-// ─── Interface Chauffeur GPS (sans auth, via token secret) ────────────────────
-Route::get('/chauffeur/{token}', [DriverController::class, 'show'])->name('driver.show');
-Route::post('/chauffeur/{token}/location', [DriverController::class, 'updateLocation'])->name('driver.update-location');
-Route::post('/chauffeur/{token}/arrive', [DriverController::class, 'markArrived'])->name('driver.arrived');
+// ─── Interface & Authentification Chauffeur ──────────────────────────────────
+Route::prefix('chauffeur')->name('driver.')->group(function () {
+    Route::get('/login', [DriverController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [DriverController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [DriverController::class, 'logout'])->name('logout');
+
+    Route::middleware([\App\Http\Middleware\AuthenticateDriver::class])->group(function () {
+        Route::get('/dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
+        Route::get('/{token}', [DriverController::class, 'show'])->name('show');
+        Route::post('/{token}/location', [DriverController::class, 'updateLocation'])->name('update-location');
+        Route::post('/{token}/arrive', [DriverController::class, 'markArrived'])->name('arrived');
+    });
+});
 
 // Nouvelle fonctionnalité : Suivi de Commande (Tracking)
 Route::get('/suivi', [TrackingController::class, 'index'])->name('tracking.index');

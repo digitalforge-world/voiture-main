@@ -154,9 +154,14 @@
       <h1 style="display:flex;align-items:center;gap:0.5rem;"><i data-lucide="navigation" style="width:1.2rem;height:1.2rem;color:#f59e0b;"></i> Mode Chauffeur</h1>
       <p>{{ $reservation->reference }} — {{ $reservation->client_nom }}</p>
     </div>
-    <div style="display:flex;align-items:center;gap:0.5rem;">
-      <span id="gpsStatusText" style="font-size:0.7rem;color:#64748b;">GPS inactif</span>
-      <div id="statusDot" class="status-dot"></div>
+    <div style="display:flex;align-items:center;gap:1.25rem;">
+      <a href="{{ route('driver.dashboard') }}" style="color:#94a3b8;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:4px;font-weight:600;padding:6px 12px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);" class="hover:text-white transition">
+        ← Retour au Dashboard
+      </a>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <span id="gpsStatusText" style="font-size:0.7rem;color:#64748b;">GPS inactif</span>
+        <div id="statusDot" class="status-dot"></div>
+      </div>
     </div>
   </div>
 

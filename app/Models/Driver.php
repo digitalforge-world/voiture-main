@@ -22,7 +22,20 @@ class Driver extends Model
         'vehicule_immatriculation',
         'vehicule_couleur',
         'statut',
+        'identifiant',
+        'mot_de_passe',
     ];
+
+    /**
+     * Mutator to hash password automatically.
+     */
+    public function setMotDePasseAttribute($value): void
+    {
+        if ($value === null || $value === '') {
+            return;
+        }
+        $this->attributes['mot_de_passe'] = \Illuminate\Support\Facades\Hash::needsRehash($value) ? \Illuminate\Support\Facades\Hash::make($value) : $value;
+    }
 
     /**
      * Get the driver's full name.

@@ -51,6 +51,8 @@ class DriverController extends Controller
             'vehicule_immatriculation' => 'required|string|max:50',
             'vehicule_couleur'         => 'nullable|string|max:50',
             'statut'                   => 'required|in:actif,inactif',
+            'identifiant'              => 'required|string|unique:drivers,identifiant|max:50',
+            'mot_de_passe'             => 'required|string|min:4|max:100',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -80,7 +82,13 @@ class DriverController extends Controller
             'vehicule_immatriculation' => 'required|string|max:50',
             'vehicule_couleur'         => 'nullable|string|max:50',
             'statut'                   => 'required|in:actif,inactif',
+            'identifiant'              => 'required|string|max:50|unique:drivers,identifiant,' . $id,
+            'mot_de_passe'             => 'nullable|string|min:4|max:100',
         ]);
+
+        if (empty($validated['mot_de_passe'])) {
+            unset($validated['mot_de_passe']);
+        }
 
         if ($request->hasFile('photo')) {
             // Delete old photo if exists

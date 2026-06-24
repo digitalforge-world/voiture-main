@@ -82,7 +82,7 @@
                 </div>
                 <div>
                   <div class="text-sm font-medium text-slate-900 dark:text-white">{{ $driver->prenom }} {{ $driver->nom }}</div>
-                  <div class="text-xs text-slate-500 mt-0.5">Enregistré le {{ $driver->created_at?->format('d/m/Y') ?? 'N/A' }}</div>
+                  <div class="text-xs text-amber-500 font-semibold mt-0.5">ID : <span class="font-mono">{{ $driver->identifiant }}</span></div>
                 </div>
               </div>
             </td>
@@ -194,6 +194,17 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Identifiant / N° d'identification <span class="text-rose-500">*</span></label>
+            <input type="text" name="identifiant" required placeholder="Ex: CH-0001" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Mot de passe <span class="text-rose-500">*</span></label>
+            <input type="password" name="mot_de_passe" required placeholder="••••••••" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+          </div>
+        </div>
+
         <div class="border-t border-slate-100 dark:border-slate-800 my-4 pt-4">
           <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3">Informations du Véhicule</h3>
           
@@ -278,6 +289,17 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Identifiant / N° d'identification <span class="text-rose-500">*</span></label>
+            <input type="text" name="identifiant" id="edit_identifiant" required placeholder="Ex: CH-0001" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Nouveau mot de passe <span class="text-slate-400">(Optionnel)</span></label>
+            <input type="password" name="mot_de_passe" placeholder="Laisser vide pour ne pas modifier" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500 outline-none">
+          </div>
+        </div>
+
         <div class="border-t border-slate-100 dark:border-slate-800 my-4 pt-4">
           <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3">Informations du Véhicule</h3>
           
@@ -346,6 +368,7 @@
     document.getElementById('edit_nom').value = driver.nom;
     document.getElementById('edit_telephone').value = driver.telephone;
     document.getElementById('edit_statut').value = driver.statut;
+    document.getElementById('edit_identifiant').value = driver.identifiant || '';
     
     document.getElementById('edit_vehicule_marque').value = driver.vehicule_marque;
     document.getElementById('edit_vehicule_modele').value = driver.vehicule_modele;

@@ -17,7 +17,7 @@ class TransportController extends Controller
      */
     public function index()
     {
-        return view('transport.index');
+        return view('transport.index', ['hideFooter' => true]);
     }
 
     /**
@@ -83,7 +83,10 @@ class TransportController extends Controller
     public function suivi(string $tracking)
     {
         $reservation = ReservationTransport::where('tracking_number', $tracking)->firstOrFail();
-        return view('transport.suivi', compact('reservation'));
+        return view('transport.suivi', [
+            'hideFooter' => true,
+            'reservation' => $reservation
+        ]);
     }
 
     /**
