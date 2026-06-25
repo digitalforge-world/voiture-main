@@ -11,6 +11,7 @@ use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\TransportController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\CarViewerController;
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/api/global-search', [App\Http\Controllers\GlobalSearchController::class, 'search'])->name('api.global-search');
@@ -171,6 +172,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('transport/{id}/driver-link', [App\Http\Controllers\Admin\TransportController::class, 'generateDriverLink'])->name('transport.driver-link');
     Route::post('transport/{id}/assign-driver', [App\Http\Controllers\Admin\TransportController::class, 'assignDriver'])->name('transport.assign-driver');
     Route::resource('drivers', App\Http\Controllers\Admin\DriverController::class);
+});
+
+
+// ─── Viewer 360° ─────────────────────────────────────────────────────────────
+Route::prefix('viewer')->name('viewer.')->group(function () {
+    // Public : consulter les viewers
+    Route::get('/', [CarViewerController::class, 'index'])->name('index');
+
+    // ✅ Protégé admin : créer/uploader (AVANT /{slug} pour éviter le conflit de route)
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::get('/create',    [CarViewerController::class, 'create'])->name('create');
+        Route::post('/',         [CarViewerController::class, 'store'])->name('store');
+        Route::delete('/{slug}', [CarViewerController::class, 'destroy'])->name('destroy');
+    });
+
+    // Public : afficher un viewer (après /create pour éviter le conflit)
+    Route::get('/{slug}', [CarViewerController::class, 'show'])->name('show');
 });
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

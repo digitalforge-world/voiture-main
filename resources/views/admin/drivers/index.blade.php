@@ -114,7 +114,7 @@
             <td class="px-6 py-4 text-right">
               <div class="flex items-center justify-end gap-2">
                 <button 
-                  onclick="openEditDriverModal({{ json_encode($driver) }})"
+                  onclick="openEditDriverModal({{ json_encode($driver->only(['id','prenom','nom','telephone','statut','identifiant','vehicule_marque','vehicule_modele','vehicule_immatriculation','vehicule_couleur','photo'])) }})"
                   class="p-2 text-slate-400 hover:text-amber-500 transition rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                   title="Modifier"
                 >
