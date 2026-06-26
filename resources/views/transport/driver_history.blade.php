@@ -39,35 +39,25 @@
     @php
       $totalCompleted = \App\Models\ReservationTransport::where('driver_id', $driver->id)->where('statut', 'termine')->count();
       $totalCancelled = \App\Models\ReservationTransport::where('driver_id', $driver->id)->where('statut', 'annule')->count();
-      $totalEarnings = \App\Models\ReservationTransport::where('driver_id', $driver->id)->where('statut', 'termine')->where('prix_accepte', true)->sum('prix_propose');
     @endphp
     
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-2 gap-4">
       <!-- Total Completed Card -->
-      <div class="bg-white border border-orange-100 rounded-2xl p-3 text-center shadow-sm">
-        <div class="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mx-auto mb-1.5">
-          <i data-lucide="check-circle" class="w-4 h-4"></i>
+      <div class="bg-white border border-orange-100 rounded-2xl p-4 text-center shadow-sm">
+        <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mx-auto mb-1.5">
+          <i data-lucide="check-circle" class="w-4.5 h-4.5"></i>
         </div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Réussies</div>
-        <div class="text-lg font-black text-emerald-600 mt-0.5">{{ $totalCompleted }}</div>
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wide">Réussies</div>
+        <div class="text-2xl font-black text-emerald-600 mt-0.5">{{ $totalCompleted }}</div>
       </div>
 
       <!-- Total Cancelled Card -->
-      <div class="bg-white border border-orange-100 rounded-2xl p-3 text-center shadow-sm">
-        <div class="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-1.5">
-          <i data-lucide="x-circle" class="w-4 h-4"></i>
+      <div class="bg-white border border-orange-100 rounded-2xl p-4 text-center shadow-sm">
+        <div class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-1.5">
+          <i data-lucide="x-circle" class="w-4.5 h-4.5"></i>
         </div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Annulées</div>
-        <div class="text-lg font-black text-rose-600 mt-0.5">{{ $totalCancelled }}</div>
-      </div>
-
-      <!-- Total Earnings Card -->
-      <div class="bg-white border border-orange-100 rounded-2xl p-3 text-center shadow-sm">
-        <div class="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 mx-auto mb-1.5">
-          <i data-lucide="banknote" class="w-4 h-4"></i>
-        </div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Revenus (Est.)</div>
-        <div class="text-xs font-black text-orange-600 mt-0.5 leading-tight pt-0.5">{{ number_format($totalEarnings, 0, ',', ' ') }} F</div>
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wide">Annulées</div>
+        <div class="text-2xl font-black text-rose-600 mt-0.5">{{ $totalCancelled }}</div>
       </div>
     </div>
 
@@ -99,35 +89,77 @@
           <!-- Trip details -->
           <div class="space-y-2 text-xs">
             <div class="flex items-start gap-2.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 mt-1 flex-shrink-0 border-2 border-emerald-400"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 flex-shrink-0 border-2 border-emerald-400"></span>
               <span class="text-slate-600 leading-tight">Départ : {{ $res->lieu_depart }}</span>
             </div>
             <div class="flex items-start gap-2.5">
-              <span class="w-2 h-2 rounded-full bg-rose-500 mt-1 flex-shrink-0 border-2 border-rose-400"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 flex-shrink-0 border-2 border-rose-400"></span>
               <span class="text-slate-600 leading-tight">Arrivée : {{ $res->lieu_arrivee }}</span>
             </div>
           </div>
 
-          <!-- Date & Client info & Price -->
+          <!-- Date & Toggle Details Button -->
           <div class="flex items-center justify-between text-xs pt-2 border-t border-orange-50">
-            <div class="text-slate-400 font-semibold">
+            <div class="text-slate-500 font-semibold">
               📅 {{ $res->date_prise_en_charge ? $res->date_prise_en_charge->format('d/m/Y à H:i') : '' }}
             </div>
-            @if($res->prix_propose && $res->prix_accepte)
-              <div class="text-orange-600 font-bold">
-                {{ number_format($res->prix_propose, 0, ',', ' ') }} FCFA
-              </div>
-            @else
-              <div class="text-slate-400 font-bold italic">
-                Sans prix
-              </div>
-            @endif
+            <button onclick="toggleDetails({{ $res->id }})" class="flex items-center gap-1 text-orange-600 hover:text-orange-700 font-bold transition">
+              <span>Détails</span>
+              <i data-lucide="chevron-down" id="chevron-{{ $res->id }}" class="w-3.5 h-3.5 transition-transform duration-200"></i>
+            </button>
           </div>
 
-          <!-- Client details -->
-          <div class="bg-orange-50/30 rounded-xl p-2.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-            <span>Client : <strong class="text-slate-700 font-bold">{{ $res->client_nom }}</strong></span>
-            <span>Tel : <strong class="text-slate-700 font-bold">{{ $res->client_telephone }}</strong></span>
+          <!-- Collapsible details block -->
+          <div id="details-{{ $res->id }}" class="hidden pt-3 border-t border-dashed border-orange-100 space-y-2.5 text-xs text-slate-600 animate-in fade-in duration-200">
+            <!-- Client Info -->
+            <div class="bg-orange-50/30 rounded-xl p-3 space-y-1.5 font-medium">
+              <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-bold">Informations Client</div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Nom :</span>
+                <span class="text-slate-900 font-bold">{{ $res->client_nom }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Téléphone :</span>
+                <span class="text-slate-900 font-bold">{{ $res->client_telephone }}</span>
+              </div>
+              @if($res->client_email)
+                <div class="flex justify-between">
+                  <span class="text-slate-400">E-mail :</span>
+                  <span class="text-slate-900 font-bold">{{ $res->client_email }}</span>
+                </div>
+              @endif
+            </div>
+
+            <!-- Ride Specifications -->
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 space-y-1.5 font-medium">
+              <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider font-bold">Spécifications Course</div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Type de service :</span>
+                <span class="text-slate-900 font-bold">{{ \App\Models\ReservationTransport::typeServiceLabels()[$res->type_service] ?? $res->type_service }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Nombre de personnes :</span>
+                <span class="text-slate-900 font-bold">{{ $res->nombre_personnes }} passager(s)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-400">Date de réservation :</span>
+                <span class="text-slate-900 font-bold">{{ $res->date_reservation ? $res->date_reservation->format('d/m/Y à H:i') : '' }}</span>
+              </div>
+              @if($res->chauffeur_arrived_at)
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Arrivée chauffeur :</span>
+                  <span class="text-slate-900 font-bold">{{ $res->chauffeur_arrived_at->format('d/m/Y à H:i') }}</span>
+                </div>
+              @endif
+            </div>
+
+            <!-- Client Notes -->
+            @if($res->notes_client)
+              <div class="bg-amber-50/50 border border-amber-100/50 rounded-xl p-3 space-y-1">
+                <div class="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Note du client :</div>
+                <p class="text-slate-700 italic leading-relaxed">{{ $res->notes_client }}</p>
+              </div>
+            @endif
           </div>
         </div>
       @empty
@@ -170,6 +202,21 @@
 
   <script>
     lucide.createIcons();
+
+    function toggleDetails(id) {
+      const details = document.getElementById(`details-${id}`);
+      const chevron = document.getElementById(`chevron-${id}`);
+      if (details && chevron) {
+        const isHidden = details.classList.contains('hidden');
+        if (isHidden) {
+          details.classList.remove('hidden');
+          chevron.classList.add('rotate-180');
+        } else {
+          details.classList.add('hidden');
+          chevron.classList.remove('rotate-180');
+        }
+      }
+    }
   </script>
 </body>
 </html>
