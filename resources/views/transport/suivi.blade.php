@@ -49,52 +49,53 @@
 
   /* ─── Responsive Mobile Overlays Redesign (max-width: 1024px) ─── */
   @media (max-width: 1024px) {
-    /* Full-screen Map */
-    .map-container-wrapper {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 80px; /* Space for LWS bottom navigation bar */
-      height: auto !important;
-      width: 100vw !important;
-      z-index: 10 !important;
-      border-radius: 0 !important;
-      margin: 0 !important;
-      border: none !important;
+    /* Make the outer container fit the screen below the site header */
+    .mobile-page-container {
+      min-height: auto !important;
+      height: calc(100dvh - 64px - 80px) !important;
+      margin-top: 64px !important; /* Fixed site header height (64px) */
+      padding: 12px 12px 0 12px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background-color: rgb(248, 250, 252) !important;
     }
-    #suivi-map {
+    .dark .mobile-page-container {
+      background-color: rgb(9, 15, 29) !important;
+    }
+
+    /* Inner layout wrapper */
+    .mobile-page-inner {
       height: 100% !important;
-      width: 100% !important;
-      border-radius: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+    }
+    .mobile-page-inner > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0 !important;
     }
 
     /* Combined Card (Header + Stepper) (1 & 2) */
     .mobile-header-stepper-card {
-      position: fixed !important;
-      top: 16px;
-      left: 16px;
-      right: 16px;
-      z-index: 1010;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      border-radius: 24px;
-      padding: 16px 16px 14px 16px;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 15px -6px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: all 0.3s ease;
+      position: static !important;
+      background: rgb(255, 255, 255) !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+      border-radius: 20px !important;
+      padding: 14px 16px 12px 16px !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+      z-index: auto !important;
     }
     .dark .mobile-header-stepper-card {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 8px 15px -6px rgba(0, 0, 0, 0.2);
+      background: rgb(30, 41, 59) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2) !important;
     }
 
-    /* Reset inner wraps on mobile so they stack naturally */
+    /* Reset inner elements to default flow within the top card */
     .header-info-wrapper {
       position: static !important;
       background: transparent !important;
@@ -121,21 +122,20 @@
     .stepper-inner-container {
       min-width: 0 !important;
       width: 100% !important;
-      padding-left: 8px !important;
-      padding-right: 8px !important;
-      
+      padding-left: 4px !important;
+      padding-right: 4px !important;
     }
 
     .stepper-progress-line {
-      top: 14px !important;
+      top: 13px !important;
       left: 12px !important;
       right: 12px !important;
       height: 2px !important;
     }
 
     .stepper-circle {
-      width: 28px !important;
-      height: 28px !important;
+      width: 26px !important;
+      height: 26px !important;
       border-width: 2px !important;
     }
 
@@ -148,20 +148,84 @@
       display: none !important; /* Hide labels under circles on mobile for clean look */
     }
 
+    /* Grid and Column expansion on mobile */
+    .mobile-page-inner > .grid {
+      flex-grow: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      gap: 0 !important;
+      margin: 0 !important;
+    }
+    .mobile-page-inner > .grid > div:first-child {
+      flex-grow: 1 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      height: 100% !important;
+      margin-top: 0 !important;
+    }
+    .mobile-page-inner > .grid > div:first-child > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0 !important;
+    }
+
+    /* Map container takes all the remaining space below the header-stepper card */
+    .map-container-wrapper {
+      position: relative !important;
+      flex-grow: 1 !important;
+      height: 100% !important;
+      width: 100% !important;
+      border-radius: 20px !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+      background: rgb(255, 255, 255) !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+      margin: 0 !important;
+      z-index: 10 !important;
+    }
+    .dark .map-container-wrapper {
+      background: rgb(15, 23, 42) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+    #suivi-map {
+      height: 100% !important;
+      width: 100% !important;
+      border-radius: 20px !important;
+    }
+
+    /* Floating action buttons panel absolute inside the map container */
+    .mobile-fabs-panel {
+      position: absolute !important;
+      bottom: 16px !important;
+      right: 16px !important;
+      z-index: 1000 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+    .mobile-fabs-panel button {
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 9999px !important;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+    }
+    .mobile-fabs-panel button:active {
+      transform: scale(0.9) !important;
+    }
+
     /* Drawers/Modals (3, 4, 5) */
     .details-container-wrapper,
     .driver-container-wrapper,
     .chat-container-wrapper {
       position: fixed !important;
-      left: 16px;
-      right: 16px;
-      bottom: -100%; /* Hidden off-screen */
+      left: 12px !important;
+      right: 12px !important;
+      bottom: -100% !important; /* Hidden off-screen */
       z-index: 2010 !important;
-      max-height: 70vh !important;
+      max-height: 65vh !important;
       overflow-y: auto;
       border-radius: 24px !important;
       box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15) !important;
-      transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       border: 1px solid rgba(0, 0, 0, 0.05) !important;
       background: rgb(255, 255, 255) !important;
     }
@@ -177,7 +241,7 @@
     .details-container-wrapper.active-modal,
     .driver-container-wrapper.active-modal,
     .chat-container-wrapper.active-modal {
-      bottom: 96px !important; /* Align just above the nav bar */
+      bottom: 80px !important; /* Align just above the nav bar */
     }
 
     /* Chat Sizing */
@@ -188,38 +252,13 @@
       height: 100% !important;
       border: none !important;
     }
-
-    /* Structure Adjustment */
-    .min-h-\[calc\(100vh-80px\)\] {
-      padding: 0 !important;
-      min-height: auto !important;
-    }
-    .max-w-5xl {
-      max-width: 100% !important;
-      margin: 0 !important;
-    }
-  }
-
-  /* Mobile FABs animations and styling */
-  @media (max-width: 1024px) {
-    .mobile-fabs-panel {
-      bottom: 96px !important; /* Align above mobile bottom nav */
-      right: 16px !important;
-    }
-    .mobile-fabs-panel button {
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-    }
-    .mobile-fabs-panel button:active {
-      transform: scale(0.9) !important;
-    }
   }
 </style>
 @endsection
 
 @section('content')
-<div class="min-h-[calc(100vh-80px)] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-8 px-4 transition-colors duration-300">
-  <div class="max-w-5xl mx-auto space-y-6">
+<div class="min-h-[calc(100vh-80px)] mobile-page-container bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-8 px-4 transition-colors duration-300">
+  <div class="max-w-5xl mx-auto space-y-6 mobile-page-inner">
 
     <div class="mobile-header-stepper-card lg:contents">
       {{-- ─── Header (1) ─── --}}
@@ -308,6 +347,27 @@
             </div>
           </div>
           <div id="suivi-map" class="border-t border-slate-100 dark:border-slate-800/50"></div>
+
+          <!-- Floating Action Buttons Panel (Mobile viewports only) -->
+          <div class="mobile-fabs-panel lg:hidden fixed bottom-24 right-4 z-[2000] flex flex-col gap-3">
+            <!-- Button 3: Chauffeur Modal Toggle -->
+            @if($reservation->driver)
+            <button onclick="openMobileModal('driver')" class="w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25 transition active:scale-95 border border-emerald-400/20">
+              <i data-lucide="user-check" class="w-6 h-6"></i>
+            </button>
+            @endif
+
+            <!-- Button 4: Course Details Modal Toggle -->
+            <button onclick="openMobileModal('details')" class="w-14 h-14 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full flex items-center justify-center shadow-lg transition active:scale-95 border border-slate-200 dark:border-slate-800">
+              <i data-lucide="list-todo" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Button 5: Live Chat Toggle (with Unread message badge) -->
+            <button onclick="openMobileModal('chat')" class="relative w-14 h-14 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition active:scale-95 border border-amber-400/20">
+              <i data-lucide="message-square" class="w-6 h-6"></i>
+              <span id="mobile-chat-badge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black h-6 w-6 rounded-full flex items-center justify-center animate-bounce border-2 border-white dark:border-slate-950">0</span>
+            </button>
+          </div>
         </div>
 
         {{-- Trip details (4) --}}
@@ -534,26 +594,7 @@
       </div>
     </div>
 
-    <!-- Floating Action Buttons Panel (Mobile viewports only) -->
-    <div class="mobile-fabs-panel lg:hidden fixed bottom-24 right-4 z-[2000] flex flex-col gap-3">
-      <!-- Button 3: Chauffeur Modal Toggle -->
-      @if($reservation->driver)
-      <button onclick="openMobileModal('driver')" class="w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25 transition active:scale-95 border border-emerald-400/20">
-        <i data-lucide="user-check" class="w-6 h-6"></i>
-      </button>
-      @endif
 
-      <!-- Button 4: Course Details Modal Toggle -->
-      <button onclick="openMobileModal('details')" class="w-14 h-14 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full flex items-center justify-center shadow-lg transition active:scale-95 border border-slate-200 dark:border-slate-800">
-        <i data-lucide="list-todo" class="w-6 h-6"></i>
-      </button>
-
-      <!-- Button 5: Live Chat Toggle (with Unread message badge) -->
-      <button onclick="openMobileModal('chat')" class="relative w-14 h-14 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition active:scale-95 border border-amber-400/20">
-        <i data-lucide="message-square" class="w-6 h-6"></i>
-        <span id="mobile-chat-badge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black h-6 w-6 rounded-full flex items-center justify-center animate-bounce border-2 border-white dark:border-slate-950">0</span>
-      </button>
-    </div>
 
   </div>
 </div>
