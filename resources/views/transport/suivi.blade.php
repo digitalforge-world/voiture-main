@@ -123,6 +123,7 @@
       width: 100% !important;
       padding-left: 8px !important;
       padding-right: 8px !important;
+      
     }
 
     .stepper-progress-line {
