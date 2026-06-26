@@ -45,70 +45,85 @@
     0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
     50%       { box-shadow: 0 0 20px rgba(16,185,129,0.4); }
   }
-  .price-card { animation: priceGlow 2s infinite; }
-
-  /* ─── Responsive Mobile Overlays Redesign (max-width: 1024px) ─── */
+  .price-card { animation: priceGlow 2s infinite;  /* ─── Responsive Mobile Overlays Redesign (max-width: 1024px) ─── */
   @media (max-width: 1024px) {
-    /* Make the outer container fit the screen below the site header */
+    /* Main container is static to allow fixed overlays relative to the viewport */
     .mobile-page-container {
       min-height: auto !important;
-      height: calc(100dvh - 64px - 80px) !important;
-     /* margin-top: 64px !important; /* Fixed site header height (64px) */
-      padding: 12px !important;
-      display: flex !important;
-      flex-direction: column !important;
-      background-color: rgb(248, 250, 252) !important;
-    }
-    .dark .mobile-page-container {
-      background-color: rgb(9, 15, 29) !important;
-    }
-
-    /* Inner layout wrapper */
-    .mobile-page-inner {
-      height: 100% !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 12px !important;
+      height: auto !important;
+      padding: 0 !important;
       margin: 0 !important;
-      max-width: 100% !important;
     }
-    .mobile-page-inner > :not([hidden]) ~ :not([hidden]) {
-      margin-top: 0 !important;
+    .mobile-page-inner {
+      height: auto !important;
+      gap: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
-    /* Header (1) */
+    /* Map takes the full screen height (between site header and bottom navigation bar) */
+    .map-container-wrapper {
+      position: fixed !important;
+      top: 64px !important; /* Start below fixed site header */
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 80px !important; /* End above mobile bottom navigation bar */
+      height: auto !important;
+      width: 100vw !important;
+      z-index: 10 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    #suivi-map {
+      height: 100% !important;
+      width: 100% !important;
+      border-radius: 0 !important;
+    }
+
+    /* Floating Header Overlay (1) - placed at top over the map */
     .header-info-wrapper {
-      order: 1 !important;
-      position: static !important;
-      background: rgb(255, 255, 255) !important;
+      position: fixed !important;
+      top: 80px !important; /* site header 64px + 16px gap */
+      left: 16px !important;
+      right: 16px !important;
+      z-index: 1010 !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
       border: 1px solid rgba(0, 0, 0, 0.05) !important;
       border-radius: 20px !important;
       padding: 14px 16px !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
-      width: 100% !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+      width: auto !important;
     }
     .dark .header-info-wrapper {
-      background: rgb(30, 41, 59) !important;
+      background: rgba(15, 23, 42, 0.9) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
     }
     
-    /* Stepper (3) */
+    /* Floating Stepper Overlay (2) - placed at bottom over the map */
     .stepper-container-wrapper {
-      order: 3 !important;
-      position: static !important;
-      background: rgb(255, 255, 255) !important;
+      position: fixed !important;
+      bottom: 96px !important; /* Sit 16px above bottom nav bar */
+      left: 16px !important;
+      right: 16px !important;
+      z-index: 1010 !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
       border: 1px solid rgba(0, 0, 0, 0.05) !important;
       border-radius: 20px !important;
       padding: 12px 16px !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
       overflow-x: visible !important;
-      width: 100% !important;
+      width: auto !important;
     }
     .dark .stepper-container-wrapper {
-      background: rgb(30, 41, 59) !important;
+      background: rgba(15, 23, 42, 0.9) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2) !important;
     }
 
     .stepper-inner-container {
@@ -140,56 +155,12 @@
       display: none !important; /* Hide labels under circles on mobile for clean look */
     }
 
-    /* Grid and Column expansion on mobile (2) */
-    .mobile-page-inner > .grid {
-      order: 2 !important;
-      flex-grow: 1 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      gap: 0 !important;
-      margin: 0 !important;
-    }
-    .mobile-page-inner > .grid > div:first-child {
-      flex-grow: 1 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      height: 100% !important;
-      margin-top: 0 !important;
-    }
-    .mobile-page-inner > .grid > div:first-child > :not([hidden]) ~ :not([hidden]) {
-      margin-top: 0 !important;
-    }
-
-    /* Map container takes all the remaining space in the middle */
-    .map-container-wrapper {
-      position: relative !important;
-      flex-grow: 1 !important;
-      height: 100% !important;
-      width: 100% !important;
-      border-radius: 20px !important;
-      border: 1px solid rgba(0, 0, 0, 0.05) !important;
-      background: rgb(255, 255, 255) !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
-      margin: 0 !important;
-      z-index: 10 !important;
-    }
-    .dark .map-container-wrapper {
-      background: rgb(15, 23, 42) !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-    #suivi-map {
-      height: 100% !important;
-      width: 100% !important;
-      border-radius: 20px !important;
-    }
-
-    /* Floating action buttons panel absolute inside the map container */
+    /* Floating Action Buttons Panel (Mobile viewports only) */
     .mobile-fabs-panel {
-      position: absolute !important;
-      bottom: 16px !important;
+      position: fixed !important;
+      bottom: 176px !important; /* Sit exactly above bottom stepper card (96px + 64px card + 16px gap) */
       right: 16px !important;
-      z-index: 1000 !important;
+      z-index: 2000 !important;
       display: flex !important;
       flex-direction: column !important;
       gap: 10px !important;
@@ -199,7 +170,7 @@
       height: 48px !important;
       border-radius: 9999px !important;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease !important;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
     }
     .mobile-fabs-panel button:active {
       transform: scale(0.9) !important;
@@ -244,6 +215,19 @@
     .chat-container-wrapper > div {
       height: 100% !important;
       border: none !important;
+    }
+
+    /* Deactivate flex items resizing on mobile */
+    .mobile-page-inner > .grid {
+      display: block !important;
+      height: auto !important;
+      margin: 0 !important;
+      gap: 0 !important;
+    }
+    .mobile-page-inner > .grid > div:first-child {
+      display: block !important;
+      height: auto !important;
+      margin: 0 !important;
     }
   }
 </style>
