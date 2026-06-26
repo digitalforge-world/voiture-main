@@ -15,123 +15,251 @@
       background: #0f172a;
       color: white;
       height: 100dvh;
-      display: flex;
-      flex-direction: column;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
+      position: relative;
     }
 
-    /* Header */
-    #header {
-      padding: 1rem 1.25rem;
-      background: #1e293b;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-    #header h1 { font-size: 1rem; font-weight: 700; }
-    #header p  { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
-    .status-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: #ef4444;
-      flex-shrink: 0;
-    }
-    .status-dot.active { background: #10b981; animation: pulseDot 1.5s infinite; }
-    @keyframes pulseDot {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
-      50%       { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-    }
-
-    /* Carte */
+    /* Full-screen Map */
     #driver-map {
-      flex: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 1;
     }
 
-    /* Panel boutons bas */
-    #bottomPanel {
-      flex-shrink: 0;
-      background: #0f172a;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding: 1rem 1.25rem;
-      padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-      space-y: 1rem;
+    /* Floating Header Overlay */
+    .header-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 1010;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
     }
-
-    /* Infos trajet */
-    #tripInfo {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
+    .client-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
-    .trip-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 0.75rem;
-      padding: 0.75rem;
-      font-size: 0.7rem;
-    }
-    .trip-card .label { color: #64748b; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.05em; margin-bottom: 3px; }
-    .trip-card .value { color: white; font-weight: 600; line-height: 1.3; }
-
-    /* Boutons */
-    .btn {
-      width: 100%;
-      padding: 1rem;
-      border: none;
-      border-radius: 1rem;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
+    .client-label {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      text-transform: uppercase;
       letter-spacing: 0.05em;
-      cursor: pointer;
-      transition: all 0.2s;
+      font-weight: 700;
+    }
+    .client-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: white;
+    }
+    .btn-back {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.2s ease;
     }
-    .btn:active { transform: scale(0.97); }
-    .btn-gps {
+    .btn-back:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.12);
+      transform: scale(1.05);
+    }
+    .btn-back:active {
+      transform: scale(0.95);
+    }
+
+    /* Actions panel bottom right */
+    .actions-panel {
+      position: absolute;
+      bottom: 32px;
+      right: 16px;
+      z-index: 1010;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .action-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* GPS Button styles */
+    .btn-gps.off {
+      background: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .btn-gps.off:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+    }
+    .btn-gps.on {
       background: #10b981;
       color: white;
-      margin-bottom: 0.75rem;
-      font-size: 0.9rem;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
     }
-    .btn-gps.off { background: #1e293b; border: 2px solid rgba(255,255,255,0.1); }
+    .btn-gps.on .pulse-ring {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 3px solid #10b981;
+      border-radius: 50%;
+      animation: gpsPulse 2s infinite;
+      pointer-events: none;
+    }
+    @keyframes gpsPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    /* Arrive Button styles */
     .btn-arrive {
       background: #f59e0b;
       color: #0f172a;
-      font-size: 0.9rem;
     }
     .btn-arrive:disabled {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       color: #475569;
       cursor: not-allowed;
     }
+    .btn-arrive.arrived {
+      background: #10b981;
+      color: white;
+      cursor: default;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .btn-arrive:not(:disabled):not(.arrived) .btn-icon {
+      animation: bellRing 2s infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes bellRing {
+      0%, 100% { transform: rotate(0); }
+      10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
+      20%, 40%, 60%, 80% { transform: rotate(10deg); }
+    }
 
-    /* Alert GPS */
+    /* Loader spin animation */
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Custom Leaflet Tooltips */
+    .custom-map-tooltip {
+      background: rgba(15, 23, 42, 0.9) !important;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      border-radius: 12px !important;
+      padding: 8px 12px !important;
+      color: white !important;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4) !important;
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 0.75rem !important;
+      max-width: 200px !important;
+      white-space: normal !important;
+      text-align: left !important;
+    }
+    .custom-map-tooltip .tooltip-title {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .depart-tooltip .tooltip-title {
+      color: #10b981;
+    }
+    .arrivee-tooltip .tooltip-title {
+      color: #ef4444;
+    }
+    .custom-map-tooltip .tooltip-body {
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .custom-map-tooltip::before {
+      border-top-color: rgba(15, 23, 42, 0.9) !important;
+    }
+
+    /* Floating Alert GPS */
     #gpsAlert {
       display: none;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
+      position: absolute;
+      top: 96px;
+      left: 16px;
+      right: 16px;
+      z-index: 1010;
+      background: rgba(239, 68, 68, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
       color: #f87171;
-      font-size: 0.75rem;
-      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     /* Toast */
     #toast {
       position: fixed;
-      bottom: 6rem;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: #1e293b;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.1);
       color: white;
       padding: 0.75rem 1.5rem;
@@ -142,71 +270,57 @@
       transition: all 0.3s;
       z-index: 9999;
       white-space: nowrap;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
-  {{-- Header --}}
-  <div id="header">
-    <div>
-      <h1 style="display:flex;align-items:center;gap:0.5rem;"><i data-lucide="navigation" style="width:1.2rem;height:1.2rem;color:#f59e0b;"></i> Mode Chauffeur</h1>
-      <p>{{ $reservation->reference }} — {{ $reservation->client_nom }}</p>
-    </div>
-    <div style="display:flex;align-items:center;gap:1.25rem;">
-      <a href="{{ route('driver.dashboard') }}" style="color:#94a3b8;font-size:0.75rem;text-decoration:none;display:flex;align-items:center;gap:4px;font-weight:600;padding:6px 12px;background:rgba(255,255,255,0.05);border-radius:8px;border:1px solid rgba(255,255,255,0.08);" class="hover:text-white transition">
-        ← Retour au Dashboard
-      </a>
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <span id="gpsStatusText" style="font-size:0.7rem;color:#64748b;">GPS inactif</span>
-        <div id="statusDot" class="status-dot"></div>
-      </div>
-    </div>
-  </div>
-
   {{-- Carte --}}
   <div id="driver-map"></div>
 
-  {{-- Panel bas --}}
-  <div id="bottomPanel">
-
-    <div id="tripInfo">
-      <div class="trip-card">
-        <div class="label" style="display:flex;align-items:center;gap:3px;"><i data-lucide="map-pin" style="width:0.75rem;height:0.75rem;color:#10b981;"></i> Départ client</div>
-        <div class="value" style="font-size:0.65rem;">{{ Str::limit($reservation->lieu_depart, 50) }}</div>
-      </div>
-      <div class="trip-card">
-        <div class="label" style="display:flex;align-items:center;gap:3px;"><i data-lucide="flag" style="width:0.75rem;height:0.75rem;color:#ef4444;"></i> Destination</div>
-        <div class="value" style="font-size:0.65rem;">{{ Str::limit($reservation->lieu_arrivee, 50) }}</div>
-      </div>
-      <div class="trip-card">
-        <div class="label" style="display:flex;align-items:center;gap:3px;"><i data-lucide="phone" style="width:0.75rem;height:0.75rem;color:#f59e0b;"></i> Client</div>
-        <div class="value">{{ $reservation->client_telephone }}</div>
-      </div>
-      <div class="trip-card">
-        <div class="label" style="display:flex;align-items:center;gap:3px;"><i data-lucide="users" style="width:0.75rem;height:0.75rem;color:#38bdf8;"></i> Passagers</div>
-        <div class="value">{{ $reservation->nombre_personnes }} pers.</div>
-      </div>
+  {{-- Header Overlay --}}
+  <div class="header-overlay">
+    <div class="client-info">
+      <span class="client-label">Client</span>
+      <h1 class="client-name">{{ $reservation->client_nom }}</h1>
     </div>
+    <a href="{{ route('driver.dashboard') }}" class="btn-back" title="Retour au Dashboard">
+      <i data-lucide="chevron-left" style="width:1.6rem;height:1.6rem;"></i>
+    </a>
+  </div>
 
-    <div id="gpsAlert">⚠️ Accès GPS refusé ou non disponible. Activez la localisation dans les paramètres de votre navigateur.</div>
+  {{-- Alert GPS --}}
+  <div id="gpsAlert">
+    <i data-lucide="alert-triangle" style="width:1.2rem;height:1.2rem;"></i>
+    <span>Accès GPS refusé. Veuillez activer la localisation.</span>
+  </div>
 
+  {{-- Actions Panel Overlay --}}
+  <div class="actions-panel">
     {{-- Bouton GPS --}}
-    <button id="btnGPS" class="btn btn-gps off" onclick="toggleGPS()">
-      <span id="gpsIcon" style="display:flex;align-items:center;"><i data-lucide="map-pin" style="width:1.2rem;height:1.2rem;"></i></span>
-      <span id="gpsLabel">Activer le partage GPS</span>
+    <button id="btnGPS" class="action-btn btn-gps off" onclick="toggleGPS()" title="Partage en direct">
+      <span id="gpsIcon" style="display:flex;align-items:center;">
+        <i data-lucide="map-pin" style="width:1.4rem;height:1.4rem;"></i>
+      </span>
+      <span class="pulse-ring"></span>
     </button>
 
     {{-- Bouton Arrivée --}}
     @if($reservation->chauffeur_arrived)
-    <button class="btn btn-arrive" style="background:#10b981;color:white;" disabled><i data-lucide="check" style="width:1.2rem;height:1.2rem;"></i> Vous avez signalé votre arrivée</button>
+      <button class="action-btn btn-arrive arrived" disabled title="Arrivée signalée">
+        <span class="btn-icon" style="display:flex;align-items:center;">
+          <i data-lucide="check" style="width:1.4rem;height:1.4rem;"></i>
+        </span>
+      </button>
     @else
-    <button id="btnArrive" class="btn btn-arrive" onclick="signalArrive()" disabled>
-      <i data-lucide="check-circle" style="width:1.2rem;height:1.2rem;"></i> Je suis arrivé au point de départ
-    </button>
+      <button id="btnArrive" class="action-btn btn-arrive" onclick="signalArrive()" disabled title="Signaler mon arrivée">
+        <span class="btn-icon" style="display:flex;align-items:center;">
+          <i data-lucide="bell" style="width:1.4rem;height:1.4rem;"></i>
+        </span>
+      </button>
     @endif
-
   </div>
 
   <div id="toast"></div>
@@ -218,6 +332,8 @@
     const LNG_DEP  = {{ $reservation->lng_depart  ?? 1.2125 }};
     const LAT_ARR  = {{ $reservation->lat_arrivee ?? 6.1644 }};
     const LNG_ARR  = {{ $reservation->lng_arrivee ?? 1.2514 }};
+    const LIEU_DEP = {!! json_encode($reservation->lieu_depart) !!};
+    const LIEU_ARR = {!! json_encode($reservation->lieu_arrivee) !!};
     const CSRF     = document.querySelector('meta[name="csrf-token"]').content;
 
     let gpsActive   = false;
@@ -245,9 +361,40 @@
     `;
     const iconMe     = L.divIcon({ html: carIconSvg, iconSize:[36,36], iconAnchor:[18,18], className:'' });
 
-    if (LAT_DEP && LNG_DEP) L.marker([LAT_DEP, LNG_DEP], { icon: iconClient }).addTo(map).bindPopup('<b>📍 Le client vous attend ici</b>');
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    if (LAT_DEP && LNG_DEP) {
+      const markerClient = L.marker([LAT_DEP, LNG_DEP], { icon: iconClient }).addTo(map);
+      markerClient.bindPopup('<b>📍 Le client vous attend ici</b>');
+      
+      markerClient.bindTooltip(`<div class="tooltip-title">Départ</div><div class="tooltip-body">${escapeHtml(LIEU_DEP)}</div>`, {
+        permanent: true,
+        direction: 'top',
+        offset: [0, -12],
+        className: 'custom-map-tooltip depart-tooltip'
+      });
+    }
+
     if (LAT_ARR && LNG_ARR) {
-      L.marker([LAT_ARR, LNG_ARR], { icon: iconDest }).addTo(map).bindPopup('<b>🏁 Destination finale</b>');
+      const markerDest = L.marker([LAT_ARR, LNG_ARR], { icon: iconDest }).addTo(map);
+      markerDest.bindPopup('<b>🏁 Destination finale</b>');
+      
+      markerDest.bindTooltip(`<div class="tooltip-title">Arrivée</div><div class="tooltip-body">${escapeHtml(LIEU_ARR)}</div>`, {
+        permanent: true,
+        direction: 'top',
+        offset: [0, -12],
+        className: 'custom-map-tooltip arrivee-tooltip'
+      });
     }
 
     // ─── Routage Réel OSRM ──────────────────────────────────────────────────────
@@ -307,7 +454,8 @@
 
     function startGPS() {
       if (!navigator.geolocation) {
-        document.getElementById('gpsAlert').style.display = 'block';
+        const gpsAlert = document.getElementById('gpsAlert');
+        if (gpsAlert) gpsAlert.style.display = 'flex';
         return;
       }
 
@@ -331,7 +479,8 @@
           if (btnArrive) btnArrive.disabled = false;
         },
         function(err) {
-          document.getElementById('gpsAlert').style.display = 'block';
+          const gpsAlert = document.getElementById('gpsAlert');
+          if (gpsAlert) gpsAlert.style.display = 'flex';
           stopGPS();
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
@@ -341,14 +490,22 @@
       sendInterval = setInterval(sendLocation, 5000);
 
       gpsActive = true;
-      document.getElementById('statusDot').classList.add('active');
-      document.getElementById('gpsStatusText').textContent = 'GPS actif';
-      document.getElementById('gpsStatusText').style.color = '#10b981';
-      document.getElementById('btnGPS').classList.remove('off');
-      document.getElementById('gpsLabel').textContent = 'GPS activé — Partage en direct';
-      document.getElementById('gpsIcon').innerHTML = '<i data-lucide="wifi" style="width:1.2rem;height:1.2rem;"></i>';
-      lucide.createIcons({ nodes: [document.getElementById('gpsIcon')] });
-      document.getElementById('gpsAlert').style.display = 'none';
+      
+      const btnGPS = document.getElementById('btnGPS');
+      if (btnGPS) {
+        btnGPS.classList.remove('off');
+        btnGPS.classList.add('on');
+      }
+      
+      const gpsIcon = document.getElementById('gpsIcon');
+      if (gpsIcon) {
+        gpsIcon.innerHTML = '<i data-lucide="wifi" style="width:1.4rem;height:1.4rem;"></i>';
+        lucide.createIcons({ nodes: [gpsIcon] });
+      }
+      
+      const gpsAlert = document.getElementById('gpsAlert');
+      if (gpsAlert) gpsAlert.style.display = 'none';
+      
       showToast('GPS activé — Position partagée avec le client');
     }
  
@@ -356,13 +513,19 @@
       if (watchId) navigator.geolocation.clearWatch(watchId);
       if (sendInterval) clearInterval(sendInterval);
       gpsActive = false;
-      document.getElementById('statusDot').classList.remove('active');
-      document.getElementById('gpsStatusText').textContent = 'GPS inactif';
-      document.getElementById('gpsStatusText').style.color = '#64748b';
-      document.getElementById('btnGPS').classList.add('off');
-      document.getElementById('gpsLabel').textContent = 'Activer le partage GPS';
-      document.getElementById('gpsIcon').innerHTML = '<i data-lucide="map-pin" style="width:1.2rem;height:1.2rem;"></i>';
-      lucide.createIcons({ nodes: [document.getElementById('gpsIcon')] });
+      
+      const btnGPS = document.getElementById('btnGPS');
+      if (btnGPS) {
+        btnGPS.classList.remove('on');
+        btnGPS.classList.add('off');
+      }
+      
+      const gpsIcon = document.getElementById('gpsIcon');
+      if (gpsIcon) {
+        gpsIcon.innerHTML = '<i data-lucide="map-pin" style="width:1.4rem;height:1.4rem;"></i>';
+        lucide.createIcons({ nodes: [gpsIcon] });
+      }
+      
       showToast('GPS désactivé');
     }
 
@@ -382,7 +545,12 @@
       const btn = document.getElementById('btnArrive');
       if (!btn || btn.disabled) return;
       btn.disabled = true;
-      btn.textContent = '⏳ Envoi en cours...';
+      
+      const iconSpan = btn.querySelector('.btn-icon');
+      if (iconSpan) {
+        iconSpan.innerHTML = '<i data-lucide="loader" class="animate-spin" style="width:1.4rem;height:1.4rem;"></i>';
+        lucide.createIcons({ nodes: [iconSpan] });
+      }
 
       fetch(`/chauffeur/${TOKEN}/arrive`, {
         method: 'POST',
@@ -390,15 +558,27 @@
         body: JSON.stringify({})
       }).then(r => r.json()).then(data => {
         if (data.success) {
-          btn.innerHTML = '<i data-lucide="check"></i> Arrivée signalée ! Le client est notifié.';
-          btn.style.background = '#10b981';
-          btn.style.color = '#ffffff';
-          lucide.createIcons();
+          btn.classList.add('arrived');
+          btn.disabled = true;
+          if (iconSpan) {
+            iconSpan.innerHTML = '<i data-lucide="check" style="width:1.4rem;height:1.4rem;"></i>';
+            lucide.createIcons({ nodes: [iconSpan] });
+          }
           showToast('Client notifié de votre arrivée !');
+        } else {
+          btn.disabled = false;
+          if (iconSpan) {
+            iconSpan.innerHTML = '<i data-lucide="bell" style="width:1.4rem;height:1.4rem;"></i>';
+            lucide.createIcons({ nodes: [iconSpan] });
+          }
+          showToast('Erreur — Réessayez');
         }
       }).catch(() => {
         btn.disabled = false;
-        btn.textContent = 'Je suis arrivé au point de départ';
+        if (iconSpan) {
+          iconSpan.innerHTML = '<i data-lucide="bell" style="width:1.4rem;height:1.4rem;"></i>';
+          lucide.createIcons({ nodes: [iconSpan] });
+        }
         showToast('Erreur — Réessayez');
       });
     }

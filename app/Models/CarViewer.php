@@ -25,15 +25,22 @@ class CarViewer extends Model
     {
         if (!$this->frames_path) return null;
 
-        $extensions = ['jpg', 'jpeg', 'png', 'webp'];
-        $pad = str_pad(1, strlen((string) $this->frame_count), '0', STR_PAD_LEFT);
+        try {
+            $files = \Illuminate\Support\Facades\Storage::disk('public')->files($this->frames_path);
+            
+            // Trouver la première frame triée par nom de fichier
+            $firstFrame = collect($files)
+                ->filter(fn($f) => preg_match('/frame_\d+\.(jpg|jpeg|png|webp)$/i', basename($f)))
+                ->sortBy(fn($f) => basename($f))
+                ->first();
 
-        foreach ($extensions as $ext) {
-            $path = "{$this->frames_path}/frame_{$pad}.{$ext}";
-            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
-                return \Illuminate\Support\Facades\Storage::url($path);
+            if ($firstFrame) {
+                return \Illuminate\Support\Facades\Storage::url($firstFrame);
             }
+        } catch (\Exception $e) {
+            // Silence errors to avoid blocking the page
         }
+
         return null;
     }
 }
