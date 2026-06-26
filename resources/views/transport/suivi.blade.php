@@ -46,6 +46,125 @@
     50%       { box-shadow: 0 0 20px rgba(16,185,129,0.4); }
   }
   .price-card { animation: priceGlow 2s infinite; }
+
+  /* ─── Responsive Mobile Overlays Redesign (max-width: 1024px) ─── */
+  @media (max-width: 1024px) {
+    /* Full-screen Map */
+    .map-container-wrapper {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 80px; /* Space for LWS bottom navigation bar */
+      height: auto !important;
+      width: 100vw !important;
+      z-index: 10 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+    #suivi-map {
+      height: 100% !important;
+      width: 100% !important;
+      border-radius: 0 !important;
+    }
+
+    /* Floating Header Overlay (1) */
+    .header-info-wrapper {
+      position: fixed !important;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 1010;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      padding: 12px 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .dark .header-info-wrapper {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Floating Stepper Overlay (2) */
+    .stepper-container-wrapper {
+      position: fixed !important;
+      top: 124px;
+      left: 16px;
+      right: 16px;
+      z-index: 1010;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      padding: 10px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+    .dark .stepper-container-wrapper {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .stepper-container-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Drawers/Modals (3, 4, 5) */
+    .details-container-wrapper,
+    .driver-container-wrapper,
+    .chat-container-wrapper {
+      position: fixed !important;
+      left: 16px;
+      right: 16px;
+      bottom: -100%; /* Hidden off-screen */
+      z-index: 2010 !important;
+      max-height: 70vh !important;
+      overflow-y: auto;
+      border-radius: 24px !important;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15) !important;
+      transition: bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+      background: rgb(255, 255, 255) !important;
+    }
+    .dark .details-container-wrapper,
+    .dark .driver-container-wrapper,
+    .dark .chat-container-wrapper {
+      background: rgb(15, 23, 42) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* Active Modals State */
+    .details-container-wrapper.active-modal,
+    .driver-container-wrapper.active-modal,
+    .chat-container-wrapper.active-modal {
+      bottom: 96px !important; /* Align just above the nav bar */
+    }
+
+    /* Chat Sizing */
+    .chat-container-wrapper {
+      height: 60vh !important;
+    }
+    .chat-container-wrapper > div {
+      height: 100% !important;
+      border: none !important;
+    }
+
+    /* Structure Adjustment */
+    .min-h-\[calc\(100vh-80px\)\] {
+      padding: 0 !important;
+      min-height: auto !important;
+    }
+    .max-w-5xl {
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+  }
 </style>
 @endsection
 
@@ -53,10 +172,10 @@
 <div class="min-h-[calc(100vh-80px)] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-8 px-4 transition-colors duration-300">
   <div class="max-w-5xl mx-auto space-y-6">
 
-    {{-- ─── Header ─────────────────────────────────────────────────────────── --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    {{-- ─── Header (1) ─── --}}
+    <div class="header-info-wrapper flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <a href="{{ route('transport.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-amber-500 text-xs mb-3 transition">
+        <a href="{{ route('transport.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-amber-500 text-xs mb-3 transition lg:flex hidden">
           ← Nouvelle réservation
         </a>
         <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Suivi de votre transport</h1>
@@ -81,7 +200,7 @@
       </div>
     </div>
 
-    {{-- ─── Stepper ─────────────────────────────────────────────────────────── --}}
+    {{-- ─── Stepper (2) ─── --}}
     @php
       $steps = [
         ['key' => 'en_attente',         'label' => 'En attente', 'icon' => 'clock'],
@@ -95,7 +214,7 @@
       $currentIdx  = $statutOrder[$reservation->statut] ?? 0;
     @endphp
     
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm overflow-x-auto custom-scrollbar">
+    <div class="stepper-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm overflow-x-auto custom-scrollbar">
       <div class="relative flex justify-between items-center w-full min-w-[600px] px-8 py-2">
         <!-- Progress Bar Background -->
         <div class="absolute top-[21px] left-12 right-12 h-0.5 bg-slate-200 dark:bg-slate-800 z-0">
@@ -123,12 +242,12 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-      {{-- ─── Colonne gauche : Carte + Infos ────────────────────────────────── --}}
+      {{-- ─── Left Column: Map + Info ─── --}}
       <div class="lg:col-span-3 space-y-5">
 
-        {{-- Carte --}}
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        {{-- Map --}}
+        <div class="map-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 lg:flex hidden">
             <h2 class="text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2">
               <i data-lucide="map" class="w-4 h-4 text-amber-500"></i> Votre trajet
             </h2>
@@ -140,18 +259,24 @@
           <div id="suivi-map" class="border-t border-slate-100 dark:border-slate-800/50"></div>
         </div>
 
-        {{-- Infos course --}}
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+        {{-- Trip details (4) --}}
+        <div class="details-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center justify-between mb-4 gap-2">
             <h2 class="text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2">
               <i data-lucide="list-todo" class="w-4 h-4 text-amber-500"></i> Détails de la course
             </h2>
-            @if($reservation->statut === 'en_attente')
-              <button onclick="openEditTrajetModal()" class="flex items-center gap-1.5 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition shadow shadow-amber-500/10 hover:-translate-y-0.5">
-                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                <span>Modifier mon trajet</span>
+            <div class="flex items-center gap-2">
+              @if($reservation->statut === 'en_attente')
+                <button onclick="openEditTrajetModal()" class="flex items-center gap-1.5 px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition shadow shadow-amber-500/10 hover:-translate-y-0.5">
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                  <span>Modifier mon trajet</span>
+                </button>
+              @endif
+              <!-- Dismiss Modal Button for Mobile viewports -->
+              <button onclick="closeMobileModal('details')" class="lg:hidden w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 flex items-center justify-center transition border border-slate-200/50 dark:border-slate-700">
+                <i data-lucide="x" class="w-4 h-4"></i>
               </button>
-            @endif
+            </div>
           </div>
           <div class="space-y-3 text-sm">
             <div class="flex items-start gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/50">
@@ -194,12 +319,18 @@
         </div>
 
         @if($reservation->driver)
-        {{-- Votre Chauffeur --}}
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+        {{-- Your Driver (3) --}}
+        <div class="driver-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-[4rem]"></div>
-          <h2 class="text-slate-900 dark:text-white font-bold text-sm mb-4 flex items-center gap-2">
-            <i data-lucide="user-check" class="w-4 h-4 text-amber-500"></i> Votre chauffeur & Véhicule
-          </h2>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-slate-900 dark:text-white font-bold text-sm flex items-center gap-2">
+              <i data-lucide="user-check" class="w-4 h-4 text-amber-500"></i> Votre chauffeur & Véhicule
+            </h2>
+            <!-- Dismiss Modal Button for Mobile viewports -->
+            <button onclick="closeMobileModal('driver')" class="lg:hidden z-10 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 flex items-center justify-center transition border border-slate-200/50 dark:border-slate-700">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
               <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden flex-shrink-0 shadow-md">
@@ -234,7 +365,7 @@
         </div>
         @endif
 
-        {{-- Prix proposé --}}
+        {{-- Proposed Price --}}
         @if($reservation->prix_propose)
         <div id="priceCard" class="price-card bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 dark:border-emerald-500/30 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center justify-between gap-4">
@@ -287,17 +418,23 @@
 
       </div>
 
-      {{-- ─── Chat ───────────────────────────────────────────────────────────── --}}
-      <div class="lg:col-span-2 flex flex-col">
+      {{-- ─── Chat Column (5) ─── --}}
+      <div class="chat-container-wrapper lg:col-span-2 flex flex-col">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col shadow-sm" style="height: 600px;">
-          <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3 flex-shrink-0">
-            <div class="w-9 h-9 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950 shadow-md">
-              <i data-lucide="message-square" class="w-4 h-4"></i>
+          <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 flex-shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-amber-500 rounded-xl flex items-center justify-center text-slate-950 shadow-md">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <div class="text-slate-900 dark:text-white font-bold text-sm">Chat avec notre équipe</div>
+                <div class="text-slate-500 dark:text-slate-400 text-xs">Temps de réponse : &lt; 5 min</div>
+              </div>
             </div>
-            <div>
-              <div class="text-slate-900 dark:text-white font-bold text-sm">Chat avec notre équipe</div>
-              <div class="text-slate-500 dark:text-slate-400 text-xs">Temps de réponse : &lt; 5 min</div>
-            </div>
+            <!-- Dismiss Modal Button for Mobile viewports -->
+            <button onclick="closeMobileModal('chat')" class="lg:hidden w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 flex items-center justify-center transition border border-slate-200/50 dark:border-slate-700">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
           </div>
 
           {{-- Messages --}}
@@ -346,10 +483,31 @@
       </div>
     </div>
 
+    <!-- Floating Action Buttons Panel (Mobile viewports only) -->
+    <div class="mobile-fabs-panel lg:hidden fixed bottom-24 right-4 z-[2000] flex flex-col gap-3">
+      <!-- Button 3: Chauffeur Modal Toggle -->
+      @if($reservation->driver)
+      <button onclick="openMobileModal('driver')" class="w-14 h-14 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25 transition active:scale-95 border border-emerald-400/20">
+        <i data-lucide="user-check" class="w-6 h-6"></i>
+      </button>
+      @endif
+
+      <!-- Button 4: Course Details Modal Toggle -->
+      <button onclick="openMobileModal('details')" class="w-14 h-14 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full flex items-center justify-center shadow-lg transition active:scale-95 border border-slate-200 dark:border-slate-800">
+        <i data-lucide="list-todo" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Button 5: Live Chat Toggle (with Unread message badge) -->
+      <button onclick="openMobileModal('chat')" class="relative w-14 h-14 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition active:scale-95 border border-amber-400/20">
+        <i data-lucide="message-square" class="w-6 h-6"></i>
+        <span id="mobile-chat-badge" class="hidden absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-black h-6 w-6 rounded-full flex items-center justify-center animate-bounce border-2 border-white dark:border-slate-950">0</span>
+      </button>
+    </div>
+
   </div>
 </div>
 
-{{-- ─── Overlay "Chauffeur Arrivé" ──────────────────────────────────────────── --}}
+{{-- ─── Overlay "Chauffeur Arrivé" ─── --}}
 <div id="arrivedOverlay">
   <div class="text-center px-8">
     <div class="car-icon-big w-32 h-32 bg-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-amber-500/40 text-slate-950">
@@ -459,12 +617,54 @@ let prixAccepte = {{ $reservation->prix_accepte ? 'true' : 'false' }};
 const LAT_DRV   = {{ $reservation->chauffeur_lat ?? 'null' }};
 const LNG_DRV   = {{ $reservation->chauffeur_lng ?? 'null' }};
 
-// ─── Carte ───────────────────────────────────────────────────────────────────
+// ─── Live Chat Overlay state tracking ───
+let unreadMessageCount = 0;
+
+function openMobileModal(type) {
+  closeAllMobileModals();
+  const wrapper = document.querySelector(`.${type}-container-wrapper`);
+  if (wrapper) {
+    wrapper.classList.add('active-modal');
+  }
+  
+  if (type === 'chat') {
+    unreadMessageCount = 0;
+    updateUnreadBadge();
+    setTimeout(scrollChatBottom, 100);
+  }
+}
+
+function closeMobileModal(type) {
+  const wrapper = document.querySelector(`.${type}-container-wrapper`);
+  if (wrapper) {
+    wrapper.classList.remove('active-modal');
+  }
+}
+
+function closeAllMobileModals() {
+  document.querySelectorAll('.details-container-wrapper, .driver-container-wrapper, .chat-container-wrapper').forEach(el => {
+    el.classList.remove('active-modal');
+  });
+}
+
+function updateUnreadBadge() {
+  const badge = document.getElementById('mobile-chat-badge');
+  if (!badge) return;
+  if (unreadMessageCount > 0) {
+    badge.innerText = unreadMessageCount;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+// ─── Map ───
 const map = L.map('suivi-map').setView([LAT_DEP, LNG_DEP], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 
+// Departure marker (6) is Green dot, Destination marker (7) is Orange dot
 const iconDepart = L.divIcon({ html: `<div style="width:24px;height:24px;background:#10b981;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`, iconSize:[24,24], iconAnchor:[12,12], className:'' });
-const iconArrivee = L.divIcon({ html: `<div style="width:24px;height:24px;background:#ef4444;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`, iconSize:[24,24], iconAnchor:[12,12], className:'' });
+const iconArrivee = L.divIcon({ html: `<div style="width:24px;height:24px;background:#f59e0b;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4)"></div>`, iconSize:[24,24], iconAnchor:[12,12], className:'' });
 const carIconSvg = `
   <div style="background: #f59e0b; border: 2px solid white; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;" class="text-slate-950">
@@ -483,11 +683,19 @@ if (LAT_ARR && LNG_ARR) {
 if (LAT_DRV && LNG_DRV && ['chauffeur_en_route', 'chauffeur_arrive', 'en_cours'].includes(STATUT)) {
   driverMarker = L.marker([LAT_DRV, LNG_DRV], { icon: iconDriver, zIndexOffset: 1000 }).addTo(map);
   driverMarker.bindPopup('<b>🚗 Votre chauffeur</b>');
-  document.getElementById('driverStatus').classList.remove('hidden');
-  document.getElementById('driverStatus').classList.add('flex');
+  const statusEl = document.getElementById('driverStatus');
+  if (statusEl) {
+    statusEl.classList.remove('hidden');
+    statusEl.classList.add('flex');
+  }
 }
 
-// ─── Routage Réel OSRM ──────────────────────────────────────────────────────
+// Invalidate Leaflet bounds on window resize/mobile layout transition
+setTimeout(() => {
+  map.invalidateSize();
+}, 400);
+
+// ─── Real OSRM Routing ───
 let routeLine = null;
 
 function drawRoute(latlngDep, latlngArr) {
@@ -537,14 +745,14 @@ if (LAT_DEP && LNG_DEP && LAT_ARR && LNG_ARR) {
   map.setView([LAT_DEP, LNG_DEP], 14);
 }
 
-// ─── Scroll chat au bas ───────────────────────────────────────────────────────
+// ─── Chat scroll bottom ───
 function scrollChatBottom() {
   const c = document.getElementById('chatMessages');
-  c.scrollTop = c.scrollHeight;
+  if (c) c.scrollTop = c.scrollHeight;
 }
 scrollChatBottom();
 
-// ─── Ajouter un message dans le chat ─────────────────────────────────────────
+// ─── Add Message to Chat ───
 function appendMessage(msg) {
   if (msg.id && document.querySelector(`[data-msg-id="${msg.id}"]`)) {
     return;
@@ -553,7 +761,16 @@ function appendMessage(msg) {
     LAST_MSG_ID = Math.max(LAST_MSG_ID, msg.id);
   }
 
+  // Increment unread count if chat drawer modal is closed on mobile
+  const chatWrapper = document.querySelector('.chat-container-wrapper');
+  const isChatOpen = chatWrapper && chatWrapper.classList.contains('active-modal');
+  if (!isChatOpen && msg.id && (msg.auteur === 'admin' || msg.auteur === 'systeme' || msg.type === 'notification_systeme')) {
+    unreadMessageCount++;
+    updateUnreadBadge();
+  }
+
   const c = document.getElementById('chatMessages');
+  if (!c) return;
   let dateObj = msg.created_at ? new Date(msg.created_at) : new Date();
   if (isNaN(dateObj.getTime())) {
     dateObj = new Date();
@@ -581,15 +798,13 @@ function appendMessage(msg) {
   scrollChatBottom();
 }
 
-// ─── Notification arrivée chauffeur ──────────────────────────────────────────
+// ─── Driver Arrived overlay ───
 function triggerArrivedNotification() {
   if (notifiedArrival) return;
   notifiedArrival = true;
 
-  // Overlay visuel
   document.getElementById('arrivedOverlay').style.display = 'flex';
 
-  // Son via Web Audio API
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     [523, 659, 784].forEach((freq, i) => {
@@ -604,7 +819,6 @@ function triggerArrivedNotification() {
     });
   } catch(e) {}
 
-  // Notification navigateur
   if (Notification.permission === 'granted') {
     new Notification('Votre chauffeur est arrivé !', {
       body: 'Il vous attend à votre point de départ.',
@@ -615,7 +829,7 @@ function triggerArrivedNotification() {
   }
 }
 
-// ─── Polling : messages + position chauffeur ──────────────────────────────────
+// ─── Polling ───
 let pollingActive = false;
 function pollMessages() {
   if (pollingActive) return;
@@ -624,25 +838,21 @@ function pollMessages() {
   fetch(`/transport/messages/${TRACKING}?since_id=${LAST_MSG_ID}`)
     .then(r => r.json())
     .then(data => {
-      // Nouveaux messages
       data.messages.forEach(msg => {
         appendMessage(msg);
       });
 
-      // Mise à jour statut
       if (data.statut && data.statut !== STATUT) {
         STATUT = data.statut;
-        // Mettre à jour le badge (rechargement léger)
         location.reload();
       }
 
-      // Mise à jour prix
       if (data.prix_propose && data.prix_propose !== currentPrix) {
         currentPrix = data.prix_propose;
         const card = document.getElementById('priceCard');
         const dynPrice = document.getElementById('dynamicPrice');
         if (dynPrice) dynPrice.innerHTML = new Intl.NumberFormat('fr-FR').format(currentPrix) + ' <span class="text-sm font-medium text-slate-500 dark:text-slate-400">FCFA</span>';
-        card.classList.remove('hidden');
+        if (card) card.classList.remove('hidden');
       }
     })
     .catch(() => {})
@@ -660,7 +870,6 @@ function pollDriverLocation() {
   fetch(`/transport/driver-location/${TRACKING}`)
     .then(r => r.json())
     .then(data => {
-      // Mise à jour marqueur chauffeur
       if (data.trackable && data.chauffeur_lat && data.chauffeur_lng) {
         const pos = [data.chauffeur_lat, data.chauffeur_lng];
         if (driverMarker) {
@@ -668,12 +877,14 @@ function pollDriverLocation() {
         } else {
           driverMarker = L.marker(pos, { icon: iconDriver, zIndexOffset: 1000 }).addTo(map);
           driverMarker.bindPopup('<b>🚗 Votre chauffeur</b>');
-          document.getElementById('driverStatus').classList.remove('hidden');
-          document.getElementById('driverStatus').classList.add('flex');
+          const statusEl = document.getElementById('driverStatus');
+          if (statusEl) {
+            statusEl.classList.remove('hidden');
+            statusEl.classList.add('flex');
+          }
         }
       }
 
-      // Notification arrivée
       if (data.chauffeur_arrived && !notifiedArrival) {
         triggerArrivedNotification();
       }
@@ -686,21 +897,19 @@ function pollDriverLocation() {
     });
 }
 
-// Démarrer les pollings
 setInterval(pollMessages, 5000);
 setInterval(pollDriverLocation, 5000);
 
-// Demande permission notification au chargement
 if (Notification.permission === 'default') {
   setTimeout(() => Notification.requestPermission(), 3000);
 }
 
-// Si déjà arrivé au chargement
 if (notifiedArrival) {
-  document.getElementById('arrivedOverlay').style.display = 'flex';
+  const arrivedEl = document.getElementById('arrivedOverlay');
+  if (arrivedEl) arrivedEl.style.display = 'flex';
 }
 
-// ─── Envoi message chat ────────────────────────────────────────────────────────
+// ─── Message submission ───
 document.getElementById('chatForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const input = document.getElementById('chatInput');
@@ -719,7 +928,7 @@ document.getElementById('chatForm').addEventListener('submit', function(e) {
   });
 });
 
-// ─── Accepter le prix ──────────────────────────────────────────────────────────
+// ─── Accept Price ───
 const acceptForm = document.getElementById('acceptPriceForm');
 if (acceptForm) {
   acceptForm.addEventListener('submit', function(e) {
@@ -742,19 +951,20 @@ if (acceptForm) {
   });
 }
 
-// ─── Modal modification trajet client ─────────────────────────────────────────
+// ─── Travel modification modal ───
 function openEditTrajetModal() {
-  document.getElementById('editTrajetModal').classList.remove('hidden');
+  const modal = document.getElementById('editTrajetModal');
+  if (modal) modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
 
 function closeEditTrajetModal() {
-  document.getElementById('editTrajetModal').classList.add('hidden');
+  const modal = document.getElementById('editTrajetModal');
+  if (modal) modal.classList.add('hidden');
   document.body.style.overflow = '';
 }
 
 @if($reservation->statut === 'en_attente')
-// Autocomplete pour les inputs du modal
 function initEditSearch(inputId, resultsId, type) {
   const input = document.getElementById(inputId);
   const results = document.getElementById(resultsId);
@@ -821,7 +1031,6 @@ function initEditSearch(inputId, resultsId, type) {
 initEditSearch('edit_search_depart', 'edit_results_depart', 'depart');
 initEditSearch('edit_search_arrivee', 'edit_results_arrivee', 'arrivee');
 
-// Soumission du formulaire
 document.getElementById('editTrajetForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const btn = document.getElementById('saveTrajetBtn');

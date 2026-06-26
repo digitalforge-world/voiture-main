@@ -76,6 +76,22 @@ class DriverController extends Controller
     }
 
     /**
+     * Historique complet des courses du chauffeur.
+     */
+    public function history()
+    {
+        $driverId = session('driver_authenticated_id');
+        $driver = Driver::findOrFail($driverId);
+
+        $completedReservations = ReservationTransport::where('driver_id', $driverId)
+            ->whereIn('statut', ['termine', 'annule'])
+            ->latest('date_prise_en_charge')
+            ->paginate(15);
+
+        return view('transport.driver_history', compact('driver', 'completedReservations'));
+    }
+
+    /**
      * Interface mobile du chauffeur pour une course spécifique.
      */
     public function show(string $token)

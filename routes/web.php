@@ -53,6 +53,7 @@ Route::prefix('chauffeur')->name('driver.')->group(function () {
 
     Route::middleware([\App\Http\Middleware\AuthenticateDriver::class])->group(function () {
         Route::get('/dashboard', [DriverController::class, 'dashboard'])->name('dashboard');
+        Route::get('/historique', [DriverController::class, 'history'])->name('history');
         Route::get('/{token}', [DriverController::class, 'show'])->name('show');
         Route::post('/{token}/location', [DriverController::class, 'updateLocation'])->name('update-location');
         Route::post('/{token}/arrive', [DriverController::class, 'markArrived'])->name('arrived');
