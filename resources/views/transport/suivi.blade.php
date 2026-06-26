@@ -69,49 +69,82 @@
       border-radius: 0 !important;
     }
 
-    /* Floating Header Overlay (1) */
-    .header-info-wrapper {
+    /* Combined Card (Header + Stepper) (1 & 2) */
+    .mobile-header-stepper-card {
       position: fixed !important;
       top: 16px;
       left: 16px;
       right: 16px;
       z-index: 1010;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(0, 0, 0, 0.05);
-      border-radius: 20px;
-      padding: 12px 16px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      padding: 16px 16px 14px 16px;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 15px -6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.3s ease;
     }
-    .dark .header-info-wrapper {
-      background: rgba(15, 23, 42, 0.85);
+    .dark .mobile-header-stepper-card {
+      background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 8px 15px -6px rgba(0, 0, 0, 0.2);
     }
 
-    /* Floating Stepper Overlay (2) */
+    /* Reset inner wraps on mobile so they stack naturally */
+    .header-info-wrapper {
+      position: static !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      width: 100% !important;
+    }
+    
     .stepper-container-wrapper {
-      position: fixed !important;
-      top: 124px;
-      left: 16px;
-      right: 16px;
-      z-index: 1010;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      border-radius: 20px;
-      padding: 10px 14px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      overflow-x: auto;
+      position: static !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      overflow-x: visible !important;
+      width: 100% !important;
     }
-    .dark .stepper-container-wrapper {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+
+    .stepper-inner-container {
+      min-width: 0 !important;
+      width: 100% !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
     }
-    .stepper-container-wrapper::-webkit-scrollbar {
-      display: none;
+
+    .stepper-progress-line {
+      top: 14px !important;
+      left: 12px !important;
+      right: 12px !important;
+      height: 2px !important;
+    }
+
+    .stepper-circle {
+      width: 28px !important;
+      height: 28px !important;
+      border-width: 2px !important;
+    }
+
+    .stepper-circle i {
+      width: 12px !important;
+      height: 12px !important;
+    }
+
+    .stepper-label {
+      display: none !important; /* Hide labels under circles on mobile for clean look */
     }
 
     /* Drawers/Modals (3, 4, 5) */
@@ -165,6 +198,21 @@
       margin: 0 !important;
     }
   }
+
+  /* Mobile FABs animations and styling */
+  @media (max-width: 1024px) {
+    .mobile-fabs-panel {
+      bottom: 96px !important; /* Align above mobile bottom nav */
+      right: 16px !important;
+    }
+    .mobile-fabs-panel button {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+    }
+    .mobile-fabs-panel button:active {
+      transform: scale(0.9) !important;
+    }
+  }
 </style>
 @endsection
 
@@ -172,71 +220,73 @@
 <div class="min-h-[calc(100vh-80px)] bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-8 px-4 transition-colors duration-300">
   <div class="max-w-5xl mx-auto space-y-6">
 
-    {{-- ─── Header (1) ─── --}}
-    <div class="header-info-wrapper flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <a href="{{ route('transport.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-amber-500 text-xs mb-3 transition lg:flex hidden">
-          ← Nouvelle réservation
-        </a>
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Suivi de votre transport</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Réf : <span class="font-mono text-amber-500 dark:text-amber-400 font-bold">{{ $reservation->tracking_number }}</span></p>
-      </div>
-      <div class="flex items-center gap-3">
-        @php
-          $statusColors = [
-            'en_attente'          => 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-500/20',
-            'accepte'             => 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500/20',
-            'chauffeur_en_route'  => 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20',
-            'chauffeur_arrive'    => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
-            'en_cours'            => 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-500/20',
-            'termine'             => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
-            'annule'              => 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20',
-          ];
-          $sc = $statusColors[$reservation->statut] ?? 'bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800';
-        @endphp
-        <span id="statutBadge" class="px-4 py-2 rounded-full text-xs font-bold border uppercase tracking-widest {{ $sc }}">
-          {{ $reservation->statut_label }}
-        </span>
-      </div>
-    </div>
-
-    {{-- ─── Stepper (2) ─── --}}
-    @php
-      $steps = [
-        ['key' => 'en_attente',         'label' => 'En attente', 'icon' => 'clock'],
-        ['key' => 'accepte',            'label' => 'Accepté',    'icon' => 'check-circle'],
-        ['key' => 'chauffeur_en_route', 'label' => 'En route',   'icon' => 'navigation'],
-        ['key' => 'chauffeur_arrive',   'label' => 'Arrivé',     'icon' => 'map-pin'],
-        ['key' => 'en_cours',           'label' => 'En cours',   'icon' => 'play-circle'],
-        ['key' => 'termine',            'label' => 'Terminé',    'icon' => 'check-square'],
-      ];
-      $statutOrder = ['en_attente' => 0, 'accepte' => 1, 'chauffeur_en_route' => 2, 'chauffeur_arrive' => 3, 'en_cours' => 4, 'termine' => 5, 'annule' => -1];
-      $currentIdx  = $statutOrder[$reservation->statut] ?? 0;
-    @endphp
-    
-    <div class="stepper-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm overflow-x-auto custom-scrollbar">
-      <div class="relative flex justify-between items-center w-full min-w-[600px] px-8 py-2">
-        <!-- Progress Bar Background -->
-        <div class="absolute top-[21px] left-12 right-12 h-0.5 bg-slate-200 dark:bg-slate-800 z-0">
-          <div class="h-full bg-emerald-500 transition-all duration-500" style="width: {{ $currentIdx * 20 }}%"></div>
+    <div class="mobile-header-stepper-card lg:contents">
+      {{-- ─── Header (1) ─── --}}
+      <div class="header-info-wrapper flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <a href="{{ route('transport.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-amber-500 text-xs mb-3 transition lg:flex hidden">
+            ← Nouvelle réservation
+          </a>
+          <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Suivi de votre transport</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Réf : <span class="font-mono text-amber-500 dark:text-amber-400 font-bold">{{ $reservation->tracking_number }}</span></p>
         </div>
-        
-        @foreach($steps as $i => $s)
-          @php 
-            $done = $currentIdx > $i; 
-            $active = $currentIdx === $i; 
+        <div class="flex items-center gap-3">
+          @php
+            $statusColors = [
+              'en_attente'          => 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-500/20',
+              'accepte'             => 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-500/20',
+              'chauffeur_en_route'  => 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-500/20',
+              'chauffeur_arrive'    => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+              'en_cours'            => 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-500/20',
+              'termine'             => 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+              'annule'              => 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20',
+            ];
+            $sc = $statusColors[$reservation->statut] ?? 'bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800';
           @endphp
-          <div class="relative z-10 flex flex-col items-center">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2
-              {{ $done ? 'bg-emerald-500 border-emerald-500 text-white' : ($active ? 'bg-amber-500 border-amber-500 text-slate-950' : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600') }}">
-              <i data-lucide="{{ $s['icon'] }}" class="w-4 h-4"></i>
-            </div>
-            <span class="text-[9px] mt-2 font-bold uppercase tracking-wider
-              {{ $done ? 'text-emerald-500' : ($active ? 'text-amber-500' : 'text-slate-400 dark:text-slate-600') }}">
-              {{ $s['label'] }}
-            </span>
+          <span id="statutBadge" class="px-4 py-2 rounded-full text-xs font-bold border uppercase tracking-widest {{ $sc }}">
+            {{ $reservation->statut_label }}
+          </span>
+        </div>
+      </div>
+
+      {{-- ─── Stepper (2) ─── --}}
+      @php
+        $steps = [
+          ['key' => 'en_attente',         'label' => 'En attente', 'icon' => 'clock'],
+          ['key' => 'accepte',            'label' => 'Accepté',    'icon' => 'check-circle'],
+          ['key' => 'chauffeur_en_route', 'label' => 'En route',   'icon' => 'navigation'],
+          ['key' => 'chauffeur_arrive',   'label' => 'Arrivé',     'icon' => 'map-pin'],
+          ['key' => 'en_cours',           'label' => 'En cours',   'icon' => 'play-circle'],
+          ['key' => 'termine',            'label' => 'Terminé',    'icon' => 'check-square'],
+        ];
+        $statutOrder = ['en_attente' => 0, 'accepte' => 1, 'chauffeur_en_route' => 2, 'chauffeur_arrive' => 3, 'en_cours' => 4, 'termine' => 5, 'annule' => -1];
+        $currentIdx  = $statutOrder[$reservation->statut] ?? 0;
+      @endphp
+      
+      <div class="stepper-container-wrapper bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm overflow-x-auto custom-scrollbar">
+        <div class="stepper-inner-container relative flex justify-between items-center w-full min-w-[600px] px-8 py-2">
+          <!-- Progress Bar Background -->
+          <div class="stepper-progress-line absolute top-[21px] left-12 right-12 h-0.5 bg-slate-200 dark:bg-slate-800 z-0">
+            <div class="h-full bg-emerald-500 transition-all duration-500" style="width: {{ $currentIdx * 20 }}%"></div>
           </div>
-        @endforeach
+          
+          @foreach($steps as $i => $s)
+            @php 
+              $done = $currentIdx > $i; 
+              $active = $currentIdx === $i; 
+            @endphp
+            <div class="relative z-10 flex flex-col items-center">
+              <div class="stepper-circle w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2
+                {{ $done ? 'bg-emerald-500 border-emerald-500 text-white' : ($active ? 'bg-amber-500 border-amber-500 text-slate-950' : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600') }}">
+                <i data-lucide="{{ $s['icon'] }}" class="w-4 h-4"></i>
+              </div>
+              <span class="stepper-label text-[9px] mt-2 font-bold uppercase tracking-wider
+                {{ $done ? 'text-emerald-500' : ($active ? 'text-amber-500' : 'text-slate-400 dark:text-slate-600') }}">
+                {{ $s['label'] }}
+              </span>
+            </div>
+          @endforeach
+        </div>
       </div>
     </div>
 
@@ -628,8 +678,7 @@ function openMobileModal(type) {
   }
   
   if (type === 'chat') {
-    unreadMessageCount = 0;
-    updateUnreadBadge();
+    markChatAsRead();
     setTimeout(scrollChatBottom, 100);
   }
 }
@@ -653,10 +702,43 @@ function updateUnreadBadge() {
   if (unreadMessageCount > 0) {
     badge.innerText = unreadMessageCount;
     badge.classList.remove('hidden');
+    badge.classList.add('flex');
   } else {
+    badge.classList.remove('flex');
     badge.classList.add('hidden');
   }
 }
+
+function markChatAsRead() {
+  localStorage.setItem('last_read_msg_id_' + TRACKING, LAST_MSG_ID);
+  unreadMessageCount = 0;
+  updateUnreadBadge();
+}
+
+// Initial count of unread messages on page load based on localStorage
+document.addEventListener('DOMContentLoaded', () => {
+  const lastReadId = parseInt(localStorage.getItem('last_read_msg_id_' + TRACKING) || '0');
+  let count = 0;
+  document.querySelectorAll('#chatMessages [data-msg-id]').forEach(el => {
+    const msgId = parseInt(el.getAttribute('data-msg-id') || '0');
+    if (msgId > lastReadId) {
+      if (el.querySelector('.bubble-admin') || el.querySelector('.bubble-system')) {
+        count++;
+      }
+    }
+  });
+  
+  const chatWrapper = document.querySelector('.chat-container-wrapper');
+  const isMobile = window.innerWidth < 1024;
+  const isChatOpen = chatWrapper && chatWrapper.classList.contains('active-modal');
+  
+  if (!isMobile || isChatOpen) {
+    markChatAsRead();
+  } else {
+    unreadMessageCount = count;
+    updateUnreadBadge();
+  }
+});
 
 // ─── Map ───
 const map = L.map('suivi-map').setView([LAT_DEP, LNG_DEP], 13);
@@ -763,8 +845,11 @@ function appendMessage(msg) {
 
   // Increment unread count if chat drawer modal is closed on mobile
   const chatWrapper = document.querySelector('.chat-container-wrapper');
+  const isMobile = window.innerWidth < 1024;
   const isChatOpen = chatWrapper && chatWrapper.classList.contains('active-modal');
-  if (!isChatOpen && msg.id && (msg.auteur === 'admin' || msg.auteur === 'systeme' || msg.type === 'notification_systeme')) {
+  if (!isMobile || isChatOpen) {
+    markChatAsRead();
+  } else if (msg.id && (msg.auteur === 'admin' || msg.auteur === 'systeme' || msg.type === 'notification_systeme')) {
     unreadMessageCount++;
     updateUnreadBadge();
   }
