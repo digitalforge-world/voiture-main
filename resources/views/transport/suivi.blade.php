@@ -54,7 +54,7 @@
       min-height: auto !important;
       height: calc(100dvh - 64px - 80px) !important;
       margin-top: 64px !important; /* Fixed site header height (64px) */
-      padding: 12px 12px 0 12px !important;
+      padding: 12px !important;
       display: flex !important;
       flex-direction: column !important;
       background-color: rgb(248, 250, 252) !important;
@@ -76,47 +76,39 @@
       margin-top: 0 !important;
     }
 
-    /* Combined Card (Header + Stepper) (1 & 2) */
-    .mobile-header-stepper-card {
+    /* Header (1) */
+    .header-info-wrapper {
+      order: 1 !important;
       position: static !important;
       background: rgb(255, 255, 255) !important;
       border: 1px solid rgba(0, 0, 0, 0.05) !important;
       border-radius: 20px !important;
-      padding: 14px 16px 12px 16px !important;
+      padding: 14px 16px !important;
       box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-      z-index: auto !important;
+      width: 100% !important;
     }
-    .dark .mobile-header-stepper-card {
+    .dark .header-info-wrapper {
       background: rgb(30, 41, 59) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
       box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2) !important;
     }
-
-    /* Reset inner elements to default flow within the top card */
-    .header-info-wrapper {
-      position: static !important;
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      width: 100% !important;
-    }
     
+    /* Stepper (3) */
     .stepper-container-wrapper {
+      order: 3 !important;
       position: static !important;
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+      background: rgb(255, 255, 255) !important;
+      border: 1px solid rgba(0, 0, 0, 0.05) !important;
+      border-radius: 20px !important;
+      padding: 12px 16px !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
       overflow-x: visible !important;
       width: 100% !important;
+    }
+    .dark .stepper-container-wrapper {
+      background: rgb(30, 41, 59) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2) !important;
     }
 
     .stepper-inner-container {
@@ -148,8 +140,9 @@
       display: none !important; /* Hide labels under circles on mobile for clean look */
     }
 
-    /* Grid and Column expansion on mobile */
+    /* Grid and Column expansion on mobile (2) */
     .mobile-page-inner > .grid {
+      order: 2 !important;
       flex-grow: 1 !important;
       display: flex !important;
       flex-direction: column !important;
@@ -168,7 +161,7 @@
       margin-top: 0 !important;
     }
 
-    /* Map container takes all the remaining space below the header-stepper card */
+    /* Map container takes all the remaining space in the middle */
     .map-container-wrapper {
       position: relative !important;
       flex-grow: 1 !important;
@@ -260,7 +253,7 @@
 <div class="min-h-[calc(100vh-80px)] mobile-page-container bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 py-8 px-4 transition-colors duration-300">
   <div class="max-w-5xl mx-auto space-y-6 mobile-page-inner">
 
-    <div class="mobile-header-stepper-card lg:contents">
+
       {{-- ─── Header (1) ─── --}}
       <div class="header-info-wrapper flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -328,7 +321,7 @@
           @endforeach
         </div>
       </div>
-    </div>
+
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
