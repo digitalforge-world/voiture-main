@@ -28,7 +28,7 @@
 <body class="h-full font-sans antialiased text-slate-600 dark:text-slate-200 selection:bg-amber-500/30 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-300">
  <div class="flex h-screen bg-white dark:bg-slate-950">
   <!-- Persistent Sidebar -->
-  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col">
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 transform -translate-x-full lg:translate-x-0  lg:inset-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 flex flex-col">
    <div class="p-6 flex items-center justify-between">
     <a href="{{ route('admin.dashboard') }}" class="group flex items-center py-2 transition-all duration-500 hover:opacity-90">
      @php

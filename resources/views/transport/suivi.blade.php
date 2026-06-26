@@ -53,7 +53,7 @@
     .mobile-page-container {
       min-height: auto !important;
       height: calc(100dvh - 64px - 80px) !important;
-      margin-top: 64px !important; /* Fixed site header height (64px) */
+     /* margin-top: 64px !important; /* Fixed site header height (64px) */
       padding: 12px !important;
       display: flex !important;
       flex-direction: column !important;
