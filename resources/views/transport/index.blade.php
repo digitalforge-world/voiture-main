@@ -13,6 +13,13 @@
     z-index: 1;
   }
 
+  @media (max-width: 768px) {
+    #transport-map {
+      min-height: 280px !important;
+      height: 280px !important;
+    }
+  }
+
   /* Panneau flottant sur la carte */
   .map-panel {
     position: absolute;
@@ -32,7 +39,7 @@
       width: 100% !important;
       max-height: none !important;
       overflow-y: visible !important;
-      padding: 0 !important;
+      padding: 0 1rem 120px 1rem !important;
       margin-top: 1rem;
     }
   }
